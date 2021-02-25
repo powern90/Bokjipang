@@ -5,7 +5,7 @@ import { Text, View } from "react-native";
 import { createMaterialBottomTabNavigator} from "@react-navigation/material-bottom-tabs";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
-import HomeScreen from './main/Home';
+import HomeScreen from './main/home/Home';
 import BoardScreen from './main/board/Board';
 import SupportScreen from './main/support/Support';
 
