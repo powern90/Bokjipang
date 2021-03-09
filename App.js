@@ -25,7 +25,7 @@ if(firebase.apps.length === 0) {
 import {NavigationContainer} from "@react-navigation/native";
 import {createStackNavigator} from '@react-navigation/stack';
 
-import LoginScreen from "./Components/auth/Login";
+import LoginScreen from "./Components/auth/API/Apple";
 import MainScreen from "./Components/Main";
 
 const Stack = createStackNavigator();

@@ -1,15 +1,16 @@
 //메인페이지
 import React from 'react';
-import {View, Text, StyleSheet} from "react-native";
+import {View, Text, StyleSheet, ScrollView} from "react-native";
 
 import Header from '../Header'
 import Link from './Link';
 import Zzim from './Zzim';
-import Banner from './Banner';
+import Banner from './banner';
+import Board from './Board';
 
 export default function Home() {
     return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
             <View style={styles.header}>
                 <Header/>
             </View>
@@ -23,8 +24,16 @@ export default function Home() {
                 <View style={styles.zzim}>
                     <Zzim/>
                 </View>
+                <View style={styles.board}>
+                    <Board/>
+                </View>
+                <View style={styles.board}>
+                    <Board/>
+                </View>
+
+
             </View>
-        </View>
+        </ScrollView>
     )
 }
 
@@ -60,6 +69,11 @@ const styles = StyleSheet.create({
     },
     zzim: {
         width:'100%',
-        height:'20%',
+        height:180,
     },
+    board: {
+        width: '100%',
+        height: 300,
+        top: '3%',
+    }
 });
