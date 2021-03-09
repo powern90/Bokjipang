@@ -7,7 +7,8 @@ export class Zzim extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            zzim_item: 'null'
+            zzim_title: 'zzim_title',
+            zzim_content: 'zzim_contentaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
         };
     }
 
@@ -19,11 +20,11 @@ export class Zzim extends Component {
                         <Text
                             adjustsFontSizeToFit={true}
                             numberOfLines={1}
-                            style={styles.title}>찜한 지원사업</Text>
+                            style={styles.title}>Zzim support</Text>
                     </View>
 
                     <View style={styles.item_container}>
-                        <Zzim_item data={this.state.zzim_item}/>
+                        <Zzim_item title={this.state.zzim_title} content={this.state.zzim_content} />
                     </View>
 
                 </View>
@@ -54,9 +55,11 @@ const styles = StyleSheet.create({
 
     },
     title: {
-        marginLeft: '7%',
-        marginTop: '3%',
+        marginLeft: '5%',
+        marginTop: '1%',
         fontSize: 17,
+        fontWeight: 500,
+        color: 'grey',
     },
     item_container: {
 
