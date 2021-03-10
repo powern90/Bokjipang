@@ -9,17 +9,17 @@ import rootReducer from './redux/reducers'
 import thunk from 'redux-thunk'
 
 const firebaseConfig = {
-    apiKey: "AIzaSyB5aMZCl21pEz1UbE83AuxdWVPSFOsRATk",
-    authDomain: "bokjipang.firebaseapp.com",
-    projectId: "bokjipang",
-    storageBucket: "bokjipang.appspot.com",
-    messagingSenderId: "626259617240",
-    appId: "1:626259617240:web:0386780264c19156b6fead",
-    measurementId: "G-N6THEHK4M5"
+  apiKey: "AIzaSyB5aMZCl21pEz1UbE83AuxdWVPSFOsRATk",
+  authDomain: "bokjipang.firebaseapp.com",
+  projectId: "bokjipang",
+  storageBucket: "bokjipang.appspot.com",
+  messagingSenderId: "626259617240",
+  appId: "1:626259617240:web:0386780264c19156b6fead",
+  measurementId: "G-N6THEHK4M5"
 };
 
 if(firebase.apps.length === 0) {
-    firebase.initializeApp(firebaseConfig)
+  firebase.initializeApp(firebaseConfig)
 }
 
 import {NavigationContainer} from "@react-navigation/native";
@@ -31,38 +31,38 @@ import MainScreen from "./Components/Main";
 const Stack = createStackNavigator();
 
 export class App extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            loaded: false
-        }
+  constructor(props) {
+    super(props);
+    this.state = {
+      loaded: false
     }
+  }
 
-    componentDidMount() {
-        setTimeout(() => {
-            this.setState({
-                loaded: true
-            });
-        }, 100);
-    }
+  componentDidMount() {
+    setTimeout(() => {
+      this.setState({
+        loaded: true
+      });
+    }, 100);
+  }
 
-    render() {
-        const {loaded} = this.state;
-        if (!loaded) {
-            return (
-                <View style={{flex: 1, justifyContent: 'center'}}>
-                    <Text>Loading</Text>
-                </View>
-            )
-        }
-        return (
-            <NavigationContainer>
-                <Stack.Navigator initialRouteName="Landing">
-                    <Stack.Screen name="Login" component={ MainScreen } options={{headerShown: false}}/>
-                </Stack.Navigator>
-            </NavigationContainer>
-        )
+  render() {
+    const {loaded} = this.state;
+    if (!loaded) {
+      return (
+          <View style={{flex: 1, justifyContent: 'center'}}>
+            <Text>Loading</Text>
+          </View>
+      )
     }
+    return (
+        <NavigationContainer>
+          <Stack.Navigator initialRouteName="Landing">
+            <Stack.Screen name="Login" component={ LoginScreen } options={{headerShown: false}}/>
+          </Stack.Navigator>
+        </NavigationContainer>
+    )
+  }
 }
 
 export default App
