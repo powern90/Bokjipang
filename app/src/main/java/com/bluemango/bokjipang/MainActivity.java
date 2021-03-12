@@ -14,12 +14,15 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
 
-    private FragmentManager fm = getSupportFragmentManager();
+    final FragmentManager fm = getSupportFragmentManager();
     private fragment_community fragment_comu = new fragment_community();
     private fragment_home fragment_home = new fragment_home();
     private fragment_notification fragment_noti = new fragment_notification();
     private fragment_setting fragment_set = new fragment_setting();
     private fragment_support fragment_sup = new fragment_support();
+    private fragment_login fragment_login  = new fragment_login();
+
+
     Fragment active;
     BottomNavigationView bottomNavigationView;
     Fragment firstFragment = null;
@@ -28,8 +31,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         firstFragment = new fragment_home();
-        fm.beginTransaction().replace(R.id.fragment_container,fragment_home).commit();
-        setContentView(R.layout.activity_main);
+        fm.beginTransaction().replace(R.id.fragment_container,fragment_login).commit();
+
+        setContentView(R.layout.activity_main);        //세션 없으니 바로 로그인으로 가게 해놓아놨음, 만약 필요하면 여기 바꿔서 각자
+
         bottomNavigationView = findViewById(R.id.bottom_navigation); //탭바 장착
         bottomNavigationView.setOnNavigationItemSelectedListener(navListener); //탭바 리스너
     }
