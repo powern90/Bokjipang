@@ -44,19 +44,19 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottom_navigation); //탭바 장착
         bottomNavigationView.setOnNavigationItemSelectedListener(navListener); //탭바 리스너
 
-
-        /**KAKAO hash key 얻기*/
-        try {
-            PackageInfo pkinfo = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_SIGNATURES);
-            for (Signature signature : pkinfo.signatures) {
-                MessageDigest messageDigest = MessageDigest.getInstance("SHA");
-                messageDigest.update(signature.toByteArray());
-                String result = new String(Base64.encode(messageDigest.digest(), 0));
-                Log.d("해시", result);
-            }
-        } catch (Exception e) {
-        }
-        /**KAKAO hash key 얻기*/
+//
+//        /**KAKAO hash key 얻기*/
+//        try {
+//            PackageInfo pkinfo = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_SIGNATURES);
+//            for (Signature signature : pkinfo.signatures) {
+//                MessageDigest messageDigest = MessageDigest.getInstance("SHA");
+//                messageDigest.update(signature.toByteArray());
+//                String result = new String(Base64.encode(messageDigest.digest(), 0));
+//                Log.d("해시", result);
+//            }
+//        } catch (Exception e) {
+//        }
+//        /**KAKAO hash key 얻기*/
 
 
     }
