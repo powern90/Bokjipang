@@ -14,5 +14,23 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
+    <ViewFlipper android:id="@+id/viewFlipper1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ImageView android:id="@+id/imageView1"
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:src="@drawable/donut"/>
+        <ImageView android:id="@+id/imageView3"
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ecliar"/>
+        <ImageView android:id="@+id/imageView4"
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:src="@drawable/honey"/>
+    </ViewFlipper>
 </androidx.constraintlayout.widget.ConstraintLayout>
