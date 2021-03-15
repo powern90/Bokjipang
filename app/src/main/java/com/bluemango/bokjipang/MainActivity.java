@@ -33,12 +33,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         firstFragment = new fragment_home();
         fm.beginTransaction().replace(R.id.fragment_container,fragment_login).commit();
-
         setContentView(R.layout.activity_main);        //세션 없으니 바로 로그인으로 가게 해놓아놨음, 만약 필요하면 여기 바꿔서 각자
 
         bottomNavigationView = findViewById(R.id.bottom_navigation); //탭바 장착
         bottomNavigationView.setOnNavigationItemSelectedListener(navListener); //탭바 리스너
-
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener =
