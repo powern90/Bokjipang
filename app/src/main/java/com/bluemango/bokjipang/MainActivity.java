@@ -38,8 +38,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         firstFragment = new fragment_home();
-        fm.beginTransaction().replace(R.id.fragment_container, fragment_login).commit();
-
+        fm.beginTransaction().replace(R.id.fragment_container,fragment_login).commit();
         setContentView(R.layout.activity_main);        //세션 없으니 바로 로그인으로 가게 해놓아놨음, 만약 필요하면 여기 바꿔서 각자
 
         bottomNavigationView = findViewById(R.id.bottom_navigation); //탭바 장착
@@ -70,49 +69,49 @@ public class MainActivity extends AppCompatActivity {
                     count = getSupportFragmentManager().getBackStackEntryCount();
                     Fragment current = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
 
-                    switch (menuItem.getItemId()) {
+                    switch (menuItem.getItemId()){
                         case R.id.home: //홈화면 선택 됐을때
-                            if (count > 0) {
-                                for (int i = 0; i < count; i++) //기존 스택에 남아있던 화면들 다 삭제
+                            if (count>0){
+                                for (int i=0; i<count; i++) //기존 스택에 남아있던 화면들 다 삭제
                                     getSupportFragmentManager().popBackStack();
                             }
-                            fm.beginTransaction().replace(R.id.fragment_container, fragment_home).commit(); //홈화면으로 화면변경
+                            fm.beginTransaction().replace(R.id.fragment_container,fragment_home).commit(); //홈화면으로 화면변경
                             active = firstFragment;
                             break;
 
                         case R.id.community: //펫프렌즈 매칭 화면 선택 됐을때
-                            if (count > 0) {
-                                for (int i = 0; i < count; i++)
+                            if (count>0){
+                                for (int i=0; i<count; i++)
                                     getSupportFragmentManager().popBackStack();
                             }
-                            fm.beginTransaction().replace(R.id.fragment_container, fragment_comu).commit();
+                            fm.beginTransaction().replace(R.id.fragment_container,fragment_comu).commit();
                             active = fragment_comu;
                             break;
 
                         case R.id.support: //펫 파트너 매칭 화면 선택 됐을때
-                            if (count > 0) {
-                                for (int i = 0; i < count; i++)
+                            if (count>0){
+                                for (int i=0; i<count; i++)
                                     getSupportFragmentManager().popBackStack();
                             }
-                            fm.beginTransaction().replace(R.id.fragment_container, fragment_sup).commit();
+                            fm.beginTransaction().replace(R.id.fragment_container,fragment_sup).commit();
                             active = fragment_sup;
                             break;
 
                         case R.id.notification: //채팅화면 선택 됐을때
-                            if (count > 0) {
-                                for (int i = 0; i < count; i++)
+                            if (count>0){
+                                for (int i=0; i<count; i++)
                                     getSupportFragmentManager().popBackStack();
                             }
-                            fm.beginTransaction().replace(R.id.fragment_container, fragment_noti).commit();
+                            fm.beginTransaction().replace(R.id.fragment_container,fragment_noti).commit();
                             active = fragment_noti;
                             break;
 
                         case R.id.setting: //마이페이지화면 선택 됐을때
-                            if (count > 0) {
-                                for (int i = 0; i < count; i++)
+                            if (count>0){
+                                for (int i=0; i<count; i++)
                                     getSupportFragmentManager().popBackStack();
                             }
-                            fm.beginTransaction().replace(R.id.fragment_container, fragment_set).commit();
+                            fm.beginTransaction().replace(R.id.fragment_container,fragment_set).commit();
                             active = fragment_set;
                             break;
                     }
