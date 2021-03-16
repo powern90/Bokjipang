@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<resources>
+    <string-array name="community_type">
+        <item>장애인</item>
+        <item>고령자</item>
+        <item>북한</item>
+        <item>한부모</item>
+        <item>저소득</item>
+    </string-array>
+</resources>
