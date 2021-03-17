@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.kakao.auth.Session;
 import com.kakao.usermgmt.LoginButton;
@@ -40,8 +41,10 @@ public class fragment_login extends Fragment {
         signup.setOnClickListener(new View.OnClickListener() {          //회원가입 페이질 이동
             @Override
             public void onClick(View v) {
-                MainActivity activity = (MainActivity) getActivity();
-                activity.fm.beginTransaction().replace(R.id.fragment_container,fragment_signup).commit();
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_container, fragment_signup);
+                transaction.addToBackStack(null);
+                transaction.commit();
             }
         });
 
