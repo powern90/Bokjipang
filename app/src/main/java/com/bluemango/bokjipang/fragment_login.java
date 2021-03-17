@@ -1,5 +1,6 @@
 package com.bluemango.bokjipang;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,12 +23,13 @@ import com.kakao.auth.Session;
 import com.kakao.usermgmt.LoginButton;
 import com.kakao.usermgmt.UserManagement;
 import com.kakao.usermgmt.callback.LogoutResponseCallback;
-
+import org.w3c.dom.Text;
 import java.util.zip.Inflater;
 
 public class fragment_login extends Fragment {
     private EditText id_text, pw_text;
-    private Button btn_login;
+    private TextView text;
+    private fragment_home fragment_home = new fragment_home();
     private fragment_signup fragment_signup = new fragment_signup();
 
     Button kakaoLogin,kakaoLogout;
@@ -45,8 +47,36 @@ public class fragment_login extends Fragment {
                 transaction.replace(R.id.fragment_container, fragment_signup);
                 transaction.addToBackStack(null);
                 transaction.commit();
+
+
+//                MainActivity activity = (MainActivity) getActivity();
+//                activity.auto_login.edit().putBoolean("login",true).apply();
+//                Fragment fragment_home = new fragment_home();
+//                activity.firstFragment = fragment_home;
+//                activity.bottomNavigationView.setSelectedItemId(R.id.bottom_navigation);
+//                activity.fm.beginTransaction().replace(R.id.fragment_container,fragment_home,"3").commit();
+//                activity.active = fragment_home;
+//                activity.recreate();
             }
         });
+
+        text = view.findViewById(R.id.text2);
+        text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+//                MainActivity activity = (MainActivity) getActivity();
+//                activity.auto_login.edit().putBoolean("login",true).apply();
+//                Fragment fragment_home = new fragment_home();
+//                activity.firstFragment = fragment_home;
+//                activity.bottomNavigationView.setSelectedItemId(R.id.bottom_navigation);
+//                activity.fm.beginTransaction().replace(R.id.fragment_container,fragment_home,"3").commit();
+//                activity.active = fragment_home;
+//                activity.recreate();
+            }
+        });
+
 
         /**KAKAO 로그인 */
         loginButton = view.findViewById(R.id.loginButton);

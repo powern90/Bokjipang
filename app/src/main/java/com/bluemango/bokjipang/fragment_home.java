@@ -14,10 +14,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 public class fragment_home extends Fragment {
+    BottomNavigationView bottomNavigationView;
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
+
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         /**자동 이미지 배너*/
