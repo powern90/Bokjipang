@@ -61,14 +61,37 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="30dp"
                 android:ems="10"
-                android:hint="010-0000-0000"
+                android:hint="'-'없이 입력해주세요"
                 android:inputType="phone" />
-
             <Button
+                android:id="@+id/buttonContinue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="2dp"
                 android:text="본인확인"
+                android:textSize="10dp" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/verify_layout"
+            android:layout_width="389dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            tools:context=".MainActivity">
+            <EditText
+                android:id="@+id/confirm_code"
+                android:layout_width="285dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:ems="10"
+                android:hint="전송된 인증코드를 입력해주세요"
+                android:inputType="phone" />
+            <Button
+                android:id="@+id/buttonSignIn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="2dp"
+                android:text="인증확인"
                 android:textSize="10dp" />
         </LinearLayout>
         <TextView
@@ -83,7 +106,7 @@
 
         <EditText
             android:id="@+id/password"
-            android:layout_width="357dp"
+            android:layout_width="285dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
             android:ems="10"
@@ -100,14 +123,27 @@
             android:textSize="20dp"
             android:text="비밀번호 확인" />
 
-        <EditText
-            android:id="@+id/confirm_password"
-            android:layout_width="357dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
-            android:ems="10"
-            android:hint="다시한번 입력해주세요"
-            android:inputType="textPassword" />
+            android:orientation="horizontal"
+            tools:context=".MainActivity">
+            <EditText
+                android:id="@+id/confirm_password"
+                android:layout_width="285dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:ems="10"
+                android:hint="다시한번 입력해주세요"
+                android:inputType="textPassword" />
+            <ImageView
+                android:id="@+id/setImage"
+                android:layout_width="22dp"
+                android:layout_weight="1.5"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:scaleType="fitStart" />
+        </LinearLayout>
         <TextView
             android:id="@+id/textView14"
             android:layout_width="wrap_content"
@@ -211,7 +247,7 @@
                 android:textSize="10dp" />
         </LinearLayout>
         <TextView
-            android:id="@+id/textView17"
+            android:id="@+id/favorite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
@@ -271,10 +307,5 @@
             android:textStyle="bold"
             android:textSize="20dp" />
 
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:srcCompat="@android:drawable/ic_delete" />
     </LinearLayout>
 </ScrollView>

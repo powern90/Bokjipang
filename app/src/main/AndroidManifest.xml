@@ -12,9 +12,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Bokjipang"
-        android:name=".KaKaoSDKInit"
-        android:usesCleartextTraffic="true">
 
+        android:usesCleartextTraffic="true">
+<!--        android:name=".KaKaoSDKInit"-->
         <meta-data
             android:name="com.kakao.sdk.AppKey"
             android:value="@string/kakaoApi" />
