@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "626259617240",
+    "firebase_url": "https://bokjipang-default-rtdb.firebaseio.com",
+    "project_id": "bokjipang",
+    "storage_bucket": "bokjipang.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:626259617240:android:e0252da53bc19be8b6fead",
+        "android_client_info": {
+          "package_name": "com.bluemango.bokjipang"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "626259617240-4lf1dnvkvovh10u5bdavvfe3htm7g50b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyClw4BXDAtKo2DqxlauU72v3w6iKMao1_0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "626259617240-4lf1dnvkvovh10u5bdavvfe3htm7g50b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

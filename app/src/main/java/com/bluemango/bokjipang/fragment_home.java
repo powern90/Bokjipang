@@ -18,16 +18,21 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 public class fragment_home extends Fragment {
     ViewFlipper viewFlipper;
     float xAtDown, xAtUp;
+    BottomNavigationView bottomNavigationView;
 
     @SuppressLint("ClickableViewAccessibility")
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
+
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         /**자동 이미지 배너*/
+        final ViewFlipper viewFlipper;
         viewFlipper = (ViewFlipper) view.findViewById(R.id.viewFlipper1);
         viewFlipper.setAutoStart(true);
         /** 자동이미지 터치로 넘기기*/

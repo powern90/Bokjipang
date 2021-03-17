@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
@@ -14,6 +15,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -28,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private fragment_setting fragment_set = new fragment_setting();
     private fragment_support fragment_sup = new fragment_support();
     private fragment_login fragment_login = new fragment_login();
-
+    SharedPreferences auto_login;
 
     Fragment active;
     BottomNavigationView bottomNavigationView;
@@ -37,13 +39,19 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        auto_login = getSharedPreferences("login",MODE_PRIVATE); //세션유지에 쓸 sharedPreferences
+        SharedPreferences.Editor editor = auto_login.edit();
+        editor.putBoolean("login", false);
+        editor.apply();
+
         firstFragment = new fragment_home();
         fm.beginTransaction().replace(R.id.fragment_container,fragment_login).commit();
         setContentView(R.layout.activity_main);        //세션 없으니 바로 로그인으로 가게 해놓아놨음, 만약 필요하면 여기 바꿔서 각자
 
         bottomNavigationView = findViewById(R.id.bottom_navigation); //탭바 장착
         bottomNavigationView.setOnNavigationItemSelectedListener(navListener); //탭바 리스너
-
+//        bottomNavigationView.setVisibility(View.GONE);
 //
 //        /**KAKAO hash key 얻기*/
 //        try {
