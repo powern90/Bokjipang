@@ -61,10 +61,11 @@ public class fragment_signup extends Fragment {
     RadioGroup radio_group;
     TextView back_login;
     RadioButton radio_man, radio_woman;
-    String gender = "", interested="";
+    String gender = "", interested="", auth_checked="false";
     Button btn_search;
     CheckBox checkBox1,checkBox2,checkBox3,checkBox4,checkBox5;
     JSONObject js;
+    ImageView set_image;
 
     private String mVerificationID;
     private EditText confirm_code;
@@ -213,6 +214,7 @@ public class fragment_signup extends Fragment {
         txt_address = (EditText) view.findViewById(R.id.txt_address);
         btn_search = (Button) view.findViewById(R.id.WebView_btn);
         confirm_code = view.findViewById(R.id.confirm_code);
+        set_image = view.findViewById(R.id.setImage);
     }
 
     public void checkbox_ischecked() throws JSONException {
@@ -241,6 +243,7 @@ public class fragment_signup extends Fragment {
             second_password.setText(bundle.getString("second_password"));
             name.setText(bundle.getString("name"));
             age.setText(bundle.getString("age"));
+            //받는 부분 String text = bundle.getString("auth_checked");
             if (bundle.getString("gender").equals("남성")) {
                 radio_man.setChecked(true);
                 gender = "남성";
@@ -272,6 +275,8 @@ public class fragment_signup extends Fragment {
                     bundle2.putString("name", name.getText().toString());
                     bundle2.putString("age", age.getText().toString());
                     bundle2.putString("gender", gender);
+                    //bundle2.putString("auth_checked", "true");   보내는 곳
+
                     Webview_address.setArguments(bundle2);
                     FragmentTransaction transaction = getFragmentManager().beginTransaction();
                     transaction.replace(R.id.fragment_container, Webview_address);
