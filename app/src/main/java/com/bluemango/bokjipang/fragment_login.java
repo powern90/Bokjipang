@@ -47,8 +47,6 @@ public class fragment_login extends Fragment {
                 transaction.replace(R.id.fragment_container, fragment_signup);
                 transaction.addToBackStack(null);
                 transaction.commit();
-
-
 //                MainActivity activity = (MainActivity) getActivity();
 //                activity.auto_login.edit().putBoolean("login",true).apply();
 //                Fragment fragment_home = new fragment_home();
@@ -64,8 +62,6 @@ public class fragment_login extends Fragment {
         text.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
 //                MainActivity activity = (MainActivity) getActivity();
 //                activity.auto_login.edit().putBoolean("login",true).apply();
 //                Fragment fragment_home = new fragment_home();
@@ -76,8 +72,6 @@ public class fragment_login extends Fragment {
 //                activity.recreate();
             }
         });
-
-
 //        /**KAKAO 로그인 */
 //        loginButton = view.findViewById(R.id.loginButton);
 //        kakaoLogin = view.findViewById(R.id.kakaoLogin);

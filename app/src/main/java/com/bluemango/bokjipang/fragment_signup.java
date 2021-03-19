@@ -1,6 +1,7 @@
 package com.bluemango.bokjipang;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.Context;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import android.widget.RadioGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.graphics.drawable.Drawable;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
@@ -31,13 +33,14 @@ import androidx.fragment.app.FragmentTransaction;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.content.Intent;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskExecutors;
@@ -61,11 +64,13 @@ public class fragment_signup extends Fragment {
     RadioGroup radio_group;
     TextView back_login;
     RadioButton radio_man, radio_woman;
-    String gender = "", interested="", auth_checked="false";
+    String gender = "", interested="", phone_auth="",auth_checked="false";
     Button btn_search;
+    Button auth_button;
     CheckBox checkBox1,checkBox2,checkBox3,checkBox4,checkBox5;
     JSONObject js;
     ImageView set_image;
+    LinearLayout verify_layout;
 
     private String mVerificationID;
     private EditText confirm_code;
@@ -78,10 +83,10 @@ public class fragment_signup extends Fragment {
         if (context instanceof Activity)
             activity = (Activity) context;
     }
+
     public View onCreateView(LayoutInflater layoutInflater, @Nullable ViewGroup container, @Nullable Bundle saveInstanceState) {
         View view = layoutInflater.inflate(R.layout.fragment_signup, container, false);
         js = new JSONObject();
-
         init_varaibles(view);       //변수 초기화
         /**성별 라디오버튼 체크*/
         radio_group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -103,6 +108,18 @@ public class fragment_signup extends Fragment {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        try {
+            if (js.getString("phone_auth").equals("true")) {
+                auth_button.setEnabled(false);
+                input_phone.setClickable(false);
+                input_phone.setFocusable(false);
+                input_phone.setEnabled(false);
+                input_phone.setFocusableInTouchMode(false);
+                verify_layout.setVisibility(View.INVISIBLE);
+            }
+        } catch (JSONException e){
+            e.printStackTrace();
+        }
 
         /**버튼 클릭시 도로명 주소 api 인 webview_address로 이동*/
         goto_address_api();
@@ -117,6 +134,46 @@ public class fragment_signup extends Fragment {
                 transaction.commit();
             }
         });
+        /** 비밀번호 입력형식 완료여부 **/
+        /** 1. 영문(대소문자 구분), 숫자, 특수문자 조합 **/
+        /** 2. 9~12자리 사이 문자 **/
+        /** 3. 같은 문자 4개 이상 사용 불가 <-- 이거 제거 예정 **/
+        /** 4. 비밀번호에 ID 포함 불가 **/
+        /** 5. 공백문자 사용 불가 **/
+        first_password.addTextChangedListener(new TextWatcher() {
+            String pwPattern = "^(?=.*\\d)(?=.*[~`!@#$%\\^&*()-])(?=.*[a-z])(?=.*[A-Z]).{9,12}$";
+            String pwPattern2 = "(.)\\1\\1\\1";
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Matcher matcher = Pattern.compile(pwPattern).matcher(first_password.getText().toString());
+                Matcher matcher2 = Pattern.compile(pwPattern).matcher(first_password.getText().toString());
+                if(!matcher.matches()){
+                    first_password.setError("비밀번호는 9~12자리 사이의 영문,숫자,특수문자 조합이여야 합니다.");
+                }
+                if(matcher2.find()){
+                    first_password.setError("비밀번호는 같은 문자 4개 이상 사용불가합니다.");
+                }
+                if(first_password.getText().toString().contains(" ")){
+                    first_password.setError("비밀번호는 공백을 포함하지 않습니다.");
+                }
+                if (matcher.matches() && !matcher2.find() && !first_password.getText().toString().contains(" ")) {
+                    Drawable icon = getResources().getDrawable(R.drawable.equal);
+                    icon.setBounds(0,0,80, 80);
+                    first_password.setError("사용가능한 비밀번호 입니다.", icon);
+                }
+
+            }
+        });
+
         /** 비밀번호 일치 여부 **/
         second_password.addTextChangedListener(new TextWatcher() {
             @Override
@@ -139,11 +196,9 @@ public class fragment_signup extends Fragment {
 
             }
         });
-
         /** 전화번호 인증 **/
 
         view.findViewById(R.id.buttonContinue).setOnClickListener(new View.OnClickListener() {
-            LinearLayout verify_layout = view.findViewById(R.id.verify_layout);
 
             @Override
             public void onClick(View v) {
@@ -215,6 +270,8 @@ public class fragment_signup extends Fragment {
         btn_search = (Button) view.findViewById(R.id.WebView_btn);
         confirm_code = view.findViewById(R.id.confirm_code);
         set_image = view.findViewById(R.id.setImage);
+        auth_button = (Button) view.findViewById(R.id.buttonContinue);
+        verify_layout = (LinearLayout) view.findViewById(R.id.verify_layout);
     }
 
     public void checkbox_ischecked() throws JSONException {
@@ -243,7 +300,7 @@ public class fragment_signup extends Fragment {
             second_password.setText(bundle.getString("second_password"));
             name.setText(bundle.getString("name"));
             age.setText(bundle.getString("age"));
-            //받는 부분 String text = bundle.getString("auth_checked");
+            phone_auth = bundle.getString("auth_checked");
             if (bundle.getString("gender").equals("남성")) {
                 radio_man.setChecked(true);
                 gender = "남성";
@@ -258,6 +315,7 @@ public class fragment_signup extends Fragment {
             js.put("name", bundle.getString("name"));
             js.put("age", bundle.getString("age"));
             js.put("gender", gender);
+            js.put("phone_auth", phone_auth);
         }
     }
 
@@ -275,7 +333,7 @@ public class fragment_signup extends Fragment {
                     bundle2.putString("name", name.getText().toString());
                     bundle2.putString("age", age.getText().toString());
                     bundle2.putString("gender", gender);
-                    //bundle2.putString("auth_checked", "true");   보내는 곳
+                    bundle2.putString("phone_auth", auth_checked);
 
                     Webview_address.setArguments(bundle2);
                     FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -335,7 +393,6 @@ public class fragment_signup extends Fragment {
     }
 
     private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
-
         FirebaseAuth auth = FirebaseAuth.getInstance();
         auth.signInWithCredential(credential)
                 .addOnCompleteListener(activity, new OnCompleteListener<AuthResult>() {
@@ -343,7 +400,20 @@ public class fragment_signup extends Fragment {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             Log.d(TAG, "전화 인증 성공");
+                            auth_checked = "true";
                             FirebaseUser user = task.getResult().getUser();
+                            auth_button.setEnabled(false);
+                            input_phone.setClickable(false);
+                            input_phone.setFocusable(false);
+                            input_phone.setEnabled(false);
+                            input_phone.setFocusableInTouchMode(false);
+                            verify_layout.setVisibility(View.INVISIBLE);
+
+                            AlertDialog.Builder auth_alert = new AlertDialog.Builder(activity);
+                            auth_alert.setTitle("Bokjipang 인증 서비스");
+                            auth_alert.setMessage("인증 완료");
+                            auth_alert.setPositiveButton("예", null);
+                            auth_alert.create().show();
                         } else {
                             Log.w(TAG, "전화 인증 실패", task.getException());
                             if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
