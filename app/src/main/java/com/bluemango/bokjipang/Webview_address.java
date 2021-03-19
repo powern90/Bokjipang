@@ -46,6 +46,7 @@ public class Webview_address extends Fragment {
                 js.put("name",bundle2.getString("name"));
                 js.put("age",bundle2.getString("age"));
                 js.put("gender",bundle2.getString("gender"));
+                js.put("auth_checked",bundle2.getString("auth_checked"));
             } catch (JSONException e) {
                 e.printStackTrace();
             }

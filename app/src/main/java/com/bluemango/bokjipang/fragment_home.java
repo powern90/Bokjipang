@@ -80,6 +80,8 @@ public class fragment_home extends Fragment {
             gojung=false;
         }
 
+        /** 여기 실시간 인기사업 두개 받아서 settext로 넣어주기*/
+
 
         /**자동 이미지 배너*/
         viewFlipper = (ViewFlipper) view.findViewById(R.id.viewFlipper1);

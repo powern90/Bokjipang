@@ -64,7 +64,7 @@ public class fragment_signup extends Fragment {
     RadioGroup radio_group;
     TextView back_login;
     RadioButton radio_man, radio_woman;
-    String gender = "", interested="", phone_auth="",auth_checked="false";
+    String gender = "", interested="",auth_checked="false";
     Button btn_search;
     Button auth_button;
     CheckBox checkBox1,checkBox2,checkBox3,checkBox4,checkBox5;
@@ -108,18 +108,7 @@ public class fragment_signup extends Fragment {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        try {
-            if (js.getString("phone_auth").equals("true")) {
-                auth_button.setEnabled(false);
-                input_phone.setClickable(false);
-                input_phone.setFocusable(false);
-                input_phone.setEnabled(false);
-                input_phone.setFocusableInTouchMode(false);
-                verify_layout.setVisibility(View.INVISIBLE);
-            }
-        } catch (JSONException e){
-            e.printStackTrace();
-        }
+
 
         /**버튼 클릭시 도로명 주소 api 인 webview_address로 이동*/
         goto_address_api();
@@ -300,7 +289,7 @@ public class fragment_signup extends Fragment {
             second_password.setText(bundle.getString("second_password"));
             name.setText(bundle.getString("name"));
             age.setText(bundle.getString("age"));
-            phone_auth = bundle.getString("auth_checked");
+            auth_checked = bundle.getString("auth_checked");
             if (bundle.getString("gender").equals("남성")) {
                 radio_man.setChecked(true);
                 gender = "남성";
@@ -315,7 +304,16 @@ public class fragment_signup extends Fragment {
             js.put("name", bundle.getString("name"));
             js.put("age", bundle.getString("age"));
             js.put("gender", gender);
-            js.put("phone_auth", phone_auth);
+            js.put("auth_checked", auth_checked);
+
+            if (bundle.getString("auth_checked").equals("true")) {
+                auth_button.setEnabled(false);
+                input_phone.setClickable(false);
+                input_phone.setFocusable(false);
+                input_phone.setEnabled(false);
+                input_phone.setFocusableInTouchMode(false);
+                verify_layout.setVisibility(View.INVISIBLE);
+            }
         }
     }
 
@@ -333,7 +331,7 @@ public class fragment_signup extends Fragment {
                     bundle2.putString("name", name.getText().toString());
                     bundle2.putString("age", age.getText().toString());
                     bundle2.putString("gender", gender);
-                    bundle2.putString("phone_auth", auth_checked);
+                    bundle2.putString("auth_checked", auth_checked);
 
                     Webview_address.setArguments(bundle2);
                     FragmentTransaction transaction = getFragmentManager().beginTransaction();
