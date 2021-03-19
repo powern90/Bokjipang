@@ -141,8 +141,7 @@ public class fragment_signup extends Fragment {
         /** 4. 비밀번호에 ID 포함 불가 **/
         /** 5. 공백문자 사용 불가 **/
         first_password.addTextChangedListener(new TextWatcher() {
-            String pwPattern = "^(?=.*\\d)(?=.*[~`!@#$%\\^&*()-])(?=.*[a-z])(?=.*[A-Z]).{9,12}$";
-            String pwPattern2 = "(.)\\1\\1\\1";
+            String pwPattern = "^(?=.*\\d)(?=.*[~`!@#$%\\^&*()-])(?=.*[a-z]).{9,12}$";
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -159,13 +158,10 @@ public class fragment_signup extends Fragment {
                 if(!matcher.matches()){
                     first_password.setError("비밀번호는 9~12자리 사이의 영문,숫자,특수문자 조합이여야 합니다.");
                 }
-                if(matcher2.find()){
-                    first_password.setError("비밀번호는 같은 문자 4개 이상 사용불가합니다.");
-                }
                 if(first_password.getText().toString().contains(" ")){
                     first_password.setError("비밀번호는 공백을 포함하지 않습니다.");
                 }
-                if (matcher.matches() && !matcher2.find() && !first_password.getText().toString().contains(" ")) {
+                if (matcher.matches() && !first_password.getText().toString().contains(" ")) {
                     Drawable icon = getResources().getDrawable(R.drawable.equal);
                     icon.setBounds(0,0,80, 80);
                     first_password.setError("사용가능한 비밀번호 입니다.", icon);
@@ -300,7 +296,6 @@ public class fragment_signup extends Fragment {
             second_password.setText(bundle.getString("second_password"));
             name.setText(bundle.getString("name"));
             age.setText(bundle.getString("age"));
-            phone_auth = bundle.getString("auth_checked");
             if (bundle.getString("gender").equals("남성")) {
                 radio_man.setChecked(true);
                 gender = "남성";
@@ -315,7 +310,7 @@ public class fragment_signup extends Fragment {
             js.put("name", bundle.getString("name"));
             js.put("age", bundle.getString("age"));
             js.put("gender", gender);
-            js.put("phone_auth", phone_auth);
+            js.put("auth_checked", bundle.getString("auth_checked"));
         }
     }
 
@@ -333,8 +328,7 @@ public class fragment_signup extends Fragment {
                     bundle2.putString("name", name.getText().toString());
                     bundle2.putString("age", age.getText().toString());
                     bundle2.putString("gender", gender);
-                    bundle2.putString("phone_auth", auth_checked);
-
+                    bundle2.putString("auth_checked", auth_checked);
                     Webview_address.setArguments(bundle2);
                     FragmentTransaction transaction = getFragmentManager().beginTransaction();
                     transaction.replace(R.id.fragment_container, Webview_address);
