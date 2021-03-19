@@ -80,6 +80,7 @@ public class fragment_home extends Fragment {
             gojung=false;
         }
 
+
         /**자동 이미지 배너*/
         viewFlipper = (ViewFlipper) view.findViewById(R.id.viewFlipper1);
         viewFlipper.setAutoStart(true);
