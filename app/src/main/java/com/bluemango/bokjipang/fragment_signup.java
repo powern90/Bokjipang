@@ -143,7 +143,6 @@ public class fragment_signup extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {
                 Matcher matcher = Pattern.compile(pwPattern).matcher(first_password.getText().toString());
-                Matcher matcher2 = Pattern.compile(pwPattern).matcher(first_password.getText().toString());
                 if(!matcher.matches()){
                     first_password.setError("비밀번호는 9~12자리 사이의 영문,숫자,특수문자 조합이여야 합니다.");
                 }
