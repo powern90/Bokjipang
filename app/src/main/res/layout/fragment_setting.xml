@@ -86,6 +86,7 @@
             android:textColor="@color/black"
             android:text="앱 관리"/>
         <TextView
+            android:id="@+id/alarm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
@@ -98,7 +99,7 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/legal_policy"
         android:layout_width="match_parent"
-        android:layout_height="185dp"
+        android:layout_height="150dp"
         android:layout_gravity="center"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
@@ -119,25 +120,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
-            android:layout_marginTop="55dp"
+            android:layout_marginTop="50dp"
             android:textColor="@color/black"
             android:clickable="true"
-            android:text="문의하기"/>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
-            android:layout_marginTop="95dp"
-            android:textColor="@color/black"
-            android:clickable="true"
+            android:id="@+id/service"
             android:text="서비스 이용약관"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
-            android:layout_marginTop="135dp"
+            android:layout_marginTop="80dp"
             android:textColor="@color/black"
             android:clickable="true"
+            android:id="@+id/privacy"
             android:text="개인정보 처리방침"/>
     </androidx.cardview.widget.CardView>
 </LinearLayout>
