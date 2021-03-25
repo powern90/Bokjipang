@@ -61,14 +61,6 @@ public class fragment_login extends Fragment {
                 transaction.replace(R.id.fragment_container, fragment_signup);
                 transaction.addToBackStack(null);
                 transaction.commit();
-//                MainActivity activity = (MainActivity) getActivity();
-//                activity.auto_login.edit().putBoolean("login",true).apply();
-//                Fragment fragment_home = new fragment_home();
-//                activity.firstFragment = fragment_home;
-//                activity.bottomNavigationView.setSelectedItemId(R.id.bottom_navigation);
-//                activity.fm.beginTransaction().replace(R.id.fragment_container,fragment_home,"3").commit();
-//                activity.active = fragment_home;
-//                activity.recreate();
             }
         });
 
