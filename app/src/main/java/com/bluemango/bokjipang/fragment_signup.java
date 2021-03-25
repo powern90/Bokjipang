@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.JsonReader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +35,12 @@ import androidx.fragment.app.FragmentTransaction;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.io.Serializable;
@@ -56,6 +64,8 @@ import com.google.firebase.auth.PhoneAuthProvider;
 
 import java.util.concurrent.TimeUnit;
 
+import javax.net.ssl.HttpsURLConnection;
+
 
 public class fragment_signup extends Fragment {
 
@@ -64,14 +74,15 @@ public class fragment_signup extends Fragment {
     RadioGroup radio_group;
     TextView back_login;
     RadioButton radio_man, radio_woman;
-    String gender = "", interested="",auth_checked="false";
+    String auth_checked="false";
+    int gender;
     Button btn_search;
     Button auth_button;
     CheckBox checkBox1,checkBox2,checkBox3,checkBox4,checkBox5;
     JSONObject js;
     ImageView set_image;
     LinearLayout verify_layout;
-
+    private final fragment_login fragment_login = new fragment_login();
     private String mVerificationID;
     private EditText confirm_code;
     private Activity activity;
@@ -93,22 +104,75 @@ public class fragment_signup extends Fragment {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
                 if (i == R.id.radio_man) {
-                    gender = "남성";
+                    gender = 1;
                 } else {
-                    gender = "여성";
+                    gender = 2;
                 }
             }
         });
 
         /** webview_address에서 addres 정보 받아와서 출력하기 및 js 저장*/
         Bundle bundle = getArguments();
-        try {
-            bundle_receive(bundle);
-            checkbox_ischecked();               //이 부분 회원가입 버튼 누를때로 위치 이동해야됩니다. @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        String res = bundle_receive(bundle);
 
+        /**회원가입 버튼 api*/
+        Button btn_signup = (Button)view.findViewById(R.id.btn_signup);
+        btn_signup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                String str = checkbox_ischecked(res);
+                AsyncTask.execute(new Runnable(){
+                    @Override
+                    public void run(){
+                        try {
+                            /**url에 http 로 하는 경우는 HttpURLConnection 으로 해야하고, url에 https인 경우는 HttpsURLConnection 으로 만들어야함*/
+                            URL url = new URL("https://api.bluemango.me/auth/enroll/");
+                            HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
+                            myconnection.setRequestMethod("POST");  //post, get 나누기
+                            myconnection.setDoOutput(true); // 쓰기모드 지정
+                            myconnection.setDoInput(true); // 읽기모드 지정
+                            myconnection.setRequestProperty("Content-Type","application/json"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
+                            myconnection.setUseCaches(false); // 캐싱데이터를 받을지 안받을지
+
+                            byte[] outputInBytes = str.getBytes(StandardCharsets.UTF_8);    //post 인 경우 body 채우는 곳
+                            OutputStream os = myconnection.getOutputStream();
+                            os.write( outputInBytes );
+                            os.close();
+                            if(myconnection.getResponseCode() == 200){
+                                /** 리스폰스 데이터 받는 부분*/
+                                InputStream responseBody = myconnection.getInputStream();
+                                InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
+                                JsonReader jsonReader = new JsonReader(responseBodyReader);
+                                jsonReader.beginObject();
+                                while(jsonReader.hasNext()){
+                                    String key = jsonReader.nextName();
+                                    if(key.equals("success")){
+                                        boolean success = jsonReader.nextBoolean();
+                                        Log.d("token",Boolean.toString(success));
+                                        break;
+                                    }
+                                    else{
+                                        jsonReader.skipValue();
+                                    }
+                                }
+                                jsonReader.close();
+                                myconnection.disconnect();
+                                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                                transaction.replace(R.id.fragment_container, fragment_login);
+                                transaction.addToBackStack(null);
+                                transaction.commit();
+                            }else{
+                                Log.d("api 연결","error 200아님");
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            Log.d("api 연결","tru catch 에러뜸");
+                        }
+                    }
+                });
+            }
+        });
 
         /**버튼 클릭시 도로명 주소 api 인 webview_address로 이동*/
         goto_address_api();
@@ -211,25 +275,6 @@ public class fragment_signup extends Fragment {
                 verifyVerificationCode(code);
             }
         });
-//        second_password.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                if(first_password.getText().toString().equals(second_password.getText().toString())){
-//
-//                }
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//
-//            }
-//        });
-
         return view;
     }
 
@@ -258,25 +303,36 @@ public class fragment_signup extends Fragment {
         verify_layout = (LinearLayout) view.findViewById(R.id.verify_layout);
     }
 
-    public void checkbox_ischecked() throws JSONException {
+    public String checkbox_ischecked(String str) {
+        String result =str;
+        boolean t = true;
+        boolean f = false;
+        result = result + "\"interest\": {\"장애인\":";
         if(checkBox1.isChecked())
-            interested = interested + checkBox1.getText() + ",";
+            result = result+t+",\"한부모\":";
+        else
+            result = result+f+",\"한부모\":";
         if(checkBox2.isChecked())
-            interested = interested + checkBox2.getText() + ",";
+            result = result+t+",\"다문화\":";
+        else
+            result = result+f+",\"다문화\":";
         if(checkBox3.isChecked())
-            interested = interested + checkBox3.getText() + ",";
+            result = result+t+",\"고령자\":";
+        else
+            result = result+f+",\"고령자\":";
         if(checkBox4.isChecked())
-            interested = interested + checkBox4.getText() + ",";
+            result = result+t+",\"저소득\":";
+        else
+            result = result+f+",\"저소득\":";
         if(checkBox5.isChecked())
-            interested = interested + checkBox5.getText() + ",";
-        if(!interested.equals("")){
-            interested = interested.substring(0, interested.length()-1);
-        }
-        js.put("interested",interested);
+            result = result+t+"}}";
+        else
+            result = result+f+"}}";
+        return result;
     }
 
     /**webview_address에서 addres 정보 받아와서 출력 및 js 저장*/
-    public void bundle_receive(Bundle bundle) throws JSONException {
+    public String bundle_receive(Bundle bundle) {
         if (bundle != null) {
             txt_address.setText(String.format("(%s) %s %s", bundle.getString("arg1"), bundle.getString("arg2"), bundle.getString("arg3")));
             input_phone.setText(bundle.getString("input_phone"));
@@ -285,21 +341,13 @@ public class fragment_signup extends Fragment {
             name.setText(bundle.getString("name"));
             age.setText(bundle.getString("age"));
             auth_checked = bundle.getString("auth_checked");
-            if (bundle.getString("gender").equals("남성")) {
+            if (bundle.getString("gender").equals("1")) {
                 radio_man.setChecked(true);
-                gender = "남성";
+                gender = 1;
             } else {
                 radio_woman.setChecked(true);
-                gender = "여성";
+                gender = 2;
             }
-            /** json 형식으로 저장*/
-            js.put("input_phone", bundle.getString("input_phone"));
-            js.put("first_password", bundle.getString("first_password"));
-            js.put("second_password", bundle.getString("second_password"));
-            js.put("name", bundle.getString("name"));
-            js.put("age", bundle.getString("age"));
-            js.put("gender", gender);
-            js.put("auth_checked", auth_checked);
 
             if (bundle.getString("auth_checked").equals("true")) {
                 auth_button.setEnabled(false);
@@ -309,7 +357,20 @@ public class fragment_signup extends Fragment {
                 input_phone.setFocusableInTouchMode(false);
                 verify_layout.setVisibility(View.INVISIBLE);
             }
+            return "{\"phone\" :\"" +
+                    bundle.getString("input_phone") +"\","+
+                    "\"password\" :\"" +
+                    bundle.getString("second_password") +"\","+
+                    "\"name\" : \"" +
+                    bundle.getString("name") +"\","+
+                    "\"gender\":" +
+                    gender +","+
+                    "\"age\":" +
+                    bundle.getString("age") +","+
+                    "\"address\":\"" +
+                    String.format("(%s) %s %s", bundle.getString("arg1"), bundle.getString("arg2"), bundle.getString("arg3")) +"\",";
         }
+        return null;
     }
 
     /**버튼 클릭시 도로명 주소 api 인 webview_address로 이동*/
@@ -325,7 +386,7 @@ public class fragment_signup extends Fragment {
                     bundle2.putString("second_password", second_password.getText().toString());
                     bundle2.putString("name", name.getText().toString());
                     bundle2.putString("age", age.getText().toString());
-                    bundle2.putString("gender", gender);
+                    bundle2.putString("gender", String.valueOf(gender));
                     bundle2.putString("auth_checked", auth_checked);
 
                     Webview_address.setArguments(bundle2);
