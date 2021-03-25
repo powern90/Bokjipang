@@ -130,8 +130,7 @@ public class fragment_signup extends Fragment {
         /** 4. 비밀번호에 ID 포함 불가 **/
         /** 5. 공백문자 사용 불가 **/
         first_password.addTextChangedListener(new TextWatcher() {
-            String pwPattern = "^(?=.*\\d)(?=.*[~`!@#$%\\^&*()-])(?=.*[a-z])(?=.*[A-Z]).{9,12}$";
-            String pwPattern2 = "(.)\\1\\1\\1";
+            String pwPattern = "^(?=.*\\d)(?=.*[~`!@#$%\\^&*()-])(?=.*[a-z]).{9,12}$";
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -144,17 +143,13 @@ public class fragment_signup extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {
                 Matcher matcher = Pattern.compile(pwPattern).matcher(first_password.getText().toString());
-                Matcher matcher2 = Pattern.compile(pwPattern).matcher(first_password.getText().toString());
                 if(!matcher.matches()){
                     first_password.setError("비밀번호는 9~12자리 사이의 영문,숫자,특수문자 조합이여야 합니다.");
-                }
-                if(matcher2.find()){
-                    first_password.setError("비밀번호는 같은 문자 4개 이상 사용불가합니다.");
                 }
                 if(first_password.getText().toString().contains(" ")){
                     first_password.setError("비밀번호는 공백을 포함하지 않습니다.");
                 }
-                if (matcher.matches() && !matcher2.find() && !first_password.getText().toString().contains(" ")) {
+                if (matcher.matches() && !first_password.getText().toString().contains(" ")) {
                     Drawable icon = getResources().getDrawable(R.drawable.equal);
                     icon.setBounds(0,0,80, 80);
                     first_password.setError("사용가능한 비밀번호 입니다.", icon);
