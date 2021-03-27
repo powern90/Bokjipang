@@ -70,10 +70,10 @@ import javax.net.ssl.HttpsURLConnection;
 public class fragment_signup extends Fragment {
 
     EditText first_password, second_password, input_phone, name, age, txt_address;
-    Webview_address Webview_address = new Webview_address();
     RadioGroup radio_group;
     TextView back_login;
     RadioButton radio_man, radio_woman;
+    Webview_address Webview_address;
     String auth_checked="false";
     int gender;
     Button btn_search;
@@ -82,7 +82,7 @@ public class fragment_signup extends Fragment {
     JSONObject js;
     ImageView set_image;
     LinearLayout verify_layout;
-    private final fragment_login fragment_login = new fragment_login();
+    String res = null;
     private String mVerificationID;
     private EditText confirm_code;
     private Activity activity;
@@ -96,6 +96,7 @@ public class fragment_signup extends Fragment {
     }
 
     public View onCreateView(LayoutInflater layoutInflater, @Nullable ViewGroup container, @Nullable Bundle saveInstanceState) {
+        Webview_address = new Webview_address();
         View view = layoutInflater.inflate(R.layout.fragment_signup, container, false);
         js = new JSONObject();
         init_varaibles(view);       //변수 초기화
@@ -113,7 +114,7 @@ public class fragment_signup extends Fragment {
 
         /** webview_address에서 addres 정보 받아와서 출력하기 및 js 저장*/
         Bundle bundle = getArguments();
-        String res = bundle_receive(bundle);
+        res = bundle_receive(bundle);
 
         /**회원가입 버튼 api*/
         Button btn_signup = (Button)view.findViewById(R.id.btn_signup);
@@ -158,6 +159,7 @@ public class fragment_signup extends Fragment {
                                 }
                                 jsonReader.close();
                                 myconnection.disconnect();
+                                fragment_login fragment_login = new fragment_login();
                                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                                 transaction.replace(R.id.fragment_container, fragment_login);
                                 transaction.addToBackStack(null);
@@ -307,7 +309,8 @@ public class fragment_signup extends Fragment {
         String result =str;
         boolean t = true;
         boolean f = false;
-        result = result + "\"interest\": {\"장애인\":";
+        if(result!= null)
+            result = result + "\"interest\": {\"장애인\":";
         if(checkBox1.isChecked())
             result = result+t+",\"한부모\":";
         else
