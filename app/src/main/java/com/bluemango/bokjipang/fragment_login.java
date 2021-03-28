@@ -68,14 +68,14 @@ public class fragment_login extends Fragment {
         text.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                MainActivity activity = (MainActivity) getActivity();
-//                activity.auto_login.edit().putBoolean("login",true).apply();
-//                Fragment fragment_home = new fragment_home();
-//                activity.firstFragment = fragment_home;
-//                activity.bottomNavigationView.setSelectedItemId(R.id.bottom_navigation);
-//                activity.fm.beginTransaction().replace(R.id.fragment_container,fragment_home,"3").commit();
-//                activity.active = fragment_home;
-//                activity.recreate();
+                MainActivity activity = (MainActivity) getActivity();
+                activity.auto_login.edit().putBoolean("login",true).apply();
+                Fragment fragment_home = new fragment_home();
+                activity.firstFragment = fragment_home;
+                activity.bottomNavigationView.setSelectedItemId(R.id.bottom_navigation);
+                activity.fm.beginTransaction().replace(R.id.fragment_container,fragment_home,"3").commit();
+                activity.active = fragment_home;
+                activity.recreate();
             }
         });
         /**로그인 버튼 api*/
