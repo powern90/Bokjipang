@@ -72,10 +72,10 @@ import javax.net.ssl.HttpsURLConnection;
 public class fragment_signup extends Fragment {
 
     EditText first_password, second_password, input_phone, name, age, txt_address;
-    Webview_address Webview_address = new Webview_address();
     RadioGroup radio_group;
     TextView back_login;
     RadioButton radio_man, radio_woman;
+    Webview_address Webview_address;
     String auth_checked="false";
     int gender;
     Button btn_search;
@@ -84,6 +84,7 @@ public class fragment_signup extends Fragment {
     JSONObject js;
     ImageView set_image;
     LinearLayout verify_layout;
+    String res = null;
     private String mVerificationID;
     private EditText confirm_code;
     private Activity activity;
@@ -97,6 +98,7 @@ public class fragment_signup extends Fragment {
     }
 
     public View onCreateView(LayoutInflater layoutInflater, @Nullable ViewGroup container, @Nullable Bundle saveInstanceState) {
+        Webview_address = new Webview_address();
         View view = layoutInflater.inflate(R.layout.fragment_signup, container, false);
         js = new JSONObject();
         init_varaibles(view);       //변수 초기화
@@ -114,20 +116,20 @@ public class fragment_signup extends Fragment {
 
         /** webview_address에서 addres 정보 받아와서 출력하기 및 js 저장*/
         Bundle bundle = getArguments();
-        String res = bundle_receive(bundle);
+        res = bundle_receive(bundle);
 
         /**회원가입 버튼 api*/
         Button btn_signup = (Button)view.findViewById(R.id.btn_signup);
         btn_signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 String str = checkbox_ischecked(res);
                 AsyncTask.execute(new Runnable(){
                     @Override
                     public void run(){
                         try {
                             /**url에 http 로 하는 경우는 HttpURLConnection 으로 해야하고, url에 https인 경우는 HttpsURLConnection 으로 만들어야함*/
-                            fragment_login fragment_login = new fragment_login();
                             URL url = new URL("https://api.bluemango.me/auth/enroll/");
                             HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
                             myconnection.setRequestMethod("POST");  //post, get 나누기
@@ -159,6 +161,7 @@ public class fragment_signup extends Fragment {
                                 }
                                 jsonReader.close();
                                 myconnection.disconnect();
+                                fragment_login fragment_login = new fragment_login();
                                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                                 transaction.replace(R.id.fragment_container, fragment_login);
                                 transaction.addToBackStack(null);
@@ -208,10 +211,10 @@ public class fragment_signup extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {
                 Matcher matcher = Pattern.compile(pwPattern).matcher(first_password.getText().toString());
-                if (!matcher.matches()) {
+                if(!matcher.matches()){
                     first_password.setError("비밀번호는 9~12자리 사이의 영문,숫자,특수문자 조합이여야 합니다.");
                 }
-                if (first_password.getText().toString().contains(" ")) {
+                if(first_password.getText().toString().contains(" ")){
                     first_password.setError("비밀번호는 공백을 포함하지 않습니다.");
                 }
                 if (matcher.matches() && !first_password.getText().toString().contains(" ")) {
@@ -294,7 +297,7 @@ public class fragment_signup extends Fragment {
                                             verify_layout.setVisibility(View.VISIBLE);
                                             startPhoneNumberVerification(phone_number);
                                         } else {
-                                            
+
                                         }
                                         Log.d("phone_check", Boolean.toString(phone_check));
                                         break;
@@ -335,11 +338,11 @@ public class fragment_signup extends Fragment {
     /**변수 초기화*/
     public void init_varaibles(View view) {
         back_login = view.findViewById(R.id.back);
-        checkBox1 = (CheckBox) view.findViewById(R.id.checkBox1);
-        checkBox2 = (CheckBox) view.findViewById(R.id.checkBox2);
-        checkBox3 = (CheckBox) view.findViewById(R.id.checkBox3);
-        checkBox4 = (CheckBox) view.findViewById(R.id.checkBox4);
-        checkBox5 = (CheckBox) view.findViewById(R.id.checkBox5);
+        checkBox1 = (CheckBox)view.findViewById(R.id.checkBox1);
+        checkBox2 = (CheckBox)view.findViewById(R.id.checkBox2);
+        checkBox3 = (CheckBox)view.findViewById(R.id.checkBox3);
+        checkBox4 = (CheckBox)view.findViewById(R.id.checkBox4);
+        checkBox5 = (CheckBox)view.findViewById(R.id.checkBox5);
         input_phone = (EditText) view.findViewById(R.id.input_phone);
         first_password = (EditText) view.findViewById(R.id.password);
         second_password = (EditText) view.findViewById(R.id.confirm_password);
@@ -360,7 +363,8 @@ public class fragment_signup extends Fragment {
         String result =str;
         boolean t = true;
         boolean f = false;
-        result = result + "\"interest\": {\"장애인\":";
+        if(result!= null)
+            result = result + "\"interest\": {\"장애인\":";
         if(checkBox1.isChecked())
             result = result+t+",\"한부모\":";
         else
@@ -487,7 +491,7 @@ public class fragment_signup extends Fragment {
 
         @Override
         public void onCodeSent(@NonNull String verificationId,
-                               @NonNull PhoneAuthProvider.ForceResendingToken token) {
+                @NonNull PhoneAuthProvider.ForceResendingToken token) {
 
             mVerificationID = verificationId;
 //            mResendToken = token;
