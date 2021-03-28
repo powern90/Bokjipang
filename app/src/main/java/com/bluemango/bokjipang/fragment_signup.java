@@ -35,10 +35,12 @@ import androidx.fragment.app.FragmentTransaction;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
@@ -82,7 +84,6 @@ public class fragment_signup extends Fragment {
     JSONObject js;
     ImageView set_image;
     LinearLayout verify_layout;
-    private final fragment_login fragment_login = new fragment_login();
     private String mVerificationID;
     private EditText confirm_code;
     private Activity activity;
@@ -120,13 +121,13 @@ public class fragment_signup extends Fragment {
         btn_signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 String str = checkbox_ischecked(res);
                 AsyncTask.execute(new Runnable(){
                     @Override
                     public void run(){
                         try {
                             /**url에 http 로 하는 경우는 HttpURLConnection 으로 해야하고, url에 https인 경우는 HttpsURLConnection 으로 만들어야함*/
+                            fragment_login fragment_login = new fragment_login();
                             URL url = new URL("https://api.bluemango.me/auth/enroll/");
                             HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
                             myconnection.setRequestMethod("POST");  //post, get 나누기
@@ -207,15 +208,15 @@ public class fragment_signup extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {
                 Matcher matcher = Pattern.compile(pwPattern).matcher(first_password.getText().toString());
-                if(!matcher.matches()){
+                if (!matcher.matches()) {
                     first_password.setError("비밀번호는 9~12자리 사이의 영문,숫자,특수문자 조합이여야 합니다.");
                 }
-                if(first_password.getText().toString().contains(" ")){
+                if (first_password.getText().toString().contains(" ")) {
                     first_password.setError("비밀번호는 공백을 포함하지 않습니다.");
                 }
                 if (matcher.matches() && !first_password.getText().toString().contains(" ")) {
                     Drawable icon = getResources().getDrawable(R.drawable.equal);
-                    icon.setBounds(0,0,80, 80);
+                    icon.setBounds(0, 0, 80, 80);
                     first_password.setError("사용가능한 비밀번호 입니다.", icon);
                 }
 
@@ -231,10 +232,9 @@ public class fragment_signup extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(first_password.getText().toString().equals(second_password.getText().toString())){
+                if (first_password.getText().toString().equals(second_password.getText().toString())) {
                     set_image.setImageResource(R.drawable.equal);
-                }
-                else{
+                } else {
                     set_image.setImageResource(R.drawable.not_equal);
                 }
             }
@@ -250,17 +250,70 @@ public class fragment_signup extends Fragment {
 
             @Override
             public void onClick(View v) {
-                String phone_number = input_phone.getText().toString().trim();
-                if (phone_number.isEmpty() || phone_number.length() < 10) {
-                    input_phone.setError("잘못된 번호입력입니다.");
-                    input_phone.requestFocus();
-                    return;
-                }
-                if (phone_number.startsWith("0")){
-                    phone_number = phone_number.substring(1);
-                }
-                verify_layout.setVisibility(View.VISIBLE);
-                startPhoneNumberVerification(phone_number);
+                /** api 번호 체크 **/
+                AsyncTask.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            String phone_number = input_phone.getText().toString().trim();
+                            URL url = new URL("https://api.bluemango.me/auth/checkphone/");
+                            HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
+                            myconnection.setRequestMethod("POST");  //post, get 나누기
+                            myconnection.setDoOutput(true); // 쓰기모드 지정
+                            myconnection.setDoInput(true); // 읽기모드 지정
+                            myconnection.setRequestProperty("Content-Type", "application/json"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
+                            myconnection.setUseCaches(false); // 캐싱데이터를 받을지 안받을지
+
+                            String phone = "{\"phone\":" + "\"" + phone_number + "\"}";
+                            byte[] outputInBytes = phone.getBytes(StandardCharsets.UTF_8);    //post 인 경우 body 채우는 곳
+                            OutputStream os = myconnection.getOutputStream();
+                            os.write(outputInBytes);
+                            os.close();
+                            int a = myconnection.getResponseCode();
+                            String to = Integer.toString(a);
+                            Log.d("api 연결", to);
+                            if (myconnection.getResponseCode() == 200 || myconnection.getResponseCode() == 403) {
+                                /** 리스폰스 데이터 받는 부분*/
+                                InputStream responseBody = myconnection.getInputStream();
+                                InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
+                                JsonReader jsonReader = new JsonReader(responseBodyReader);
+                                jsonReader.beginObject();
+                                while (jsonReader.hasNext()) {
+                                    String key = jsonReader.nextName();
+                                    if (key.equals("exist")) {
+                                        boolean phone_check = jsonReader.nextBoolean();
+                                        if (phone_check) {
+                                            if (phone_number.isEmpty() || phone_number.length() < 10) {
+                                                input_phone.setError("잘못된 번호입력입니다.");
+                                                input_phone.requestFocus();
+                                                return;
+                                            }
+                                            if (phone_number.startsWith("0")) {
+                                                phone_number = phone_number.substring(1);
+                                            }
+                                            verify_layout.setVisibility(View.VISIBLE);
+                                            startPhoneNumberVerification(phone_number);
+                                        } else {
+                                            
+                                        }
+                                        Log.d("phone_check", Boolean.toString(phone_check));
+                                        break;
+                                    } else {
+                                        jsonReader.skipValue();
+                                    }
+                                }
+                                jsonReader.close();
+                                myconnection.disconnect();
+                            } else {
+                                Log.d("api 연결", to);
+                            }
+                        } catch (Exception e) {
+
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
             }
         });
         view.findViewById(R.id.buttonSignIn).setOnClickListener(new View.OnClickListener() {
@@ -282,11 +335,11 @@ public class fragment_signup extends Fragment {
     /**변수 초기화*/
     public void init_varaibles(View view) {
         back_login = view.findViewById(R.id.back);
-        checkBox1 = (CheckBox)view.findViewById(R.id.checkBox1);
-        checkBox2 = (CheckBox)view.findViewById(R.id.checkBox2);
-        checkBox3 = (CheckBox)view.findViewById(R.id.checkBox3);
-        checkBox4 = (CheckBox)view.findViewById(R.id.checkBox4);
-        checkBox5 = (CheckBox)view.findViewById(R.id.checkBox5);
+        checkBox1 = (CheckBox) view.findViewById(R.id.checkBox1);
+        checkBox2 = (CheckBox) view.findViewById(R.id.checkBox2);
+        checkBox3 = (CheckBox) view.findViewById(R.id.checkBox3);
+        checkBox4 = (CheckBox) view.findViewById(R.id.checkBox4);
+        checkBox5 = (CheckBox) view.findViewById(R.id.checkBox5);
         input_phone = (EditText) view.findViewById(R.id.input_phone);
         first_password = (EditText) view.findViewById(R.id.password);
         second_password = (EditText) view.findViewById(R.id.confirm_password);
@@ -434,7 +487,7 @@ public class fragment_signup extends Fragment {
 
         @Override
         public void onCodeSent(@NonNull String verificationId,
-                @NonNull PhoneAuthProvider.ForceResendingToken token) {
+                               @NonNull PhoneAuthProvider.ForceResendingToken token) {
 
             mVerificationID = verificationId;
 //            mResendToken = token;
