@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Base64;
 import android.util.JsonReader;
 import android.util.Log;
@@ -39,6 +41,7 @@ import java.lang.reflect.Array;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -47,21 +50,41 @@ public class fragment_home extends Fragment {
     float xAtDown, xAtUp;
     ImageView sarang, bokjiro, jeongbu;
     BottomNavigationView bottomNavigationView;
-    ArrayList<String> zzim;
     ListView listview;
     home_listview_adapter adapter;
     boolean gojung=true;
+    List<DataZzim> zzimList;
+    List<DataBoard> boardList;
     ArrayList<home_listview_item> itemList = new ArrayList<home_listview_item>();
 
     @SuppressLint("ClickableViewAccessibility")
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_home, container, false);
+        zzimList = new ArrayList<DataZzim>();
+        boardList = new ArrayList<DataBoard>();
 
+        /**찜한 지원사업*/
+        TextView zzim1 = (TextView) view.findViewById(R.id.zzim1);
+        TextView zzim2 = (TextView) view.findViewById(R.id.zzim2);
+        TextView zzim3 = (TextView) view.findViewById(R.id.zzim3);
+
+
+        /** 게시판*/
+        adapter = new home_listview_adapter(itemList);
+        listview = (ListView)view.findViewById(R.id.home_listview);
+
+        /**백그라운드에서 ui 변경하고 싶어서 handler 호출 하기 위해....*/
+        @SuppressLint("HandlerLeak") final Handler handler = new Handler()
+        {
+            public void handleMessage(Message msg){
+                listview.setAdapter(adapter);
+            }
+        };
 
         /** 사진 클릭 하이퍼링크*/
         imageclick(view);
-
+        /**홈에 들어온 경우 main 에서 찜이랑 게시판 받아오는 부분 start*/
         AsyncTask.execute(new Runnable(){
             @Override
             public void run(){
@@ -78,19 +101,54 @@ public class fragment_home extends Fragment {
                         InputStream responseBody = myconnection.getInputStream();
                         InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
                         JsonReader jsonReader = new JsonReader(responseBodyReader);
-                        Log.d("home", "lala");
                         jsonReader.beginObject();
                         while(jsonReader.hasNext()){
-                            String key = jsonReader.nextName();
-                            if(key.equals("zzim")){
-                                String token = jsonReader.nextString();
-                                Log.d("token",token);
+                            String key = null;
+                            try {
+                                key = jsonReader.nextName();
+                            }catch(IllegalStateException e){
                                 break;
+                            }
+                                /**찜한 리스트 띄워주는 세팅*/
+                            if(key.equals("zzim")){
+                                zzimList = read_zzim(jsonReader);
+                                try{
+                                    zzim1.setText(zzimList.get(0).getTitle());
+                                    zzim2.setText(zzimList.get(1).getTitle());
+                                    zzim3.setText(zzimList.get(2).getTitle());
+                                }catch(IndexOutOfBoundsException e){
+                                    if(zzimList.size()==0)
+                                        zzim1.setText("아직 찜한 목록이 없습니다.");
+                                }
+                            }
+                            else if(key.equals("high")){
+
+                            }
+                            else if(key.equals("board")){
+                                boardList = read_board(jsonReader);
+                                if(gojung) {
+                                    /** 즐겨찾기 인경우 먼저 숫자를 부여 -> 코드 수정 필요*/
+                                    try{
+                                        adapter.addItem(1, R.drawable.star_white, "장애인 게시판", boardList.get(0).getTitle());
+                                        adapter.addItem(2, R.drawable.star_white, "저소득 게시판", boardList.get(1).getTitle());
+                                        adapter.addItem(5, R.drawable.star_white, "다문화 게시판", boardList.get(2).getTitle());
+                                        adapter.addItem(4, R.drawable.star_white, "고령자 게시판", boardList.get(3).getTitle());
+                                        adapter.addItem(3, R.drawable.star_white, "한부모 게시판", boardList.get(4).getTitle());
+                                        adapter.addItem(0, R.drawable.star_white, "자유게시판", boardList.get(5).getTitle());
+                                    }catch(IndexOutOfBoundsException e){
+                                        Log.d("error","board error");
+                                    }
+                                    gojung=false;
+                                    /**핸들러 호출*/
+                                    Message msg = handler.obtainMessage();
+                                    handler.sendMessage(msg);
+                                }
                             }
                             else{
                                 jsonReader.skipValue();
                             }
                         }
+                        //jsonReader.endObjec   t();
                         jsonReader.close();
                         myconnection.disconnect();
 
@@ -103,38 +161,8 @@ public class fragment_home extends Fragment {
                 }
             }
         });
+        /**홈에 들어온 경우 main 에서 찜이랑 게시판 받아오는 부분 end*/
 
-        /**찜한 지원사업*/
-        zzim = new ArrayList<String>();
-        zzim.add("찜 지원사업 첫번째");
-        zzim.add("찜 지원사업 두번째");
-        zzim.add("찜 지원사업 세번째");
-        TextView zzim1 = (TextView) view.findViewById(R.id.zzim1);
-        TextView zzim2 = (TextView) view.findViewById(R.id.zzim2);
-        TextView zzim3 = (TextView) view.findViewById(R.id.zzim3);
-        try{
-            zzim1.setText(zzim.get(0));
-            zzim2.setText(zzim.get(1));
-            zzim3.setText(zzim.get(2));
-        }catch(IndexOutOfBoundsException e){
-            if(zzim.size()==0)
-                zzim1.setText("아직 찜한 목록이 없습니다.");
-        }
-
-        /** 게시판*/
-        adapter = new home_listview_adapter(itemList);
-        listview = (ListView)view.findViewById(R.id.home_listview);
-        listview.setAdapter(adapter);
-        if(gojung) {
-            /** 즐겨찾기 인경우 먼저 숫자를 부여 -> 코드 수정 필요*/
-            adapter.addItem(0, R.drawable.star_white, "자유게시판", "자유게시판 게시1");
-            adapter.addItem(1, R.drawable.star_white, "장애인 게시판", "장애인 게시판 게시1");
-            adapter.addItem(2, R.drawable.star_white, "저소득 게시판", "저소득 게시판 게시1");
-            adapter.addItem(3, R.drawable.star_white, "한부모 게시판", "한부모 게시판 게시1");
-            adapter.addItem(4, R.drawable.star_white, "고령자 게시판", "고령자 게시판 게시1");
-            adapter.addItem(5, R.drawable.star_white, "다문화 게시판", "다문화 게시판 게시1");
-            gojung=false;
-        }
 
         /** 여기 실시간 인기사업 두개 받아서 settext로 넣어주기*/
 
@@ -166,7 +194,88 @@ public class fragment_home extends Fragment {
         viewFlipper.setFlipInterval(3000);      //3초마다 자동 이미지 전환
         viewFlipper.startFlipping();
 
+
         return view;
+    }
+
+    /**api에서 받은 zzim 처리부분*/
+    public List<DataZzim> read_zzim(JsonReader reader) throws IOException{
+        List<DataZzim> temp = new ArrayList<DataZzim>();
+        reader.beginArray();
+        while(reader.hasNext()){
+            DataZzim dz = new DataZzim();
+            reader.beginObject();
+            while(reader.hasNext()) {
+                String name = reader.nextName();
+                if (name.equals("id")) {
+                    dz.setId(reader.nextInt());
+                } else if (name.equals("title")) {
+                    dz.setTitle(reader.nextString());
+                } else if (name.equals("content")) {
+                    dz.setContent(reader.nextString());
+                } else {
+                    reader.skipValue();
+                }
+            }
+            temp.add(dz);
+            reader.endObject();
+        }
+        reader.endArray();
+        return temp;
+    }
+    public DataBoard setdb(JsonReader reader, DataBoard db) throws IOException {
+        reader.beginObject();
+        while(reader.hasNext()){
+            String nm = reader.nextName();
+            if(nm.equals("id")){
+                db.setId(reader.nextInt());
+            }
+            else if(nm.equals("title")){
+                db.setTitle(reader.nextString());
+            }else{
+                reader.skipValue();
+            }
+        }
+        reader.endObject();
+        return db;
+    }
+    /**api에서 받은 board 처리부분*/
+    public List<DataBoard> read_board(JsonReader reader) throws IOException{
+        List<DataBoard> temp = new ArrayList<DataBoard>();
+        reader.beginObject();
+        while(reader.hasNext()){
+            DataBoard db = new DataBoard();
+            String name = reader.nextName();
+            if(name.equals("0")){
+                db.setBoard(name);          //board 어떤 건지 지정
+                db = setdb(reader,db);
+                temp.add(db);
+            }else if(name.equals("1")){
+                db.setBoard(name);          //board 어떤 건지 지정
+                db = setdb(reader,db);
+                temp.add(db);
+            }else if(name.equals("2")){
+                db.setBoard(name);          //board 어떤 건지 지정
+                db = setdb(reader,db);
+                temp.add(db);
+            }else if(name.equals("3")){
+                db.setBoard(name);          //board 어떤 건지 지정
+                db = setdb(reader,db);
+                temp.add(db);
+            }else if(name.equals("4")){
+                db.setBoard(name);          //board 어떤 건지 지정
+                db = setdb(reader,db);
+                temp.add(db);
+            }else if(name.equals("5")){
+                db.setBoard(name);          //board 어떤 건지 지정
+                db = setdb(reader,db);
+                temp.add(db);
+            }else{
+                reader.skipValue();
+            }
+        }
+        reader.endObject();
+        return temp;
     }
 
     @Override

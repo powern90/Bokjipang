@@ -120,6 +120,42 @@ public class fragment_login extends Fragment {
                                 }
                                 jsonReader.close();
                                 myconnection.disconnect();
+
+                                try {
+                                    /**url에 http 로 하는 경우는 HttpURLConnection 으로 해야하고, url에 https인 경우는 HttpsURLConnection 으로 만들어야함*/
+                                    URL url2 = new URL("https://api.bluemango.me/auth/check/");
+                                    HttpsURLConnection myconnection2 = (HttpsURLConnection) url2.openConnection();
+                                    myconnection2.setRequestMethod("GET");  //post, get 나누기
+                                    myconnection2.setRequestProperty ("Content-Type","application/json"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
+                                    myconnection2.setRequestProperty("x-access-token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjAxMDI3MTkwNjIyIiwibmFtZSI6Iuq5gOuzkeuvvCIsImludGVyZXN0Ijp7IuyepeyVoOyduCI6ZmFsc2UsIu2VnOu2gOuqqCI6dHJ1ZSwi64uk66y47ZmUIjp0cnVlLCLqs6DroLnsnpAiOmZhbHNlLCLsoIDshozrk50iOmZhbHNlfSwiaWF0IjoxNjE2ODQyNzI4LCJleHAiOjE2MTc0NDc1MjgsImlzcyI6ImJsdWVtYW5nby5tZSIsInN1YiI6InVzZXJJbmZvIn0.Oj4__ShSGh56I7V-qGnARNLoDRB_arKMuYhjBFn8zyY"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
+                                    Log.d("auth/check", String.valueOf(myconnection2.getResponseCode()));
+                                    if(myconnection2.getResponseCode() == 200){
+                                        /** 리스폰스 데이터 받는 부분*/
+                                        InputStream responseBody2 = myconnection.getInputStream();
+                                        InputStreamReader responseBodyReader2 = new InputStreamReader(responseBody2, StandardCharsets.UTF_8);
+                                        JsonReader jsonReader2 = new JsonReader(responseBodyReader2);
+                                        jsonReader2.beginObject();
+                                        while(jsonReader2.hasNext()){
+                                            String key = jsonReader2.nextName();
+                                            if(key.equals("success")){
+                                                boolean scs = jsonReader2.nextBoolean();
+                                                Log.d("success?",Boolean.toString(scs));
+                                                break;
+                                            }
+                                            else{
+                                                jsonReader2.skipValue();
+                                            }
+                                        }
+                                        jsonReader2.close();
+                                        myconnection2.disconnect();
+
+                                    }else{
+                                        Log.d("api 연결","error 200아님");
+                                    }
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                    Log.d("api 연결","tru catch 에러뜸");
+                                }
                                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                                 transaction.replace(R.id.fragment_container, fragment_home);
                                 transaction.addToBackStack(null);
