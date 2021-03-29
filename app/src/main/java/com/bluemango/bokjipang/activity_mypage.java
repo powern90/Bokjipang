@@ -28,6 +28,7 @@ public class activity_mypage extends AppCompatActivity {
                 MainActivity activity = (MainActivity) MainActivity.context;
                 activity.Shared_auto_login.edit().putBoolean("login",false).apply();
                 Intent intent = new Intent(activity, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             }
         });
