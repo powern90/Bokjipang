@@ -4,7 +4,11 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Base64;
+import android.util.JsonReader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,13 +25,22 @@ import android.widget.ViewFlipper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.w3c.dom.Text;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.lang.reflect.Array;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+
+import javax.net.ssl.HttpsURLConnection;
 
 public class fragment_home extends Fragment {
     ViewFlipper viewFlipper;
@@ -45,8 +58,51 @@ public class fragment_home extends Fragment {
         setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
+
         /** 사진 클릭 하이퍼링크*/
         imageclick(view);
+
+        AsyncTask.execute(new Runnable(){
+            @Override
+            public void run(){
+                try {
+                    /**url에 http 로 하는 경우는 HttpURLConnection 으로 해야하고, url에 https인 경우는 HttpsURLConnection 으로 만들어야함*/
+                    URL url = new URL("https://api.bluemango.me/main/ ");
+                    HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
+                    myconnection.setRequestMethod("GET");  //post, get 나누기
+                    myconnection.setRequestProperty ("Content-Type","application/json"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
+                    myconnection.setRequestProperty("x-access-token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjAxMDI3MTkwNjIyIiwibmFtZSI6Iuq5gOuzkeuvvCIsImludGVyZXN0Ijp7IuyepeyVoOyduCI6ZmFsc2UsIu2VnOu2gOuqqCI6dHJ1ZSwi64uk66y47ZmUIjp0cnVlLCLqs6DroLnsnpAiOmZhbHNlLCLsoIDshozrk50iOmZhbHNlfSwiaWF0IjoxNjE2ODQyNzI4LCJleHAiOjE2MTc0NDc1MjgsImlzcyI6ImJsdWVtYW5nby5tZSIsInN1YiI6InVzZXJJbmZvIn0.Oj4__ShSGh56I7V-qGnARNLoDRB_arKMuYhjBFn8zyY"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
+                    Log.d("home", String.valueOf(myconnection.getResponseCode()));
+                    if(myconnection.getResponseCode() == 200){
+                        /** 리스폰스 데이터 받는 부분*/
+                        InputStream responseBody = myconnection.getInputStream();
+                        InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
+                        JsonReader jsonReader = new JsonReader(responseBodyReader);
+                        Log.d("home", "lala");
+                        jsonReader.beginObject();
+                        while(jsonReader.hasNext()){
+                            String key = jsonReader.nextName();
+                            if(key.equals("zzim")){
+                                String token = jsonReader.nextString();
+                                Log.d("token",token);
+                                break;
+                            }
+                            else{
+                                jsonReader.skipValue();
+                            }
+                        }
+                        jsonReader.close();
+                        myconnection.disconnect();
+
+                    }else{
+                        Log.d("api 연결","error 200아님");
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.d("api 연결","tru catch 에러뜸");
+                }
+            }
+        });
 
         /**찜한 지원사업*/
         zzim = new ArrayList<String>();
