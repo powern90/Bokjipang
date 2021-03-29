@@ -54,6 +54,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             tools:context=".MainActivity">
+
             <EditText
                 android:id="@+id/input_phone"
                 android:layout_width="285dp"
@@ -102,14 +103,13 @@
             android:textColor="@color/black"
             android:textSize="20dp"
             android:text="비밀번호" />
-
         <EditText
             android:id="@+id/password"
             android:layout_width="285dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
             android:ems="10"
-            android:hint="6~16자 영문,숫자,특수기호"
+            android:hint="9~12자 영문,숫자,특수기호"
             android:inputType="textPassword" />
 
         <TextView
@@ -155,8 +155,8 @@
 
 
         <EditText
-            android:id="@+id/editTextTextPersonName4"
-            android:layout_width="285dp"
+            android:id="@+id/name"
+            android:layout_width="357dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
             android:ems="10"
@@ -172,17 +172,26 @@
             android:layout_marginLeft="70dp"
             tools:context=".MainActivity">
 
-            <CheckBox
-                android:id="@+id/checkBox3"
-                android:layout_width="160dp"
+            <RadioGroup
+                android:id="@+id/radio_group"
+                android:layout_width="389dp"
                 android:layout_height="wrap_content"
-                android:text="남성" />
+                android:orientation="horizontal">
+                <RadioButton
+                    android:id="@+id/radio_man"
+                    android:layout_height="wrap_content"
+                    android:layout_width="160dp"
+                    android:text="남성"
+                    />
+                <RadioButton
+                    android:id="@+id/radio_woman"
+                    android:layout_height="wrap_content"
+                    android:layout_width="160dp"
+                    android:text="여성"
+                    />
 
-            <CheckBox
-                android:id="@+id/checkBox4"
-                android:layout_width="160dp"
-                android:layout_height="wrap_content"
-                android:text="여성" />
+            </RadioGroup>
+
         </LinearLayout>
 
         <TextView
@@ -196,8 +205,8 @@
             android:textSize="20dp" />
 
         <EditText
-            android:id="@+id/editTextNumber2"
-            android:layout_width="285dp"
+            android:id="@+id/age"
+            android:layout_width="357dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
             android:ems="10"
@@ -219,7 +228,7 @@
 
 
             <EditText
-                android:id="@+id/editTextTextEmailAddress"
+                android:id="@+id/txt_address"
                 android:layout_width="285dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -229,10 +238,11 @@
                 android:inputType="textEmailAddress" />
 
             <Button
+                android:id="@+id/WebView_btn"
                 android:layout_width="75dp"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="2dp"
-                android:text="주소확인"
+                android:text="주소검색"
                 android:textSize="10dp" />
         </LinearLayout>
         <TextView
@@ -254,31 +264,31 @@
             tools:context=".MainActivity">
 
             <CheckBox
-                android:id="@+id/checkBox5"
+                android:id="@+id/checkBox1"
                 android:layout_width="160dp"
                 android:layout_height="wrap_content"
                 android:text="장애인" />
 
             <CheckBox
-                android:id="@+id/checkBox6"
+                android:id="@+id/checkBox2"
                 android:layout_width="160dp"
                 android:layout_height="wrap_content"
                 android:text="한부모 가정" />
 
             <CheckBox
-                android:id="@+id/checkBox7"
+                android:id="@+id/checkBox3"
                 android:layout_width="160dp"
                 android:layout_height="wrap_content"
                 android:text="다문화 가정" />
 
             <CheckBox
-                android:id="@+id/checkBox8"
+                android:id="@+id/checkBox4"
                 android:layout_width="160dp"
                 android:layout_height="wrap_content"
                 android:text="고령자" />
 
             <CheckBox
-                android:id="@+id/checkBox9"
+                android:id="@+id/checkBox5"
                 android:layout_width="160dp"
                 android:layout_height="wrap_content"
                 android:text="저소득층" />
@@ -291,6 +301,7 @@
             android:layout_marginTop="70dp"
             android:layout_marginBottom="70dp"
             android:text="계정 생성"
+            android:id="@+id/btn_signup"
             android:background="@drawable/signup_button"
             android:textColor="@color/black"
             android:textStyle="bold"
