@@ -1,5 +1,6 @@
 package com.bluemango.bokjipang;
 
+import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
@@ -7,6 +8,8 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.JsonReader;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,6 +31,9 @@ import androidx.fragment.app.FragmentTransaction;
 //import com.kakao.usermgmt.LoginButton;
 //import com.kakao.usermgmt.UserManagement;
 //import com.kakao.usermgmt.callback.LogoutResponseCallback;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.io.IOException;
@@ -63,6 +69,23 @@ public class fragment_login extends Fragment {
 
     public View onCreateView(LayoutInflater layoutInflater, @Nullable ViewGroup container, @Nullable Bundle saveInstanceState) {
         View view = layoutInflater.inflate(R.layout.fragment_login, container, false);
+        MainActivity activity = (MainActivity) getActivity();
+        /**백그라운드에서 ui 변경하고 싶어서 handler 호출 하기 위해....*/
+        @SuppressLint("HandlerLeak") final Handler handler = new Handler()
+        {
+            public void handleMessage(Message msg){
+                activity.Shared_user_info.edit().clear();
+                activity.Shared_user_info.edit().putString("token",token).apply();
+                activity.Shared_auto_login.edit().clear();
+                activity.Shared_auto_login.edit().putBoolean("login",true).apply();
+
+                activity.fm.beginTransaction().remove(fragment_login.this).commit();
+                activity.bottomNavigationView.setSelectedItemId(R.id.bottom_navigation);
+                activity.fm.beginTransaction().replace(R.id.fragment_container,fragment_home,"3");
+                activity.recreate();
+
+            }
+        };
 
         TextView signup = view.findViewById(R.id.signup);
         signup.setOnClickListener(new View.OnClickListener() {          //회원가입 페이질 이동
@@ -89,6 +112,9 @@ public class fragment_login extends Fragment {
                 activity.recreate();
             }
         });
+        JSONObject user_info = new JSONObject();
+        JSONObject user_interest = new JSONObject();
+
         /**로그인 버튼 api*/
         id_text = (EditText)view.findViewById(R.id.id_text);
         pw_text = (EditText)view.findViewById(R.id.pw_text);
@@ -96,6 +122,7 @@ public class fragment_login extends Fragment {
         btn_login.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
+                MainActivity activity = (MainActivity) getActivity();
                 String id = id_text.getText().toString();
                 String pw = pw_text.getText().toString();
                 AlertDialog.Builder login_alert = new AlertDialog.Builder(activity);
@@ -147,12 +174,93 @@ public class fragment_login extends Fragment {
                                 }
                                 jsonReader.close();
                                 myconnection.disconnect();
-                                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                                transaction.replace(R.id.fragment_container, fragment_home);
-                                transaction.addToBackStack(null);
-                                transaction.commit();
+
+                                /** 로그인 성공하면 check api 이용해서 유저 정보 받아오는 부분 start */
+                                try {
+                                    /**url에 http 로 하는 경우는 HttpURLConnection 으로 해야하고, url에 https인 경우는 HttpsURLConnection 으로 만들어야함*/
+                                    URL url2 = new URL("https://api.bluemango.me/auth/check/");
+                                    HttpsURLConnection myconnection2 = (HttpsURLConnection) url2.openConnection();
+                                    myconnection2.setRequestMethod("GET");  //post, get 나누기
+                                    myconnection2.setRequestProperty ("Content-Type","application/json"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
+                                    myconnection2.setRequestProperty("x-access-token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjAxMDI3MTkwNjIyIiwibmFtZSI6Iuq5gOuzkeuvvCIsImludGVyZXN0Ijp7IuyepeyVoOyduCI6ZmFsc2UsIu2VnOu2gOuqqCI6dHJ1ZSwi64uk66y47ZmUIjp0cnVlLCLqs6DroLnsnpAiOmZhbHNlLCLsoIDshozrk50iOmZhbHNlfSwiaWF0IjoxNjE2ODQyNzI4LCJleHAiOjE2MTc0NDc1MjgsImlzcyI6ImJsdWVtYW5nby5tZSIsInN1YiI6InVzZXJJbmZvIn0.Oj4__ShSGh56I7V-qGnARNLoDRB_arKMuYhjBFn8zyY"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
+                                    Log.d("auth/check", String.valueOf(myconnection2.getResponseCode()));
+                                    if(myconnection2.getResponseCode() == 200){
+                                        /** 리스폰스 데이터 받는 부분*/
+                                        InputStream responseBody2 = myconnection2.getInputStream();
+                                        InputStreamReader responseBodyReader2 = new InputStreamReader(responseBody2, StandardCharsets.UTF_8);
+                                        JsonReader jsonReader2 = new JsonReader(responseBodyReader2);
+                                        jsonReader2.beginObject();
+                                        while(jsonReader2.hasNext()){
+                                            String key = jsonReader2.nextName();
+                                            if(key.equals("info")){
+                                                jsonReader2.beginObject();
+                                                while(jsonReader2.hasNext()){
+                                                    String temp = jsonReader2.nextName();
+                                                    if(temp.equals("phone")){
+                                                        user_info.put("phone", jsonReader2.nextString());
+                                                    }else if(temp.equals("name")){
+                                                        user_info.put("name", jsonReader2.nextString());
+                                                    }else if(temp.equals("interest")){
+                                                        jsonReader2.beginObject();
+                                                        while(jsonReader2.hasNext()){
+                                                            String tp = jsonReader2.nextName();
+                                                            if(tp.equals("고령자")){
+                                                                user_interest.put("고령자",jsonReader2.nextBoolean());
+                                                            }else if(tp.equals("장애인")){
+                                                                user_interest.put("장애인",jsonReader2.nextBoolean());
+                                                            }else if(tp.equals("저소득")){
+                                                                user_interest.put("저소득",jsonReader2.nextBoolean());
+                                                            }else if(tp.equals("다문화")){
+                                                                user_interest.put("다문화",jsonReader2.nextBoolean());
+                                                            }else if(tp.equals("한부모")){
+                                                                user_interest.put("한부모",jsonReader2.nextBoolean());
+                                                            }else{
+                                                                jsonReader2.skipValue();
+                                                            }
+                                                        }
+                                                        jsonReader2.endObject();
+                                                    }else{
+                                                        jsonReader2.skipValue();
+                                                    }
+                                                }
+                                                jsonReader2.endObject();
+                                            }
+                                            else{
+                                                jsonReader2.skipValue();
+                                            }
+                                        }
+                                        user_info.put("interest",user_interest);
+                                        jsonReader2.close();
+                                        myconnection2.disconnect();
+
+                                    }else{
+                                        Log.d("api 연결","error 200아님");
+                                    }
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                    Log.d("api 연결","tru catch 에러뜸");
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                /** 로그인 성공하면 check api 이용해서 유저 정보 받아오는 부분 end */
+
+
+
+                                int a = 1;
+                                /** 토큰 저장 및 자동로그인 shared 저장 위치 start */
+                                Message msg = handler.obtainMessage();
+                                handler.sendMessage(msg);
+                                /** 토큰 저장 및 자동로그인 shared 저장 위치 end */
+
+                                String tmp = user_info.toString();
+                                activity.Shared_user_info.edit().putString("user_info", tmp).apply();
+
+
                             }else{
                                 Log.d("api 연결","error 200아님");
+                                //로그인 실패 토스트 띄우기
+
+
                             }
                         } catch (IOException e) {
                             e.printStackTrace();

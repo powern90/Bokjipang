@@ -17,6 +17,9 @@
         android:usesCleartextTraffic="true"
         android:largeHeap="true">
 <!--        android:name=".KaKaoSDKInit"-->
+        android:usesCleartextTraffic="true">
+        <activity android:name=".activity_community_post"></activity>
+        <!-- android:name=".KaKaoSDKInit" -->
         <meta-data
             android:name="com.kakao.sdk.AppKey"
             android:value="@string/kakaoApi" />
@@ -33,6 +36,7 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

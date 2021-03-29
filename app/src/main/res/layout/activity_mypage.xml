@@ -140,6 +140,7 @@
             android:layout_marginLeft="30dp"
             android:layout_marginTop="55dp"
             android:textColor="@color/black"
+            android:id="@+id/btn_logout"
             android:text="로그아웃"/>
         <TextView
             android:id="@+id/remove_account"
