@@ -57,7 +57,7 @@ public class fragment_support extends Fragment {
         switch(item.getItemId()) {
             case R.id.mypage_btn :
                 Intent intent = new Intent(getActivity(), activity_mypage.class);
-                startActivity(intent);
+                startActivityForResult(intent,1);
                 break;
         }
         return super.onOptionsItemSelected(item);

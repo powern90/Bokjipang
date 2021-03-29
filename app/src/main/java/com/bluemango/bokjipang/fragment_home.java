@@ -31,6 +31,8 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.io.IOException;
@@ -56,11 +58,36 @@ public class fragment_home extends Fragment {
     List<DataZzim> zzimList;
     List<DataBoard> boardList;
     ArrayList<home_listview_item> itemList = new ArrayList<home_listview_item>();
+    JSONObject user_info, user_interest;
 
     @SuppressLint("ClickableViewAccessibility")
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_home, container, false);
+        MainActivity activity = (MainActivity)  getActivity();
+
+        String info_tmp = activity.Shared_user_info.getString("user_info",null);
+        if(info_tmp != null){
+            try{
+                user_info = new JSONObject(info_tmp);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try {
+            user_interest = user_info.getJSONObject("interest");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            Log.d("시발", String.valueOf(user_interest.getBoolean("고령자")));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        int a =1;
+
         zzimList = new ArrayList<DataZzim>();
         boardList = new ArrayList<DataBoard>();
 

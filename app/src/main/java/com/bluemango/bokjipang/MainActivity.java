@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -24,6 +25,7 @@ import java.security.MessageDigest;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static Context context;
     final FragmentManager fm = getSupportFragmentManager();
     private fragment_community fragment_comu = new fragment_community();
     private fragment_home fragment_home = new fragment_home();
@@ -31,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
     private fragment_setting fragment_set = new fragment_setting();
     private fragment_support fragment_sup = new fragment_support();
     private fragment_login fragment_login = new fragment_login();
-    Intent intent = null;
     SharedPreferences Shared_auto_login;
     SharedPreferences Shared_user_info;
 
@@ -42,17 +43,21 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context = this;
 
         Shared_auto_login = getSharedPreferences("login",MODE_PRIVATE); //세션유지에 쓸 sharedPreferences
         Shared_user_info = getSharedPreferences("token",MODE_PRIVATE);
+        Shared_user_info = getSharedPreferences("user_info",MODE_PRIVATE);
 
 
-        Intent intent = getIntent();
-        if(intent != null){
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            Shared_auto_login.edit().putBoolean("login",false).apply();
-            intent = null;
-        }
+
+
+//        Intent intent = getIntent();
+//        if(intent != null){
+//            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//            Shared_auto_login.edit().putBoolean("login",false).apply();
+//            intent = null;
+//        }
 
 
         setContentView(R.layout.activity_main);        //세션 없으니 바로 로그인으로 가게 해놓아놨음, 만약 필요하면 여기 바꿔서 각자
