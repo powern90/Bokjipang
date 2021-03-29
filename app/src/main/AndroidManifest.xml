@@ -12,9 +12,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Bokjipang"
-
         android:usesCleartextTraffic="true">
-<!--        android:name=".KaKaoSDKInit"-->
+        <activity android:name=".activity_community_post"></activity>
+        <!-- android:name=".KaKaoSDKInit" -->
         <meta-data
             android:name="com.kakao.sdk.AppKey"
             android:value="@string/kakaoApi" />
@@ -25,6 +25,7 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
