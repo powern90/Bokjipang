@@ -57,6 +57,7 @@ public class fragment_home extends Fragment {
     boolean gojung=true;
     List<DataZzim> zzimList;
     List<DataBoard> boardList;
+    List<DataHigh> highList;
     ArrayList<home_listview_item> itemList = new ArrayList<home_listview_item>();
     JSONObject user_info, user_interest;
 
@@ -90,6 +91,7 @@ public class fragment_home extends Fragment {
 
         zzimList = new ArrayList<DataZzim>();
         boardList = new ArrayList<DataBoard>();
+        highList = new ArrayList<DataHigh>();
 
         /**찜한 지원사업*/
         TextView zzim1 = (TextView) view.findViewById(R.id.zzim1);
@@ -97,9 +99,20 @@ public class fragment_home extends Fragment {
         TextView zzim3 = (TextView) view.findViewById(R.id.zzim3);
 
 
+        TextView popular_title1 = (TextView) view.findViewById(R.id.popular_title1);
+        TextView popular_content1 = (TextView) view.findViewById(R.id.popular_content1);
+        TextView popular_like1 = (TextView) view.findViewById(R.id.popular_like1_count);
+        TextView popular_title2 = (TextView) view.findViewById(R.id.popular_title2);
+        TextView popular_content2 = (TextView) view.findViewById(R.id.popular_content2);
+        TextView popular_like2 = (TextView) view.findViewById(R.id.popular_like2_count);
+        TextView popular_title3 = (TextView) view.findViewById(R.id.popular_title3);
+        TextView popular_content3 = (TextView) view.findViewById(R.id.popular_content3);
+        TextView popular_like3 = (TextView) view.findViewById(R.id.popular_like3_count);
+
         /** 게시판*/
         adapter = new home_listview_adapter(itemList);
         listview = (ListView)view.findViewById(R.id.home_listview);
+        listview.setAdapter(adapter);
 
         /**백그라운드에서 ui 변경하고 싶어서 handler 호출 하기 위해....*/
         @SuppressLint("HandlerLeak") final Handler handler = new Handler()
@@ -149,19 +162,33 @@ public class fragment_home extends Fragment {
                                 }
                             }
                             else if(key.equals("high")){
-
+                                highList = read_high(jsonReader);
+                                try{
+                                    popular_title1.setText(highList.get(0).getTitle());
+                                    popular_content1.setText(highList.get(0).getContent());
+                                    popular_like1.setText(String.valueOf(highList.get(0).getLike()));
+                                    popular_title2.setText(highList.get(1).getTitle());
+                                    popular_content2.setText(highList.get(1).getContent());
+                                    popular_like2.setText(String.valueOf(highList.get(1).getLike()));
+                                    popular_title3.setText(highList.get(2).getTitle());
+                                    popular_content3.setText(highList.get(2).getContent());
+                                    popular_like3.setText(String.valueOf(highList.get(2).getLike()));
+                                }catch(IndexOutOfBoundsException e){
+                                    if(highList.size()==0)
+                                        popular_title1.setText("아직 인기 게시물이 없습니다.");
+                                }
                             }
                             else if(key.equals("board")){
                                 boardList = read_board(jsonReader);
                                 if(gojung) {
                                     /** 즐겨찾기 인경우 먼저 숫자를 부여 -> 코드 수정 필요*/
                                     try{
-                                        adapter.addItem(1, R.drawable.star_white, "장애인 게시판", boardList.get(0).getTitle());
-                                        adapter.addItem(2, R.drawable.star_white, "저소득 게시판", boardList.get(1).getTitle());
-                                        adapter.addItem(5, R.drawable.star_white, "다문화 게시판", boardList.get(2).getTitle());
-                                        adapter.addItem(4, R.drawable.star_white, "고령자 게시판", boardList.get(3).getTitle());
-                                        adapter.addItem(3, R.drawable.star_white, "한부모 게시판", boardList.get(4).getTitle());
-                                        adapter.addItem(0, R.drawable.star_white, "자유게시판", boardList.get(5).getTitle());
+                                        adapter.addItem(0, R.drawable.star_white, "장애인 게시판", boardList.get(0).getTitle());
+                                        adapter.addItem(1, R.drawable.star_white, "저소득 게시판", boardList.get(1).getTitle());
+                                        adapter.addItem(2, R.drawable.star_white, "다문화 게시판", boardList.get(2).getTitle());
+                                        adapter.addItem(3, R.drawable.star_white, "고령자 게시판", boardList.get(3).getTitle());
+                                        adapter.addItem(4, R.drawable.star_white, "한부모 게시판", boardList.get(4).getTitle());
+                                        adapter.addItem(5, R.drawable.star_white, "자유게시판", boardList.get(5).getTitle());
                                     }catch(IndexOutOfBoundsException e){
                                         Log.d("error","board error");
                                     }
@@ -175,7 +202,7 @@ public class fragment_home extends Fragment {
                                 jsonReader.skipValue();
                             }
                         }
-                        //jsonReader.endObjec   t();
+                        //jsonReader.endObject();
                         jsonReader.close();
                         myconnection.disconnect();
 
@@ -190,8 +217,6 @@ public class fragment_home extends Fragment {
         });
         /**홈에 들어온 경우 main 에서 찜이랑 게시판 받아오는 부분 end*/
 
-
-        /** 여기 실시간 인기사업 두개 받아서 settext로 넣어주기*/
 
 
         /**자동 이미지 배너*/
@@ -224,6 +249,38 @@ public class fragment_home extends Fragment {
 
         return view;
     }
+
+    /**api에서 받은 high 처리부분*/
+    public List<DataHigh> read_high(JsonReader reader) throws IOException {
+        List<DataHigh> temp = new ArrayList<DataHigh>();
+        reader.beginArray();
+        while(reader.hasNext()){
+            DataHigh dh = new DataHigh();
+            reader.beginObject();
+            while(reader.hasNext()){
+                String name = reader.nextName();
+                if (name.equals("id")) {
+                    dh.setId(reader.nextInt());
+                } else if (name.equals("title")) {
+                    dh.setTitle(reader.nextString());
+                } else if (name.equals("content")) {
+                    dh.setContent(reader.nextString());
+                } else if (name.equals("category")) {
+                    dh.setCategory(reader.nextString());
+                } else if (name.equals("like")) {
+                    dh.setLike(reader.nextInt());
+                } else {
+                    reader.skipValue();
+                }
+            }
+
+            temp.add(dh);
+            reader.endObject();
+        }
+        reader.endArray();
+        return temp;
+    }
+
 
     /**api에서 받은 zzim 처리부분*/
     public List<DataZzim> read_zzim(JsonReader reader) throws IOException{
