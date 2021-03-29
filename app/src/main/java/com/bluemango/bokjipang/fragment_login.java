@@ -95,10 +95,7 @@ public class fragment_login extends Fragment {
                             URL url = new URL("https://api.bluemango.me/auth/login/");
                             HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
                             myconnection.setRequestMethod("POST");  //post, get 나누기
-                            myconnection.setDoOutput(true); // 쓰기모드 지정
-                            myconnection.setDoInput(true); // 읽기모드 지정
                             myconnection.setRequestProperty("Content-Type","application/json"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
-                            myconnection.setUseCaches(false); // 캐싱데이터를 받을지 안받을지
                             String str = "{\"phone\":"+"\""+id+"\""+" ,\"password\":"+"\""+pw+"\""+"}"; //여기에 post인 경우 body json형식으로 채우기
                             byte[] outputInBytes = str.getBytes(StandardCharsets.UTF_8);    //post 인 경우 body 채우는 곳
                             OutputStream os = myconnection.getOutputStream();
