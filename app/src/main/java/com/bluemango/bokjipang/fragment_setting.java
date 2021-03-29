@@ -22,14 +22,12 @@ public class fragment_setting extends Fragment {
     private fragment_service fragment_service = new fragment_service();
     private fragment_alarm fragment_alarm = new fragment_alarm();
 
-    private static final String TAG = "MY_POST";
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_setting, container, false);
         TextView my_post = view.findViewById(R.id.my_post);
         my_post.setOnClickListener(new View.OnClickListener() {         // 내 게시물 관리 페이지 이동
             @Override
             public void onClick(View v) {
-                Log.d(TAG,"click");
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.replace(R.id.fragment_container, fragment_mypost);
                 transaction.addToBackStack(null);

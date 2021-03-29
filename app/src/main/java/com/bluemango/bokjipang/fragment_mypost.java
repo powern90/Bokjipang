@@ -16,6 +16,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import java.util.ArrayList;
 
@@ -28,6 +29,20 @@ public class fragment_mypost extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_mypost, container, false);
+        /** 설정 뒤로가기 */
+        fragment_setting fragment_setting = new fragment_setting();
+        TextView go_setting = view.findViewById(R.id.go_setting);
+        go_setting.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_container, fragment_setting);
+                transaction.addToBackStack(null);
+                transaction.commit();
+            }
+        });
+
+        /** 나의 게시물 리스트뷰 작성 */
         adapter = new mypost_listview_adapter(datalist);
         ListView listview = view.findViewById(R.id.post_listView);
         listview.setAdapter(adapter);
@@ -38,7 +53,6 @@ public class fragment_mypost extends Fragment {
             adapter.addItem("제목4", "내용4", "60", "60");
             hold=false;
         }
-//        adapter.notifyDataSetChanged();
         return view;
     }
     @Override

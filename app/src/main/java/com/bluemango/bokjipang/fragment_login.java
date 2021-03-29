@@ -1,8 +1,11 @@
 package com.bluemango.bokjipang;
 
 import android.app.ActionBar;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.util.JsonReader;
 import android.util.Log;
@@ -43,9 +46,17 @@ public class fragment_login extends Fragment {
     private EditText id_text, pw_text;
     private TextView text;
     Button btn_login;
+    private Activity activity;
     private fragment_home fragment_home = new fragment_home();
     private fragment_signup fragment_signup = new fragment_signup();
     String token=null;
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if (context instanceof Activity)
+            activity = (Activity) context;
+    }
 //    Button kakaoLogin,kakaoLogout;
 //    LoginButton loginButton;
 //    private KaKaoCallBack kaKaoCallBack;
@@ -87,6 +98,18 @@ public class fragment_login extends Fragment {
             public void onClick(View view){
                 String id = id_text.getText().toString();
                 String pw = pw_text.getText().toString();
+                AlertDialog.Builder login_alert = new AlertDialog.Builder(activity);
+                if(id.equals("")){
+                    login_alert.setTitle("Bokjipang 로그인 서비스");
+                    login_alert.setMessage("아이디를 입력해주세요.");
+                    login_alert.setPositiveButton("예", null);
+                    login_alert.create().show();
+                }else if(pw.equals("")){
+                    login_alert.setTitle("Bokjipang 로그인 서비스");
+                    login_alert.setMessage("비밀번호를 입력해주세요.");
+                    login_alert.setPositiveButton("예", null);
+                    login_alert.create().show();
+                }
                 AsyncTask.execute(new Runnable(){
                     @Override
                     public void run(){
@@ -95,10 +118,7 @@ public class fragment_login extends Fragment {
                             URL url = new URL("https://api.bluemango.me/auth/login/");
                             HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
                             myconnection.setRequestMethod("POST");  //post, get 나누기
-                            myconnection.setDoOutput(true); // 쓰기모드 지정
-                            myconnection.setDoInput(true); // 읽기모드 지정
                             myconnection.setRequestProperty("Content-Type","application/json"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
-                            myconnection.setUseCaches(false); // 캐싱데이터를 받을지 안받을지
                             String str = "{\"phone\":"+"\""+id+"\""+" ,\"password\":"+"\""+pw+"\""+"}"; //여기에 post인 경우 body json형식으로 채우기
                             byte[] outputInBytes = str.getBytes(StandardCharsets.UTF_8);    //post 인 경우 body 채우는 곳
                             OutputStream os = myconnection.getOutputStream();
@@ -118,6 +138,10 @@ public class fragment_login extends Fragment {
                                         break;
                                     }
                                     else{
+                                        login_alert.setTitle("Bokjipang 로그인 서비스");
+                                        login_alert.setMessage("존재하지 않는 계정입니다.");
+                                        login_alert.setPositiveButton("예", null);
+                                        login_alert.create().show();
                                         jsonReader.skipValue();
                                     }
                                 }
