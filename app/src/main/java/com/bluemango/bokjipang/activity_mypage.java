@@ -24,10 +24,11 @@ public class activity_mypage extends AppCompatActivity {
         btn_logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(activity, MainActivity.class);
-                intent.putExtra("trash",0);
-                startActivity(intent);
 
+                MainActivity activity = (MainActivity) MainActivity.context;
+                activity.Shared_auto_login.edit().putBoolean("login",false).apply();
+                Intent intent = new Intent(activity, MainActivity.class);
+                startActivity(intent);
             }
         });
 
