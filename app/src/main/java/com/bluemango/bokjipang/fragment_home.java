@@ -43,7 +43,9 @@ import java.lang.reflect.Array;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -60,13 +62,14 @@ public class fragment_home extends Fragment {
     List<DataHigh> highList;
     ArrayList<home_listview_item> itemList = new ArrayList<home_listview_item>();
     JSONObject user_info, user_interest;
+    String user_token;
 
     @SuppressLint("ClickableViewAccessibility")
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         MainActivity activity = (MainActivity)  getActivity();
-
+        user_token = activity.Shared_user_info.getString("token",null);
         String info_tmp = activity.Shared_user_info.getString("user_info",null);
         if(info_tmp != null){
             try{
@@ -118,6 +121,30 @@ public class fragment_home extends Fragment {
         @SuppressLint("HandlerLeak") final Handler handler = new Handler()
         {
             public void handleMessage(Message msg){
+                try{
+                    zzim1.setText(zzimList.get(0).getTitle());
+                    zzim2.setText(zzimList.get(1).getTitle());
+                    zzim3.setText(zzimList.get(2).getTitle());
+                }catch(IndexOutOfBoundsException e){
+                    if(zzimList.size()==0)
+                        zzim1.setText("아직 찜한 목록이 없습니다.");
+                }
+
+                try{
+                    popular_title1.setText(highList.get(0).getTitle());
+                    popular_content1.setText(highList.get(0).getContent());
+                    popular_like1.setText(String.valueOf(highList.get(0).getLike()));
+                    popular_title2.setText(highList.get(1).getTitle());
+                    popular_content2.setText(highList.get(1).getContent());
+                    popular_like2.setText(String.valueOf(highList.get(1).getLike()));
+                    popular_title3.setText(highList.get(2).getTitle());
+                    popular_content3.setText(highList.get(2).getContent());
+                    popular_like3.setText(String.valueOf(highList.get(2).getLike()));
+                }catch(IndexOutOfBoundsException e){
+                    if(highList.size()==0)
+                        popular_title1.setText("아직 인기 게시물이 없습니다.");
+                }
+
                 listview.setAdapter(adapter);
             }
         };
@@ -134,7 +161,7 @@ public class fragment_home extends Fragment {
                     HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
                     myconnection.setRequestMethod("GET");  //post, get 나누기
                     myconnection.setRequestProperty ("Content-Type","application/json"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
-                    myconnection.setRequestProperty("x-access-token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjAxMDI3MTkwNjIyIiwibmFtZSI6Iuq5gOuzkeuvvCIsImludGVyZXN0Ijp7IuyepeyVoOyduCI6ZmFsc2UsIu2VnOu2gOuqqCI6dHJ1ZSwi64uk66y47ZmUIjp0cnVlLCLqs6DroLnsnpAiOmZhbHNlLCLsoIDshozrk50iOmZhbHNlfSwiaWF0IjoxNjE2ODQyNzI4LCJleHAiOjE2MTc0NDc1MjgsImlzcyI6ImJsdWVtYW5nby5tZSIsInN1YiI6InVzZXJJbmZvIn0.Oj4__ShSGh56I7V-qGnARNLoDRB_arKMuYhjBFn8zyY"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
+                    myconnection.setRequestProperty("x-access-token", user_token); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
                     Log.d("home", String.valueOf(myconnection.getResponseCode()));
                     if(myconnection.getResponseCode() == 200){
                         /** 리스폰스 데이터 받는 부분*/
@@ -152,31 +179,11 @@ public class fragment_home extends Fragment {
                                 /**찜한 리스트 띄워주는 세팅*/
                             if(key.equals("zzim")){
                                 zzimList = read_zzim(jsonReader);
-                                try{
-                                    zzim1.setText(zzimList.get(0).getTitle());
-                                    zzim2.setText(zzimList.get(1).getTitle());
-                                    zzim3.setText(zzimList.get(2).getTitle());
-                                }catch(IndexOutOfBoundsException e){
-                                    if(zzimList.size()==0)
-                                        zzim1.setText("아직 찜한 목록이 없습니다.");
-                                }
+
                             }
                             else if(key.equals("high")){
                                 highList = read_high(jsonReader);
-                                try{
-                                    popular_title1.setText(highList.get(0).getTitle());
-                                    popular_content1.setText(highList.get(0).getContent());
-//                                    popular_like1.setText(String.valueOf(highList.get(0).getLike()));
-                                    popular_title2.setText(highList.get(1).getTitle());
-                                    popular_content2.setText(highList.get(1).getContent());
-//                                    popular_like2.setText(String.valueOf(highList.get(1).getLike()));
-                                    popular_title3.setText(highList.get(2).getTitle());
-                                    popular_content3.setText(highList.get(2).getContent());
-//                                    popular_like3.setText(String.valueOf(highList.get(2).getLike()));
-                                }catch(IndexOutOfBoundsException e){
-                                    if(highList.size()==0)
-                                        popular_title1.setText("아직 인기 게시물이 없습니다.");
-                                }
+
                             }
                             else if(key.equals("board")){
                                 boardList = read_board(jsonReader);
@@ -193,9 +200,6 @@ public class fragment_home extends Fragment {
                                         Log.d("error","board error");
                                     }
                                     gojung=false;
-                                    /**핸들러 호출*/
-                                    Message msg = handler.obtainMessage();
-                                    handler.sendMessage(msg);
                                 }
                             }
                             else{
@@ -203,6 +207,9 @@ public class fragment_home extends Fragment {
                             }
                         }
                         //jsonReader.endObject();
+                        /**핸들러 호출*/
+                        Message msg = handler.obtainMessage();
+                        handler.sendMessage(msg);
                         jsonReader.close();
                         myconnection.disconnect();
 
