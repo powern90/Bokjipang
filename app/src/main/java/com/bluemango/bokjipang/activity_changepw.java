@@ -17,12 +17,22 @@ import java.util.regex.Pattern;
 public class activity_changepw extends AppCompatActivity {
     EditText new_password;
     EditText new_password_confirm;
+    TextView back_btn;
     ImageView set_image;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_changepw);
 //        boolean password_format_check = false;
+
+        /** 비밀번호 변경 페이지 뒤로가기 */
+        back_btn = findViewById(R.id.mypage_back_btn);
+        back_btn.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                finish();
+            }
+        });
         /** 비밀번호 입력형식 완료여부 **/
         /** 1. 영문(대소문자 구분), 숫자, 특수문자 조합 **/
         /** 2. 9~12자리 사이 문자 **/

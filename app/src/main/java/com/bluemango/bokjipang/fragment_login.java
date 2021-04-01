@@ -3,10 +3,10 @@ package com.bluemango.bokjipang;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.app.AlertDialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -51,25 +51,24 @@ import javax.net.ssl.HttpsURLConnection;
 public class fragment_login extends Fragment {
     private EditText id_text, pw_text;
     private TextView text;
+    private Activity activity2;
     Button btn_login;
-    private Activity activity;
     private fragment_home fragment_home = new fragment_home();
     private fragment_signup fragment_signup = new fragment_signup();
     String token=null;
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        if (context instanceof Activity)
-            activity = (Activity) context;
-    }
 //    Button kakaoLogin,kakaoLogout;
 //    LoginButton loginButton;
 //    private KaKaoCallBack kaKaoCallBack;
-
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity)
+            activity2 = (Activity) context;
+    }
     public View onCreateView(LayoutInflater layoutInflater, @Nullable ViewGroup container, @Nullable Bundle saveInstanceState) {
         View view = layoutInflater.inflate(R.layout.fragment_login, container, false);
         MainActivity activity = (MainActivity) getActivity();
+        AlertDialog.Builder login_alert = new AlertDialog.Builder(activity2);
         /**백그라운드에서 ui 변경하고 싶어서 handler 호출 하기 위해....*/
         @SuppressLint("HandlerLeak") final Handler handler = new Handler()
         {
@@ -84,6 +83,19 @@ public class fragment_login extends Fragment {
                 activity.fm.beginTransaction().replace(R.id.fragment_container,fragment_home,"3");
                 activity.recreate();
 
+            }
+        };
+        @SuppressLint("HandlerLeak") final Handler handler2 = new Handler()
+        {
+            public void handleMessage(Message msg){
+                Log.d("login_check","not_exist");
+                AlertDialog login_check = login_alert.create();
+                login_check.setTitle("Bokjipang 로그인 서비스");
+                login_check.setMessage("존재하지 않는 계정입니다.");
+//                login_check.setPositiveButton("예", null);
+                login_check.show();
+                login_check.setCancelable(false);
+                login_check.dismiss();
             }
         };
 
@@ -102,14 +114,14 @@ public class fragment_login extends Fragment {
         text.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity activity = (MainActivity) getActivity();
-                activity.auto_login.edit().putBoolean("login",true).apply();
-                Fragment fragment_home = new fragment_home();
-                activity.firstFragment = fragment_home;
-                activity.bottomNavigationView.setSelectedItemId(R.id.bottom_navigation);
-                activity.fm.beginTransaction().replace(R.id.fragment_container,fragment_home,"3").commit();
-                activity.active = fragment_home;
-                activity.recreate();
+//                MainActivity activity = (MainActivity) getActivity();
+//                activity.auto_login.edit().putBoolean("login",true).apply();
+//                Fragment fragment_home = new fragment_home();
+//                activity.firstFragment = fragment_home;
+//                activity.bottomNavigationView.setSelectedItemId(R.id.bottom_navigation);
+//                activity.fm.beginTransaction().replace(R.id.fragment_container,fragment_home,"3").commit();
+//                activity.active = fragment_home;
+//                activity.recreate();
             }
         });
         JSONObject user_info = new JSONObject();
@@ -122,10 +134,9 @@ public class fragment_login extends Fragment {
         btn_login.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                MainActivity activity = (MainActivity) getActivity();
+
                 String id = id_text.getText().toString();
                 String pw = pw_text.getText().toString();
-                AlertDialog.Builder login_alert = new AlertDialog.Builder(activity);
                 if(id.equals("")){
                     login_alert.setTitle("Bokjipang 로그인 서비스");
                     login_alert.setMessage("아이디를 입력해주세요.");
@@ -165,10 +176,6 @@ public class fragment_login extends Fragment {
                                         break;
                                     }
                                     else{
-                                        login_alert.setTitle("Bokjipang 로그인 서비스");
-                                        login_alert.setMessage("존재하지 않는 계정입니다.");
-                                        login_alert.setPositiveButton("예", null);
-                                        login_alert.create().show();
                                         jsonReader.skipValue();
                                     }
                                 }
@@ -221,6 +228,8 @@ public class fragment_login extends Fragment {
                                                         jsonReader2.endObject();
                                                     }else{
                                                         jsonReader2.skipValue();
+                                                        Message msg = handler2.obtainMessage();
+                                                        handler2.sendMessage(msg);
                                                     }
                                                 }
                                                 jsonReader2.endObject();
@@ -325,4 +334,3 @@ public class fragment_login extends Fragment {
 //    }
 //    /**KAKAO 로그인 함수 */
 }
-

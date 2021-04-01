@@ -166,13 +166,13 @@ public class fragment_home extends Fragment {
                                 try{
                                     popular_title1.setText(highList.get(0).getTitle());
                                     popular_content1.setText(highList.get(0).getContent());
-                                    popular_like1.setText(String.valueOf(highList.get(0).getLike()));
+//                                    popular_like1.setText(String.valueOf(highList.get(0).getLike()));
                                     popular_title2.setText(highList.get(1).getTitle());
                                     popular_content2.setText(highList.get(1).getContent());
-                                    popular_like2.setText(String.valueOf(highList.get(1).getLike()));
+//                                    popular_like2.setText(String.valueOf(highList.get(1).getLike()));
                                     popular_title3.setText(highList.get(2).getTitle());
                                     popular_content3.setText(highList.get(2).getContent());
-                                    popular_like3.setText(String.valueOf(highList.get(2).getLike()));
+//                                    popular_like3.setText(String.valueOf(highList.get(2).getLike()));
                                 }catch(IndexOutOfBoundsException e){
                                     if(highList.size()==0)
                                         popular_title1.setText("아직 인기 게시물이 없습니다.");
