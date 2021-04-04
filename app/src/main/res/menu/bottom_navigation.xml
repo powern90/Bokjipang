@@ -9,13 +9,13 @@
     <item
         android:id="@+id/community"
         android:icon="@drawable/ic_format_align_justify_24px"
-        android:title="펫 프렌즈 매칭">
+        android:title="커뮤니티">
     </item>
 
     <item
         android:id="@+id/support"
         android:icon="@drawable/ic_list_alt_24px"
-        android:title="커뮤니티" />
+        android:title="지원 사업" />
 
     <item
         android:id="@+id/notification"
