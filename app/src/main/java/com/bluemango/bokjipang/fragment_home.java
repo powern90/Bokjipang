@@ -297,7 +297,7 @@ public class fragment_home extends Fragment {
             DataZzim dz = new DataZzim();
             reader.beginObject();
             while(reader.hasNext()) {
-                String name = reader.nextName();
+                String name = reader.nextString();
                 if (name.equals("id")) {
                     dz.setId(reader.nextInt());
                 } else if (name.equals("title")) {

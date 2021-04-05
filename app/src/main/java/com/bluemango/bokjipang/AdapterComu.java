@@ -88,6 +88,9 @@ public class AdapterComu extends RecyclerView.Adapter<AdapterComu.ViewHolder>{
     // getItemCount() - 전체 데이터 갯수 리턴.
     @Override
     public int getItemCount() {
-        return mData.size() ;
+        if(mData == null) {
+            return 0;
+        }
+        else return mData.size() ;
     }
 }
