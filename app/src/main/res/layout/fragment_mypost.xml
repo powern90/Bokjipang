@@ -16,6 +16,7 @@
         tools:context=".MainActivity"
         android:layout_marginTop="10dp">
         <TextView
+            android:id="@+id/go_setting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="설정으로"
@@ -42,7 +43,7 @@
         android:entries="@array/sort_type">
     </Spinner>
     <androidx.cardview.widget.CardView
-        android:id="@+id/post_list"
+        android:id="@+id/post_cardview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
@@ -55,6 +56,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
             android:layout_marginTop="10dp"
             android:dividerHeight="0px"/>
     </androidx.cardview.widget.CardView>
