@@ -155,7 +155,7 @@ public class fragment_login extends Fragment {
                                     HttpsURLConnection myconnection2 = (HttpsURLConnection) url2.openConnection();
                                     myconnection2.setRequestMethod("GET");  //post, get 나누기
                                     myconnection2.setRequestProperty ("Content-Type","application/json"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
-                                    myconnection2.setRequestProperty("x-access-token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjAxMDI3MTkwNjIyIiwibmFtZSI6Iuq5gOuzkeuvvCIsImludGVyZXN0Ijp7IuyepeyVoOyduCI6ZmFsc2UsIu2VnOu2gOuqqCI6dHJ1ZSwi64uk66y47ZmUIjp0cnVlLCLqs6DroLnsnpAiOmZhbHNlLCLsoIDshozrk50iOmZhbHNlfSwiaWF0IjoxNjE2ODQyNzI4LCJleHAiOjE2MTc0NDc1MjgsImlzcyI6ImJsdWVtYW5nby5tZSIsInN1YiI6InVzZXJJbmZvIn0.Oj4__ShSGh56I7V-qGnARNLoDRB_arKMuYhjBFn8zyY"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
+                                    myconnection2.setRequestProperty("x-access-token", token); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
                                     Log.d("auth/check", String.valueOf(myconnection2.getResponseCode()));
                                     if(myconnection2.getResponseCode() == 200){
                                         /** 리스폰스 데이터 받는 부분*/
