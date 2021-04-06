@@ -20,19 +20,39 @@
         android:text="내용"
         android:textColor="#808080"
         android:textSize="10dp"/>
-<!--    <LinearLayout-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:orientation="horizontal">-->
-<!--        <ImageView-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:src="@drawable/normal_heart"/>-->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="right">
+        <ImageView
+            android:layout_width="12dp"
+            android:layout_gravity="center"
+            android:layout_height="12dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginRight="3dp"
+            android:src="@drawable/normal_heart" />
         <TextView
             android:id="@+id/post_like"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="80"
             android:textColor="#ff0000"/>
-<!--    </LinearLayout>-->
+        <ImageView
+            android:layout_width="15dp"
+            android:layout_gravity="center"
+            android:layout_height="17dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginRight="3dp"
+            android:layout_marginLeft="15dp"
+            android:src="@drawable/comment"/>
+        <TextView
+            android:id="@+id/post_comment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15dp"
+            android:layout_marginTop="1dp"
+            android:text="80"
+            android:textColor="#3caeff"/>
+    </LinearLayout>
 </LinearLayout>

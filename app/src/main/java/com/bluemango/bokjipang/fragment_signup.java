@@ -35,10 +35,12 @@ import androidx.fragment.app.FragmentTransaction;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
@@ -75,6 +77,8 @@ public class fragment_signup extends Fragment {
     RadioButton radio_man, radio_woman;
     Webview_address Webview_address;
     String auth_checked="false";
+    boolean password_format_check = false;
+    boolean password_equal_check = false;
     int gender;
     Button btn_search;
     Button auth_button;
@@ -119,9 +123,56 @@ public class fragment_signup extends Fragment {
         /**회원가입 버튼 api*/
         Button btn_signup = (Button)view.findViewById(R.id.btn_signup);
         btn_signup.setOnClickListener(new View.OnClickListener() {
+            /** 가입정보 충분/불충분 여부 **/
+            public boolean check_signup(String phone, String password, String name, String gender, String age, String address){
+                if(phone.equals("") || !auth_checked.equals("true")){
+                    Log.d("phone","전화번호를 확인해주세요");  // <- 이 부분들 알림메세지 창 띄워주기 해야함
+                    return false;
+                }else if(password.equals("") || !password_format_check || !password_equal_check){
+                    Log.d("password","비밀번호를 확인해주세요");
+                    return false;
+                }else if(name.equals("")){
+                    Log.d("name","이름을 확인해주세요");
+                    return false;
+                }else if(gender.equals("0")){
+                    Log.d("gender","성별을 확인해주세요");
+                    return false;
+                }else if(age.equals("")){
+                    Log.d("age","나이를 확인해주세요");
+                    return false;
+                }else if(address.equals("")){
+                    Log.d("address","주소를 확인해주세요");
+                    return false;
+                }else if(!checkBox1.isChecked() && !checkBox2.isChecked() && !checkBox3.isChecked() && !checkBox4.isChecked() && !checkBox5.isChecked()){
+                    Log.d("interest","관심분야를 확인해주세요");
+                    return false;
+                }
+                return true;
+            }
             @Override
             public void onClick(View view) {
-
+                String user_phone = input_phone.getText().toString();
+                String user_password = second_password.getText().toString();
+                String user_name = name.getText().toString();
+                String user_gender = String.valueOf(gender);
+                String user_age = age.getText().toString();
+                String user_address = txt_address.getText().toString();
+                if(!check_signup(user_phone,user_password,user_name,user_gender,user_age,user_address)){
+                    return;
+                }
+                // 입력값 받아 json 포맷 생성
+                res = "{\"phone\" :\"" +
+                        user_phone +"\","+
+                        "\"password\" :\"" +
+                        user_password +"\","+
+                        "\"name\" : \"" +
+                        user_name +"\","+
+                        "\"gender\":" +
+                        user_gender +","+
+                        "\"age\":" +
+                        user_age +","+
+                        "\"address\":\"" +
+                        user_address +"\",";
                 String str = checkbox_ischecked(res);
                 AsyncTask.execute(new Runnable(){
                     @Override
@@ -189,9 +240,7 @@ public class fragment_signup extends Fragment {
         /** 비밀번호 입력형식 완료여부 **/
         /** 1. 영문(대소문자 구분), 숫자, 특수문자 조합 **/
         /** 2. 9~12자리 사이 문자 **/
-        /** 3. 같은 문자 4개 이상 사용 불가 <-- 이거 제거 예정 **/
-        /** 4. 비밀번호에 ID 포함 불가 **/
-        /** 5. 공백문자 사용 불가 **/
+        /** 3. 공백문자 사용 불가 **/
         first_password.addTextChangedListener(new TextWatcher() {
             String pwPattern = "^(?=.*\\d)(?=.*[~`!@#$%\\^&*()-])(?=.*[a-z]).{9,12}$";
             @Override
@@ -208,14 +257,17 @@ public class fragment_signup extends Fragment {
                 Matcher matcher = Pattern.compile(pwPattern).matcher(first_password.getText().toString());
                 if(!matcher.matches()){
                     first_password.setError("비밀번호는 9~12자리 사이의 영문,숫자,특수문자 조합이여야 합니다.");
+                    password_format_check = false;
                 }
                 if(first_password.getText().toString().contains(" ")){
                     first_password.setError("비밀번호는 공백을 포함하지 않습니다.");
+                    password_format_check = false;
                 }
                 if (matcher.matches() && !first_password.getText().toString().contains(" ")) {
                     Drawable icon = getResources().getDrawable(R.drawable.equal);
-                    icon.setBounds(0,0,80, 80);
+                    icon.setBounds(0, 0, 80, 80);
                     first_password.setError("사용가능한 비밀번호 입니다.", icon);
+                    password_format_check = true;
                 }
 
             }
@@ -230,11 +282,12 @@ public class fragment_signup extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(first_password.getText().toString().equals(second_password.getText().toString())){
+                if (first_password.getText().toString().equals(second_password.getText().toString())) {
                     set_image.setImageResource(R.drawable.equal);
-                }
-                else{
+                    password_equal_check = true;
+                } else {
                     set_image.setImageResource(R.drawable.not_equal);
+                    password_equal_check = false;
                 }
             }
 
@@ -249,17 +302,78 @@ public class fragment_signup extends Fragment {
 
             @Override
             public void onClick(View v) {
-                String phone_number = input_phone.getText().toString().trim();
-                if (phone_number.isEmpty() || phone_number.length() < 10) {
-                    input_phone.setError("잘못된 번호입력입니다.");
-                    input_phone.requestFocus();
-                    return;
-                }
-                if (phone_number.startsWith("0")){
-                    phone_number = phone_number.substring(1);
-                }
-                verify_layout.setVisibility(View.VISIBLE);
-                startPhoneNumberVerification(phone_number);
+                /** api 번호 체크 **/
+                AsyncTask.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            String phone_number = input_phone.getText().toString().trim();
+                            URL url = new URL("https://api.bluemango.me/auth/checkphone/");
+                            HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
+                            myconnection.setRequestMethod("POST");  //post, get 나누기
+                            myconnection.setRequestProperty("Content-Type", "application/json"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
+
+                            String phone = "{\"phone\":" + "\"" + phone_number + "\"}";
+                            byte[] outputInBytes = phone.getBytes(StandardCharsets.UTF_8);    //post 인 경우 body 채우는 곳
+                            OutputStream os = myconnection.getOutputStream();
+                            os.write(outputInBytes);
+                            os.close();
+                            int a = myconnection.getResponseCode();
+                            String to = Integer.toString(a);
+                            Log.d("api 연결", to);
+                            if (myconnection.getResponseCode() == 200 || myconnection.getResponseCode() == 403) {
+                                /** 리스폰스 데이터 받는 부분*/
+                                InputStream responseBody = myconnection.getInputStream();
+                                InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
+                                JsonReader jsonReader = new JsonReader(responseBodyReader);
+                                jsonReader.beginObject();
+                                while (jsonReader.hasNext()) {
+                                    String key = jsonReader.nextName();
+                                    if (key.equals("exist")) {
+                                        boolean phone_check = jsonReader.nextBoolean();
+                                        if (!phone_check) {
+                                            if (phone_number.isEmpty() || phone_number.length() < 10) {
+                                                input_phone.setError("잘못된 번호입력입니다.");
+                                                input_phone.requestFocus();
+                                                return;
+                                            }
+                                            if (phone_number.startsWith("0")) {
+                                                phone_number = phone_number.substring(1);
+                                            }
+//                                            AlertDialog.Builder auth_alert = new AlertDialog.Builder(activity);
+//                                            auth_alert.setTitle("Bokjipang 인증 서비스");
+//                                            auth_alert.setMessage("사용가능한 전화번호 입니다.");
+//                                            auth_alert.setPositiveButton("예", null);
+//                                            auth_alert.create().show();
+                                            Log.d("phone_check", "success");
+//                                            verify_layout.setVisibility(View.VISIBLE);
+//                                            startPhoneNumberVerification(phone_number);
+                                        } else {
+                                            Log.d("phone_check","failed");
+//                                            AlertDialog.Builder auth_alert = new AlertDialog.Builder(activity);
+//                                            auth_alert.setTitle("Bokjipang 인증 서비스");
+//                                            auth_alert.setMessage("이미 가입된 전화번호 입니다.");
+//                                            auth_alert.setPositiveButton("예", null);
+//                                            auth_alert.create().show();
+                                        }
+//                                        Log.d("phone_check", Boolean.toString(phone_check));
+                                        break;
+                                    } else {
+                                        jsonReader.skipValue();
+                                    }
+                                }
+                                jsonReader.close();
+                                myconnection.disconnect();
+                            } else {
+                                Log.d("api 연결", to);
+                            }
+                        } catch (Exception e) {
+
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
             }
         });
         view.findViewById(R.id.buttonSignIn).setOnClickListener(new View.OnClickListener() {
