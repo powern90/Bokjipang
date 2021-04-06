@@ -71,6 +71,7 @@ public class fragment_home extends Fragment {
         MainActivity activity = (MainActivity)  getActivity();
         user_token = activity.Shared_user_info.getString("token",null);
         String info_tmp = activity.Shared_user_info.getString("user_info",null);
+        Log.d("ss",user_token);
         if(info_tmp != null){
             try{
                 user_info = new JSONObject(info_tmp);
@@ -86,7 +87,7 @@ public class fragment_home extends Fragment {
         }
 
         try {
-            Log.d("시발", String.valueOf(user_interest.getBoolean("고령자")));
+            Log.d("bb", String.valueOf(user_interest.getBoolean("고령자")));
         } catch (JSONException e) {
             e.printStackTrace();
         }
