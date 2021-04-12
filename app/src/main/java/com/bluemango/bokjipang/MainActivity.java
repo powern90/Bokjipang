@@ -11,8 +11,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.SharedLibraryInfo;
 import android.content.pm.Signature;
 import android.os.Bundle;
+import android.os.Message;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
@@ -21,7 +23,21 @@ import android.view.View;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import javax.net.ssl.HttpsURLConnection;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -39,8 +55,9 @@ public class MainActivity extends AppCompatActivity {
     Fragment active;
     BottomNavigationView bottomNavigationView;
     Fragment firstFragment = null;
-
-    final
+    String u_id;
+    String u_pwd;
+    String token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +67,8 @@ public class MainActivity extends AppCompatActivity {
         Shared_auto_login = getSharedPreferences("login",MODE_PRIVATE); //세션유지에 쓸 sharedPreferences
         Shared_user_info = getSharedPreferences("token",MODE_PRIVATE);
         Shared_user_info = getSharedPreferences("user_info",MODE_PRIVATE);
-
+        Shared_user_info = getSharedPreferences("user_id", MODE_PRIVATE);
+        Shared_user_info = getSharedPreferences("user_pwd", MODE_PRIVATE);
 
 
 
@@ -65,6 +83,56 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);        //세션 없으니 바로 로그인으로 가게 해놓아놨음, 만약 필요하면 여기 바꿔서 각자
         bottomNavigationView = findViewById(R.id.bottom_navigation); //탭바 장착
         bottomNavigationView.setOnNavigationItemSelectedListener(navListener); //탭바 리스너
+
+
+        u_id = Shared_user_info.getString("user_id","error");
+        u_pwd = Shared_user_info.getString("user_pwd","error");
+        token = Shared_user_info.getString("token","error");
+
+        if(!u_id.equals("error")){
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            executor.execute(new Runnable(){
+                @Override
+                public void run(){
+                    JSONObject responseJson;
+                    try {
+                        /**url에 http 로 하는 경우는 HttpURLConnection 으로 해야하고, url에 https인 경우는 HttpsURLConnection 으로 만들어야함*/
+                        URL url = new URL("https://api.bluemango.me/auth/login/");
+                        HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
+                        myconnection.setRequestMethod("POST");  //post, get 나누기
+                        myconnection.setRequestProperty("Content-Type","application/json"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
+                        String str = "{\"phone\":"+"\""+u_id+"\""+" ,\"password\":"+"\""+u_pwd+"\""+"}"; //여기에 post인 경우 body json형식으로 채우기
+                        byte[] outputInBytes = str.getBytes(StandardCharsets.UTF_8);    //post 인 경우 body 채우는 곳
+                        OutputStream os = myconnection.getOutputStream();
+                        os.write( outputInBytes );
+                        os.close();
+
+                        if(myconnection.getResponseCode() == 200){
+                            /** 리스폰스 데이터 받는 부분*/
+                            BufferedReader br = new BufferedReader(new InputStreamReader(myconnection.getInputStream()));
+                            StringBuilder sb = new StringBuilder();
+                            String line = "";
+                            while((line = br.readLine())!=null){
+                                sb.append(line);
+                            }
+                            responseJson = new JSONObject(sb.toString());
+                            try {
+                                token = responseJson.getString("token");
+                                Shared_user_info.edit().putString("token",token).apply();
+                                Log.d("main_activity","api 돌아간다. ");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }else{
+                            Log.d("api 연결","error : " + Integer.toString(myconnection.getResponseCode()));
+                        }
+                    } catch (IOException | JSONException e) {
+                        e.printStackTrace();
+                        Log.d("api 연결","tru catch 에러뜸");
+                    }
+                }
+            });
+        }
 
         if(Shared_auto_login.getBoolean("login",false)){
             bottomNavigationView.setVisibility(View.VISIBLE);

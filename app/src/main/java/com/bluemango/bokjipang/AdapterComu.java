@@ -2,7 +2,6 @@ package com.bluemango.bokjipang;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,10 +41,11 @@ public class AdapterComu extends RecyclerView.Adapter<AdapterComu.ViewHolder>{
                     }
                 }
             });
-
-
         }
     }
+
+
+
 
     // 생성자에서 데이터 리스트 객체를 전달받음.
     public AdapterComu(Context context, ArrayList<DataComu> list) {
@@ -58,9 +58,10 @@ public class AdapterComu extends RecyclerView.Adapter<AdapterComu.ViewHolder>{
         Intent intent = new Intent(context, activity_community_post.class);
 
         DataComu dataComu = list.get(pos);
-        intent.putExtra("data", dataComu.getTitle());
+        intent.putExtra("data", dataComu.getId());
         context.startActivity(intent);
     }
+
 
     // onCreateViewHolder() - 아이템 뷰를 위한 뷰홀더 객체 생성하여 리턴.
     @Override
@@ -73,6 +74,7 @@ public class AdapterComu extends RecyclerView.Adapter<AdapterComu.ViewHolder>{
 
         return vh ;
     }
+
 
     // onBindViewHolder() - position에 해당하는 데이터를 뷰홀더의 아이템뷰에 표시.
     @Override
@@ -93,4 +95,6 @@ public class AdapterComu extends RecyclerView.Adapter<AdapterComu.ViewHolder>{
         }
         else return mData.size() ;
     }
+
+
 }
