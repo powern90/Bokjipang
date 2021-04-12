@@ -56,6 +56,9 @@ public class fragment_login extends Fragment {
     private fragment_home fragment_home = new fragment_home();
     private fragment_signup fragment_signup = new fragment_signup();
     String token=null;
+    String id; //이건 유저가 입력한 Id
+    String pw; //유저가 입력한 pwd
+
 //    Button kakaoLogin,kakaoLogout;
 //    LoginButton loginButton;
 //    private KaKaoCallBack kaKaoCallBack;
@@ -73,10 +76,15 @@ public class fragment_login extends Fragment {
         @SuppressLint("HandlerLeak") final Handler handler = new Handler()
         {
             public void handleMessage(Message msg){
-                activity.Shared_user_info.edit().clear();
+//                activity.Shared_user_info.edit().clear();
                 activity.Shared_user_info.edit().putString("token",token).apply();
-                activity.Shared_auto_login.edit().clear();
+                activity.Shared_user_info.edit().putString("user_id", id).apply();
+                activity.Shared_user_info.edit().putString("user_pwd", pw).apply();
+
+//                activity.Shared_auto_login.edit().clear();
                 activity.Shared_auto_login.edit().putBoolean("login",true).apply();
+
+
 
                 activity.fm.beginTransaction().remove(fragment_login.this).commit();
                 activity.bottomNavigationView.setSelectedItemId(R.id.bottom_navigation);
@@ -135,8 +143,8 @@ public class fragment_login extends Fragment {
             @Override
             public void onClick(View view){
 
-                String id = id_text.getText().toString();
-                String pw = pw_text.getText().toString();
+                id = id_text.getText().toString();
+                pw = pw_text.getText().toString();
                 if(id.equals("")){
                     login_alert.setTitle("Bokjipang 로그인 서비스");
                     login_alert.setMessage("아이디를 입력해주세요.");

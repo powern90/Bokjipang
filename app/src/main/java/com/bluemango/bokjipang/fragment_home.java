@@ -31,10 +31,12 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -46,6 +48,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -68,9 +72,11 @@ public class fragment_home extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_home, container, false);
+
         MainActivity activity = (MainActivity)  getActivity();
         user_token = activity.Shared_user_info.getString("token",null);
         String info_tmp = activity.Shared_user_info.getString("user_info",null);
+        Log.d("user_token",user_token);
         if(info_tmp != null){
             try{
                 user_info = new JSONObject(info_tmp);
@@ -86,7 +92,7 @@ public class fragment_home extends Fragment {
         }
 
         try {
-            Log.d("시발", String.valueOf(user_interest.getBoolean("고령자")));
+            Log.d("bb", String.valueOf(user_interest.getBoolean("고령자")));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -149,10 +155,11 @@ public class fragment_home extends Fragment {
             }
         };
 
+        ExecutorService executor = Executors.newSingleThreadExecutor();
         /** 사진 클릭 하이퍼링크*/
         imageclick(view);
         /**홈에 들어온 경우 main 에서 찜이랑 게시판 받아오는 부분 start*/
-        AsyncTask.execute(new Runnable(){
+        executor.execute(new Runnable(){
             @Override
             public void run(){
                 try {
@@ -176,7 +183,7 @@ public class fragment_home extends Fragment {
                             }catch(IllegalStateException e){
                                 break;
                             }
-                                /**찜한 리스트 띄워주는 세팅*/
+                            /**찜한 리스트 띄워주는 세팅*/
                             if(key.equals("zzim")){
                                 zzimList = read_zzim(jsonReader);
 
@@ -429,4 +436,5 @@ public class fragment_home extends Fragment {
         });
 
     }
+
 }
