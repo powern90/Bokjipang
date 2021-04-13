@@ -17,14 +17,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/nickname"
-                android:text="익명"
                 android:layout_marginLeft="10dp"
                 />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/post_time"
-                android:text="2021. 03. 21"
                 />
         </LinearLayout>
         <TextView

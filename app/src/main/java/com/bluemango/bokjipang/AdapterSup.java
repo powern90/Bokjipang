@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 public class AdapterSup extends RecyclerView.Adapter<AdapterSup.ViewHolder>{
     private ArrayList<DataSup> mData = null ;
+    private Context context = null;
 
     // 아이템 뷰를 저장하는 뷰홀더 클래스.
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -29,10 +30,11 @@ public class AdapterSup extends RecyclerView.Adapter<AdapterSup.ViewHolder>{
     }
 
     // 생성자에서 데이터 리스트 객체를 전달받음.
-    AdapterSup(ArrayList<DataSup> list) {
+
+    public AdapterSup(Context context, ArrayList<DataSup> list) {
+        this.context = context;
         mData = list ;
     }
-
     // onCreateViewHolder() - 아이템 뷰를 위한 뷰홀더 객체 생성하여 리턴.
     @Override
     public AdapterSup.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
