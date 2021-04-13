@@ -2,7 +2,6 @@ package com.bluemango.bokjipang;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -30,6 +29,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -58,11 +59,14 @@ public class fragment_community extends Fragment {
             }
         };
         String first_request = "?board=0&page=1";
-        AsyncTask.execute(new Runnable(){
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+
+        executor.execute(new Runnable(){
             @Override
             public void run(){
                 try {
-                    /**url에 http 로 하는 경우는 HttpURLConnection 으로 해야하고, url에 https인 경우는 HttpsURLConnection 으로 만들어야함*/
+                    /**url에 http 로 하는 경우는 HttpURLConnection 으로 해야하고, url c에 https인 경우는 HttpsURLConnection 으로 만들어야함*/
+                    Log.d("comu","async들어옴");
                     URL url = new URL("https://api.bluemango.me/board"+first_request);
                     HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
                     myconnection.setRequestMethod("GET");  //post, get 나누기
@@ -71,6 +75,7 @@ public class fragment_community extends Fragment {
 
                     if(myconnection.getResponseCode() == 200){
                         /** 리스폰스 데이터 받는 부분*/
+                        Log.d("comu","200됨");
                         BufferedReader br = new BufferedReader(new InputStreamReader(myconnection.getInputStream()));
                         StringBuilder sb = new StringBuilder();
                         String line = "";

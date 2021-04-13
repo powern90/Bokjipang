@@ -74,7 +74,6 @@ public class MainActivity extends AppCompatActivity {
         else{
             bottomNavigationView.setVisibility(View.GONE);
             fm.beginTransaction().replace(R.id.fragment_container,fragment_login).commit();
-
         }
 
 
