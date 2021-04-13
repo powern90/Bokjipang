@@ -219,14 +219,16 @@ public class fragment_community extends Fragment {
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
-
-//        FloatingActionButton floating_btn = activity.findViewById(R.id.floating_btn);
-//        floating_btn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//            }
-//        });
+        FloatingActionButton floating_btn = view.findViewById(R.id.floating_btn);
+        floating_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(activity, activity_comu_add.class);
+                Log.d("Comu token : ",user_token);
+                intent.putExtra("token", user_token);
+                startActivity(intent);
+            }
+        });
 
 
         return view;
