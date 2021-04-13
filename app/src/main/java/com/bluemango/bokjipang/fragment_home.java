@@ -46,6 +46,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -152,13 +154,16 @@ public class fragment_home extends Fragment {
 
         /** 사진 클릭 하이퍼링크*/
         imageclick(view);
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+
         /**홈에 들어온 경우 main 에서 찜이랑 게시판 받아오는 부분 start*/
-        AsyncTask.execute(new Runnable(){
+        executor.execute(new Runnable(){
             @Override
             public void run(){
                 try {
                     /**url에 http 로 하는 경우는 HttpURLConnection 으로 해야하고, url에 https인 경우는 HttpsURLConnection 으로 만들어야함*/
                     URL url = new URL("https://api.bluemango.me/main/ ");
+                    Log.d("home","async들어옴");
                     HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
                     myconnection.setRequestMethod("GET");  //post, get 나누기
                     myconnection.setRequestProperty ("Content-Type","application/json"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
@@ -166,6 +171,7 @@ public class fragment_home extends Fragment {
                     Log.d("home", String.valueOf(myconnection.getResponseCode()));
                     if(myconnection.getResponseCode() == 200){
                         /** 리스폰스 데이터 받는 부분*/
+                        Log.d("home","200됨");
                         InputStream responseBody = myconnection.getInputStream();
                         InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
                         JsonReader jsonReader = new JsonReader(responseBodyReader);
@@ -224,7 +230,6 @@ public class fragment_home extends Fragment {
             }
         });
         /**홈에 들어온 경우 main 에서 찜이랑 게시판 받아오는 부분 end*/
-
 
 
         /**자동 이미지 배너*/

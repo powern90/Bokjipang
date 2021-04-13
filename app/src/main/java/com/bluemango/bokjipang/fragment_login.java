@@ -69,12 +69,27 @@ public class fragment_login extends Fragment {
         View view = layoutInflater.inflate(R.layout.fragment_login, container, false);
         MainActivity activity = (MainActivity) getActivity();
         AlertDialog.Builder login_alert = new AlertDialog.Builder(activity2);
+        JSONObject user_info = new JSONObject();
+        JSONObject user_interest = new JSONObject();
+
         /**백그라운드에서 ui 변경하고 싶어서 handler 호출 하기 위해....*/
         @SuppressLint("HandlerLeak") final Handler handler = new Handler()
         {
             public void handleMessage(Message msg){
                 activity.Shared_user_info.edit().clear();
                 activity.Shared_user_info.edit().putString("token",token).apply();
+                activity.Shared_user_info.edit().clear();
+                try {
+                    activity.Shared_user_info.edit().putString("phone",user_info.get("phone").toString()).apply();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                activity.Shared_user_info.edit().clear();
+                try {
+                    activity.Shared_user_info.edit().putString("name",user_info.get("name").toString()).apply();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 activity.Shared_auto_login.edit().clear();
                 activity.Shared_auto_login.edit().putBoolean("login",true).apply();
 
@@ -124,8 +139,6 @@ public class fragment_login extends Fragment {
 //                activity.recreate();
             }
         });
-        JSONObject user_info = new JSONObject();
-        JSONObject user_interest = new JSONObject();
 
         /**로그인 버튼 api*/
         id_text = (EditText)view.findViewById(R.id.id_text);
