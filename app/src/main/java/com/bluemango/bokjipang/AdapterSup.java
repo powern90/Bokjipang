@@ -1,6 +1,8 @@
 package com.bluemango.bokjipang;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,10 +28,29 @@ public class AdapterSup extends RecyclerView.Adapter<AdapterSup.ViewHolder>{
             // 뷰 객체에 대한 참조. (hold strong reference)
             title = itemView.findViewById(R.id.title) ;
             content = itemView.findViewById(R.id.content);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int pos = getAdapterPosition();
+                    if(pos != RecyclerView.NO_POSITION){
+                        mOnPopupClick(v, pos);
+                    }
+                }
+            });
+
         }
     }
 
     // 생성자에서 데이터 리스트 객체를 전달받음.
+
+    public void mOnPopupClick(View v, int pos) {
+        ArrayList<DataSup> list = this.mData;
+        Intent intent = new Intent(context, activity_support_post.class);
+
+        DataSup dataSup = list.get(pos);
+        intent.putExtra("data", dataSup);
+        context.startActivity(intent);
+    }
 
     public AdapterSup(Context context, ArrayList<DataSup> list) {
         this.context = context;

@@ -58,6 +58,9 @@ public class activity_community_post extends AppCompatActivity {
 
         Shared_user_info = getSharedPreferences("token",MODE_PRIVATE);
         Shared_user_info = getSharedPreferences("user_info",MODE_PRIVATE);
+        Shared_user_info = getSharedPreferences("user_id", MODE_PRIVATE);
+        Shared_user_info = getSharedPreferences("user_pwd", MODE_PRIVATE);
+
         user_token = Shared_user_info.getString("token","");
 
         Intent intent = getIntent();

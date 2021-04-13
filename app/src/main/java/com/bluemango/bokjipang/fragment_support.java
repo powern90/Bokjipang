@@ -136,7 +136,7 @@ public class fragment_support extends Fragment {
             DataSup dataSup = new DataSup();
 
             dataSup.setTitle(tt.getString("title"));
-            dataSup.setContent(tt.getString("content"));
+            dataSup.setContent(tt.getString("content").replace("\n","<br>").replace("\t",""));
             dataSup.setDate(tt.getString("createdAt"));
             tmp.add(dataSup);
         }
