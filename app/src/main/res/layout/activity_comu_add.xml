@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity_comu_add">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center_horizontal"
+            android:paddingTop="10dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text=" 글 쓰 기"
+                android:textSize="30dp"
+            />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/add_comu_btn"
+                />
+        </LinearLayout>
+    </LinearLayout>
+
+
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardview"
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:layout_below="@+id/cardview_banner"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="45dp"
+        android:layout_marginBottom="15dp"
+        card_view:cardCornerRadius="20dp"
+        card_view:cardElevation="5dp"
+        tools:ignore="MissingConstraints">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <EditText
+                android:id="@+id/comu_title"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="30dp"
+                android:hint="제목을 입력해주세요."
+                android:scrollHorizontally="false"
+                android:inputType="textMultiLine"
+                android:background="@null"
+                />
+            <View
+                android:id="@+id/comu_line"
+                android:layout_width="match_parent"
+                android:layout_marginTop="2dp"
+                android:layout_height="1dp"
+                android:layout_below="@id/comu_title"
+                android:background="#A3A0A0"/>
+            <EditText
+                android:id="@+id/comu_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="15dp"
+                android:hint="내용을 입력해주세요."
+                android:textSize="15dp"
+                android:layout_below="@+id/comu_line"
+                android:scrollHorizontally="false"
+                android:inputType="textMultiLine"
+                android:background="@null"
+                />
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>
