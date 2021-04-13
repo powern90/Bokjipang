@@ -31,10 +31,12 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -70,10 +72,10 @@ public class fragment_home extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_home, container, false);
+
         MainActivity activity = (MainActivity)  getActivity();
         user_token = activity.Shared_user_info.getString("token",null);
         String info_tmp = activity.Shared_user_info.getString("user_info",null);
-        Log.d("ss",user_token);
         if(info_tmp != null){
             try{
                 user_info = new JSONObject(info_tmp);
@@ -152,10 +154,9 @@ public class fragment_home extends Fragment {
             }
         };
 
+        ExecutorService executor = Executors.newSingleThreadExecutor();
         /** 사진 클릭 하이퍼링크*/
         imageclick(view);
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-
         /**홈에 들어온 경우 main 에서 찜이랑 게시판 받아오는 부분 start*/
         executor.execute(new Runnable(){
             @Override
@@ -163,7 +164,6 @@ public class fragment_home extends Fragment {
                 try {
                     /**url에 http 로 하는 경우는 HttpURLConnection 으로 해야하고, url에 https인 경우는 HttpsURLConnection 으로 만들어야함*/
                     URL url = new URL("https://api.bluemango.me/main/ ");
-                    Log.d("home","async들어옴");
                     HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
                     myconnection.setRequestMethod("GET");  //post, get 나누기
                     myconnection.setRequestProperty ("Content-Type","application/json"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
@@ -171,7 +171,6 @@ public class fragment_home extends Fragment {
                     Log.d("home", String.valueOf(myconnection.getResponseCode()));
                     if(myconnection.getResponseCode() == 200){
                         /** 리스폰스 데이터 받는 부분*/
-                        Log.d("home","200됨");
                         InputStream responseBody = myconnection.getInputStream();
                         InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
                         JsonReader jsonReader = new JsonReader(responseBodyReader);
@@ -230,6 +229,7 @@ public class fragment_home extends Fragment {
             }
         });
         /**홈에 들어온 경우 main 에서 찜이랑 게시판 받아오는 부분 end*/
+
 
 
         /**자동 이미지 배너*/

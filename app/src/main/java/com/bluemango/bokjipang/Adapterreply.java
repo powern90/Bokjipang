@@ -21,6 +21,7 @@ public class Adapterreply extends RecyclerView.Adapter<Adapterreply.ViewHolder> 
         TextView nickname ;
         TextView content;
         TextView date;
+        TextView rereply;
 
         ViewHolder(View itemView) {
             super(itemView) ;
@@ -29,19 +30,6 @@ public class Adapterreply extends RecyclerView.Adapter<Adapterreply.ViewHolder> 
             nickname = itemView.findViewById(R.id.nickname) ;
             content = itemView.findViewById(R.id.content);
             date = itemView.findViewById(R.id.date);
-
-
-            final LinearLayout backGround = itemView.findViewById(R.id.form_reply);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(itemView.getLayoutParams());
-            params.leftMargin = 1000;
-            backGround.setLayoutParams(params);
-//            hi.leftMargin = 1000;
-//            backGround.setLayoutParams(hi);
-
-//            @SuppressLint("CutPasteId") TextView reply = itemView.findViewById(R.id.nickname);
-//            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) reply.getLayoutParams();
-//            params.leftMargin = 1000;
-//            reply.setLayoutParams(params);  이거 하나만 마진 들어가서 form 자체에 마진 줄수 있는거 찾는중
         }
     }
 
@@ -69,8 +57,14 @@ public class Adapterreply extends RecyclerView.Adapter<Adapterreply.ViewHolder> 
         holder.nickname.setText(text.getNickname());
         holder.content.setText(text.getContent());
         holder.date.setText(text.getDate());
-    }
 
+        if(text.getRereply().equals("1")) {
+                final LinearLayout backGround = holder.itemView.findViewById(R.id.form_reply);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(holder.itemView.getLayoutParams());
+                params.leftMargin = 300;
+                backGround.setLayoutParams(params);
+            }
+    }
     // getItemCount() - 전체 데이터 갯수 리턴.
     @Override
     public int getItemCount() {
