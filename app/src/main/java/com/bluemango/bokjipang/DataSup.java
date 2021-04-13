@@ -1,6 +1,8 @@
 package com.bluemango.bokjipang;
 
-public class DataSup {
+import java.io.Serializable;
+
+public class DataSup implements Serializable {
     private String title;
     private String content;
     private String date;
