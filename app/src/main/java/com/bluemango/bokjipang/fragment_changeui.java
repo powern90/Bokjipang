@@ -88,7 +88,7 @@ public class fragment_changeui extends Fragment {
                         public void run() {
                             try {
                                 /**url에 http 로 하는 경우는 HttpURLConnection 으로 해야하고, url에 https인 경우는 HttpsURLConnection 으로 만들어야함*/
-                                URL url = new URL("https://api.bluemango.me/user/update/");
+                                URL url = new URL("https://api.bluemango.site/user/update/");
                                 HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
                                 myconnection.setRequestMethod("POST");  //post, get 나누기
                                 myconnection.setRequestProperty("Content-Type", "application/json"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
