@@ -12,11 +12,19 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,6 +41,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -46,8 +55,11 @@ public class fragment_community extends Fragment {
     JSONObject responseJson = null;
     String user_token;
     private ArrayList<DataComu> list;
+
     int count;
     private Handler handler;
+    int board;      //board는 커뮤니티 종류 잡아주는거 나중에 api에서 이 board 사용해서 요청.
+    int renew=-1;
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
@@ -90,7 +102,7 @@ public class fragment_community extends Fragment {
                         public void run(){
                             try {
                                 /**url에 http 로 하는 경우는 HttpURLConnection 으로 해야하고, url에 https인 경우는 HttpsURLConnection 으로 만들어야함*/
-                                URL url = new URL("https://api.bluemango.me/board"+param);
+                                URL url = new URL("https://api.bluemango.site/board"+param);
                                 HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
                                 myconnection.setRequestMethod("GET");  //post, get 나누기
                                 myconnection.setRequestProperty ("Content-Type","application/json"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
@@ -137,7 +149,7 @@ public class fragment_community extends Fragment {
             public void run(){
                 try {
                     /**url에 http 로 하는 경우는 HttpURLConnection 으로 해야하고, url에 https인 경우는 HttpsURLConnection 으로 만들어야함*/
-                    URL url = new URL("https://api.bluemango.me/board"+first_request);
+                    URL url = new URL("https://api.bluemango.site/board"+first_request);
                     HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
                     myconnection.setRequestMethod("GET");  //post, get 나누기
                     myconnection.setRequestProperty ("Content-Type","application/json"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
@@ -183,7 +195,7 @@ public class fragment_community extends Fragment {
                     public void run(){
                         try {
                             /**url에 http 로 하는 경우는 HttpURLConnection 으로 해야하고, url에 https인 경우는 HttpsURLConnection 으로 만들어야함*/
-                            URL url = new URL("https://api.bluemango.me/board"+first_request);
+                            URL url = new URL("https://api.bluemango.site/board"+first_request);
                             HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
                             myconnection.setRequestMethod("GET");  //post, get 나누기
                             myconnection.setRequestProperty ("Content-Type","application/json"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
@@ -243,6 +255,26 @@ public class fragment_community extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.middle_top_navigation, menu);
+
+        MenuItem item = menu.findItem(R.id.spinner);
+        Spinner spinner = (Spinner) MenuItemCompat.getActionView(item);
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                getActivity(), R.array.community_spinner,
+                R.layout.simple_spinner_item
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
     }
 
     @Override
@@ -252,6 +284,8 @@ public class fragment_community extends Fragment {
                 Intent intent = new Intent(getActivity(), activity_mypage.class);
                 startActivity(intent);
                 break;
+//            case R.id.menu_spinner:
+//                break;
         }
         return super.onOptionsItemSelected(item);
     }
