@@ -41,9 +41,10 @@ import javax.net.ssl.HttpsURLConnection;
 public class fragment_changepw extends Fragment {
     EditText new_password;
     EditText new_password_confirm;
+    EditText current_pw;
     TextView back_btn;
     ImageView set_image;
-    String user_token;
+    String user_token,user_pwd;
     boolean password_format_check;
 
     @Override
@@ -51,6 +52,10 @@ public class fragment_changepw extends Fragment {
         View view = inflater.inflate(R.layout.activity_changepw, container, false);
         activity_mypage activity_mypage = (activity_mypage) getActivity();
         user_token = activity_mypage.Shared_user_info.getString("token", null);
+
+        //현재 비밀번호와 일치하는지 확인
+        current_pw = view.findViewById(R.id.current_pw_txt);
+        user_pwd = activity_mypage.Shared_user_info.getString("user_pwd", null);
 
         /** 비밀번호 변경 페이지 뒤로가기 */
         back_btn = view.findViewById(R.id.mypage_back_btn);
@@ -96,7 +101,6 @@ public class fragment_changepw extends Fragment {
                     Drawable icon = getResources().getDrawable(R.drawable.equal);
                     icon.setBounds(0, 0, 80, 80);
                     new_password.setError("사용가능한 비밀번호 입니다.", icon);
-                    password_format_check = true;
                 }
             }
         });
@@ -114,8 +118,12 @@ public class fragment_changepw extends Fragment {
                 equal_icon.setBounds(0, 0, 80, 80);
                 if (new_password.getText().toString().equals(new_password_confirm.getText().toString())) {
                     new_password_confirm.setError("비밀번호가 일치합니다.", equal_icon);
+                    password_format_check = true;
+
                 } else {
                     new_password_confirm.setError("비밀번호가 일치하지 않습니다.");
+                    password_format_check = false;
+
                 }
             }
 
@@ -147,7 +155,7 @@ public class fragment_changepw extends Fragment {
         pw_change.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (password_format_check) {
+                if (password_format_check && user_pwd.contentEquals(current_pw.getText())) {
                     AsyncTask.execute(new Runnable() {
                         @Override
                         public void run() {

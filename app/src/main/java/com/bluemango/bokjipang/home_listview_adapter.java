@@ -1,6 +1,8 @@
 package com.bluemango.bokjipang;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,19 +10,37 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class home_listview_adapter extends BaseAdapter {
-    private ArrayList<home_listview_item> listViewItemList;
+import static android.content.Context.MODE_PRIVATE;
 
-    public home_listview_adapter(ArrayList<home_listview_item> itemlist){
+public class home_listview_adapter extends BaseAdapter {
+    private final Context context;
+    private ArrayList<home_listview_item> listViewItemList;
+    SharedPreferences Shared_user_info;
+    Gson gson;
+    public home_listview_adapter(ArrayList<home_listview_item> itemlist, Context context){
         if (itemlist == null) {
             listViewItemList = new ArrayList<home_listview_item>() ;
         } else {
             listViewItemList = itemlist ;
         }
+        this.context = context;
+
+        Shared_user_info = context.getSharedPreferences("token",MODE_PRIVATE);
+        Shared_user_info = context.getSharedPreferences("user_info",MODE_PRIVATE);
+        Shared_user_info = context.getSharedPreferences("user_id", MODE_PRIVATE);
+        Shared_user_info = context.getSharedPreferences("user_pwd", MODE_PRIVATE);
+        Shared_user_info = context.getSharedPreferences("home_interest", MODE_PRIVATE);
+
     }
 
     @Override
@@ -80,6 +100,23 @@ public class home_listview_adapter extends BaseAdapter {
                         listViewItemList.get(i).setNo(i-1);
                     }
                 }
+
+//                //별 누른경우에 home_interest 별표 변경해주기
+//                String info_tmp = Shared_user_info.getString("home_interest",null);
+//                if(info_tmp != null){
+//                    try{
+//                        JSONObject home_info = new JSONObject(info_tmp);
+//                        home_info.put(listViewItem.getBoard_name(),true);
+//                        Shared_user_info.edit().putString("home_interest",home_info.toString()).apply();
+//
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+                gson = new GsonBuilder().create();
+                String user_info = gson.toJson(listViewItemList);
+                Shared_user_info.edit().putString("home_interest", user_info).apply();
+
                 Comparator<home_listview_item> noAsc = new Comparator<home_listview_item>(){
                     @Override
                     public int compare(home_listview_item item1, home_listview_item item2){
@@ -113,5 +150,9 @@ public class home_listview_adapter extends BaseAdapter {
         item.setBoard_name(name);
         item.setBoard_title(title);
         listViewItemList.add(item);
+
+        gson = new GsonBuilder().create();
+        String user_info = gson.toJson(listViewItemList);
+        Shared_user_info.edit().putString("home_interest", user_info).apply();
     }
 }
