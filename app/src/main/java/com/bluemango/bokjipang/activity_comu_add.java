@@ -21,8 +21,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.lang.reflect.Array;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -39,6 +43,7 @@ public class activity_comu_add extends AppCompatActivity {
     Activity activity;
     Context context;
     Intent intent;
+    int category_num;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         intent = getIntent();
@@ -55,17 +60,15 @@ public class activity_comu_add extends AppCompatActivity {
         Shared_user_info = getSharedPreferences("user_info",MODE_PRIVATE);
         Shared_user_info = getSharedPreferences("user_id", MODE_PRIVATE);
         Shared_user_info = getSharedPreferences("user_pwd", MODE_PRIVATE);
-        user_token2 = Shared_user_info.getString("token","");
+        Shared_user_info = getSharedPreferences("home_interest", MODE_PRIVATE);
+        user_token = Shared_user_info.getString("token","");
 
-        Log.d("asdfaskdjflkasjdfojawioghaoidfjoiasjfoiajsoif" , user_token2);
+        List<String> category_list = Arrays.asList("장애인", "저소득", "다문화", "고령자", "한부모", "자유");
 
-
-
-
-        user_token = intent.getStringExtra("token");
+        category_num = intent.getIntExtra("category",0);
         Log.d("comu_Add totken : ",user_token);
 
-        String category = "쟝애인";
+        String category = category_list.get(category_num);                          //해당 카테고리에 따라 글 작성하도록 변경
         add_comu_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

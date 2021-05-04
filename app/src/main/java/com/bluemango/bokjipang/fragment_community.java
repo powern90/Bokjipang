@@ -71,8 +71,10 @@ public class fragment_community extends Fragment {
         fragment = this;
 
         /** renew는 처음오는건지 아닌건지 확인 후에 스피너에서 변경시 board 바꾸는 것*/
-        if(renew!=-1)
+        if(renew!=-1) {
             board = renew;
+            adapterComu = null;                                 //adaptercomu 다시 초기화 해줘야지 handler에서 else문 들어가짐
+        }
         else
             board = 0;
 
@@ -91,13 +93,15 @@ public class fragment_community extends Fragment {
                 int pos=0;
                 if(adapterComu != null){
                     adapterComu.notifyDataSetChanged();
+                    recyclerView.scrollToPosition(adapterComu.getItemCount()-22);              //이 부분 나중에 맞춰서 바꿔줘야할듯, 여기 위로 새로고침할때도 들어옴
+                    recyclerView.setAdapter(adapterComu);
+                    return;
                 }
                 else {
                     adapterComu = new AdapterComu(getActivity(), list);
                 }
-                recyclerView.setVerticalScrollbarPosition(pos-1);
+                recyclerView.setVerticalScrollbarPosition(pos-1);                   //이 부분때문에 무조건 처음으로 가게 된것
                 recyclerView.setAdapter(adapterComu);
-
             }
         };
 
@@ -254,7 +258,7 @@ public class fragment_community extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent(activity, activity_comu_add.class);
                 Log.d("Comu token : ",user_token);
-                intent.putExtra("token", user_token);
+                intent.putExtra("category",board);
                 startActivity(intent);
             }
         });
