@@ -48,6 +48,7 @@
             android:layout_marginTop="10dp"
             android:textStyle="bold"
             android:textSize="18dp"
+            android:id="@+id/mypage_name"
             android:textColor="@color/black"
             android:text="이름"/>
         <TextView
@@ -56,6 +57,7 @@
             android:layout_marginLeft="30dp"
             android:layout_marginTop="55dp"
             android:textColor="@color/black"
+            android:id="@+id/mypage_phone"
             android:text="나이"/>
     </androidx.cardview.widget.CardView>
 

@@ -18,12 +18,20 @@ public class fragment_mypage extends Fragment {
     fragment_changefv fragment_changefv;
     TextView back_btn;
     TextView btn_logout;
+    TextView mypage_name, mypage_phone;
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_mypage, container, false);
 
         fragment_changeui = new fragment_changeui();
         fragment_changefv = new fragment_changefv();
+
+        mypage_name = view.findViewById(R.id.mypage_name);
+        mypage_phone = view.findViewById(R.id.mypage_phone);
+        activity_mypage activity_mypage = (activity_mypage) getActivity();
+        mypage_name.setText(activity_mypage.Shared_user_info.getString("name", null));
+        mypage_phone.setText(activity_mypage.Shared_user_info.getString("phone", null));
+
         /** 내 정보 뒤로가기 */
         back_btn = view.findViewById(R.id.mypage_back_btn);
         back_btn.setOnClickListener(new View.OnClickListener(){

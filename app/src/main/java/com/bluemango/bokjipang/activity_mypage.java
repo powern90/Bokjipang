@@ -29,6 +29,10 @@ public class activity_mypage extends AppCompatActivity {
         setContentView(R.layout.activity_mypage);
         Shared_user_info = getSharedPreferences("token",MODE_PRIVATE);
         Shared_user_info = getSharedPreferences("user_info",MODE_PRIVATE);
+        Shared_user_info = getSharedPreferences("user_id", MODE_PRIVATE);
+        Shared_user_info = getSharedPreferences("user_pwd", MODE_PRIVATE);
+        Shared_user_info = getSharedPreferences("home_interest", MODE_PRIVATE);
+
 
         fm.beginTransaction().replace(R.id.fragment_container,fragment_mypage).commit();
 

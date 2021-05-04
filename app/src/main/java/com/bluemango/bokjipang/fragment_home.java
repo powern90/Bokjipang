@@ -30,6 +30,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,10 +44,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
+import java.lang.reflect.Type;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -118,7 +122,7 @@ public class fragment_home extends Fragment {
         TextView popular_like3 = (TextView) view.findViewById(R.id.popular_like3_count);
 
         /** 게시판*/
-        adapter = new home_listview_adapter(itemList);
+        adapter = new home_listview_adapter(itemList,getActivity());
         listview = (ListView)view.findViewById(R.id.home_listview);
         listview.setAdapter(adapter);
 
@@ -196,12 +200,17 @@ public class fragment_home extends Fragment {
                                 if(gojung) {
                                     /** 즐겨찾기 인경우 먼저 숫자를 부여 -> 코드 수정 필요*/
                                     try{
-                                        adapter.addItem(0, R.drawable.star_white, "장애인 게시판", boardList.get(0).getTitle());
-                                        adapter.addItem(1, R.drawable.star_white, "저소득 게시판", boardList.get(1).getTitle());
-                                        adapter.addItem(2, R.drawable.star_white, "다문화 게시판", boardList.get(2).getTitle());
-                                        adapter.addItem(3, R.drawable.star_white, "고령자 게시판", boardList.get(3).getTitle());
-                                        adapter.addItem(4, R.drawable.star_white, "한부모 게시판", boardList.get(4).getTitle());
-                                        adapter.addItem(5, R.drawable.star_white, "자유게시판", boardList.get(5).getTitle());
+                                        String info_tmp = activity.Shared_user_info.getString("home_interest",null);
+                                        Gson gson = new Gson();
+                                        Type type = new TypeToken<ArrayList<home_listview_item>>() {}.getType();
+                                        ArrayList<home_listview_item> listViewItemList = gson.fromJson(info_tmp, type);
+
+                                        adapter.addItem(listViewItemList.get(0).getNo(), listViewItemList.get(0).getBoard_image(), listViewItemList.get(0).getBoard_name(), boardList.get(0).getTitle());
+                                        adapter.addItem(listViewItemList.get(1).getNo(), listViewItemList.get(1).getBoard_image(), listViewItemList.get(1).getBoard_name(), boardList.get(1).getTitle());
+                                        adapter.addItem(listViewItemList.get(2).getNo(), listViewItemList.get(2).getBoard_image(), listViewItemList.get(2).getBoard_name(),boardList.get(2).getTitle());
+                                        adapter.addItem(listViewItemList.get(3).getNo(), listViewItemList.get(3).getBoard_image(), listViewItemList.get(3).getBoard_name(), boardList.get(3).getTitle());
+                                        adapter.addItem(listViewItemList.get(4).getNo(), listViewItemList.get(4).getBoard_image(), listViewItemList.get(4).getBoard_name(), boardList.get(4).getTitle());
+                                        adapter.addItem(listViewItemList.get(5).getNo(), listViewItemList.get(5).getBoard_image(), listViewItemList.get(5).getBoard_name(), boardList.get(5).getTitle());
                                     }catch(IndexOutOfBoundsException e){
                                         Log.d("error","board error");
                                     }
