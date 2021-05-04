@@ -78,6 +78,23 @@ public class home_listview_adapter extends BaseAdapter {
         boardname.setText(listViewItem.getBoard_name());
         boardtitle.setText(listViewItem.getBoard_title());
 
+        Comparator<home_listview_item> noAsc = new Comparator<home_listview_item>(){
+            @Override
+            public int compare(home_listview_item item1, home_listview_item item2){
+                int ret;
+                if(item1.getNo() < item2.getNo())
+                    ret = -1;
+                else if(item1.getNo() == item2.getNo()){
+                    ret = 0;
+                }
+                else
+                    ret = 1;
+                return ret;
+            }
+        };
+        listViewItemList.sort(noAsc);
+        notifyDataSetChanged();
+
         /**별 누른 경우,,, 여기서 api 통신으로 즐겨찾기도 변경해줘야함*/
         star.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -101,18 +118,6 @@ public class home_listview_adapter extends BaseAdapter {
                     }
                 }
 
-//                //별 누른경우에 home_interest 별표 변경해주기
-//                String info_tmp = Shared_user_info.getString("home_interest",null);
-//                if(info_tmp != null){
-//                    try{
-//                        JSONObject home_info = new JSONObject(info_tmp);
-//                        home_info.put(listViewItem.getBoard_name(),true);
-//                        Shared_user_info.edit().putString("home_interest",home_info.toString()).apply();
-//
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
                 gson = new GsonBuilder().create();
                 String user_info = gson.toJson(listViewItemList);
                 Shared_user_info.edit().putString("home_interest", user_info).apply();
@@ -130,7 +135,6 @@ public class home_listview_adapter extends BaseAdapter {
                             ret = 1;
                         return ret;
                     }
-
                 };
                 listViewItemList.sort(noAsc);
                 notifyDataSetChanged();
