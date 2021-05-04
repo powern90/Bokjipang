@@ -11,7 +11,15 @@
         android:layout_height="wrap_content"
         android:id="@+id/swipe_refresh"
         tools:ignore="MissingConstraints">
-
+        <androidx.cardview.widget.CardView
+            android:id="@+id/post_cardview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="15dp"
+            android:layout_marginTop="10dp">
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler1"
             android:scrollbars="vertical"
@@ -21,6 +29,7 @@
             android:layout_marginRight="15dp"
             android:layout_marginTop="10dp"
             android:dividerHeight="0px"/>
+        </androidx.cardview.widget.CardView>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floating_btn"

@@ -20,6 +20,7 @@
         android:id="@+id/mypage_btn"
         android:icon="@drawable/ic_person_24px"
         android:title="mypage"
+        android:iconTint="@color/white"
         app:showAsAction="always" />
 
 
