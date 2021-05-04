@@ -30,9 +30,11 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class activity_comu_add extends AppCompatActivity {
 
+
+    SharedPreferences Shared_user_info;
     EditText title, content;
     Button add_comu_btn;
-    String user_token;
+    String user_token,user_token2;
     JSONObject responseJson = null;
     Activity activity;
     Context context;
@@ -47,6 +49,19 @@ public class activity_comu_add extends AppCompatActivity {
         content = findViewById(R.id.comu_content);
         add_comu_btn = findViewById(R.id.add_comu_btn);
 
+
+
+        Shared_user_info = getSharedPreferences("token",MODE_PRIVATE);
+        Shared_user_info = getSharedPreferences("user_info",MODE_PRIVATE);
+        Shared_user_info = getSharedPreferences("user_id", MODE_PRIVATE);
+        Shared_user_info = getSharedPreferences("user_pwd", MODE_PRIVATE);
+        user_token2 = Shared_user_info.getString("token","");
+
+        Log.d("asdfaskdjflkasjdfojawioghaoidfjoiasjfoiajsoif" , user_token2);
+
+
+
+
         user_token = intent.getStringExtra("token");
         Log.d("comu_Add totken : ",user_token);
 
@@ -60,7 +75,7 @@ public class activity_comu_add extends AppCompatActivity {
                     public void run(){
                         try {
                             /**url에 http 로 하는 경우는 HttpURLConnection 으로 해야하고, url에 https인 경우는 HttpsURLConnection 으로 만들어야함*/
-                            URL url = new URL("https://api.bluemango.me/board/post/add/");
+                            URL url = new URL("https://api.bluemango.site/board/post/add/");
                             HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
                             myconnection.setRequestMethod("POST");  //post, get 나누기
                             myconnection.setRequestProperty ("Content-Type","application/json"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우

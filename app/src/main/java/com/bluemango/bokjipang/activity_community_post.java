@@ -58,6 +58,8 @@ public class activity_community_post extends AppCompatActivity {
 
         Shared_user_info = getSharedPreferences("token",MODE_PRIVATE);
         Shared_user_info = getSharedPreferences("user_info",MODE_PRIVATE);
+        Shared_user_info = getSharedPreferences("user_id", MODE_PRIVATE);
+        Shared_user_info = getSharedPreferences("user_pwd", MODE_PRIVATE);
         user_token = Shared_user_info.getString("token","");
 
         Intent intent = getIntent();
@@ -105,7 +107,7 @@ public class activity_community_post extends AppCompatActivity {
             public void run(){
                 try {
                     /**url에 http 로 하는 경우는 HttpURLConnection 으로 해야하고, url에 https인 경우는 HttpsURLConnection 으로 만들어야함*/
-                    URL url = new URL("https://api.bluemango.me/board/post"+first_request);
+                    URL url = new URL("https://api.bluemango.site/board/post"+first_request);
                     HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
                     myconnection.setRequestMethod("GET");  //post, get 나누기
                     myconnection.setRequestProperty ("Content-Type","application/json"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
