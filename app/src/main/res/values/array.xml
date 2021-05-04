@@ -15,18 +15,19 @@
     </string-array>
 
     <string-array name="community_spinner">
-        <item>장애인 커뮤니티</item>
-        <item>저소득 커뮤니티</item>
-        <item>한부모 커뮤니티</item>
-        <item>고령자 커뮤니티</item>
-        <item>다문화 커뮤니티</item>
+        <item>장애인 게시판</item>
+        <item>저소득 게시판</item>
+        <item>다문화 게시판</item>
+        <item>고령자 게시판</item>
+        <item>한부모 게시판</item>
+        <item>자유 게시판</item>
     </string-array>
 
     <string-array name="support_spinner">
         <item>장애인 지원사업</item>
         <item>저소득 지원사업</item>
-        <item>한부모 지원사업</item>
-        <item>고령자 지원사업</item>
         <item>다문화 지원사업</item>
+        <item>고령자 지원사업</item>
+        <item>한부모 지원사업</item>
     </string-array>
 </resources>
