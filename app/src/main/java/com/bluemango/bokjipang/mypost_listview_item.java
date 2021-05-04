@@ -2,7 +2,9 @@ package com.bluemango.bokjipang;
 
 public class mypost_listview_item {
     private String title, content, like, comment;
+    private String idx;
 
+    public void setIdx(String idx){this.idx = idx;}
     public void set_title(String Title){this.title=Title;}
     public void set_content(String Content){this.content=Content;}
     public void set_like(String Like){this.like=Like;}
@@ -11,4 +13,5 @@ public class mypost_listview_item {
     public String get_content(){return this.content;}
     public String get_like(){return this.like;}
     public String get_comment(){return this.comment;}
+    public String getIdx(){return this.idx;}
 }
