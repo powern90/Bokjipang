@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,7 +38,8 @@ public class activity_comu_add extends AppCompatActivity {
 
     SharedPreferences Shared_user_info;
     EditText title, content;
-    Button add_comu_btn;
+    TextView comu_category;
+    Button add_comu_btn, back_btn;
     String user_token,user_token2;
     JSONObject responseJson = null;
     Activity activity;
@@ -53,8 +55,8 @@ public class activity_comu_add extends AppCompatActivity {
         title = findViewById(R.id.comu_title);
         content = findViewById(R.id.comu_content);
         add_comu_btn = findViewById(R.id.add_comu_btn);
-
-
+        comu_category = findViewById(R.id.write_category);
+        back_btn = findViewById(R.id.comu_back_btn);
 
         Shared_user_info = getSharedPreferences("token",MODE_PRIVATE);
         Shared_user_info = getSharedPreferences("user_info",MODE_PRIVATE);
@@ -65,10 +67,18 @@ public class activity_comu_add extends AppCompatActivity {
 
         List<String> category_list = Arrays.asList("장애인", "저소득", "다문화", "고령자", "한부모", "자유");
 
+
         category_num = intent.getIntExtra("category",0);
+        comu_category.setText(category_list.get(category_num).concat(" 게시판"));
         Log.d("comu_Add totken : ",user_token);
 
         String category = category_list.get(category_num);                          //해당 카테고리에 따라 글 작성하도록 변경
+        back_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         add_comu_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
