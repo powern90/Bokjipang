@@ -21,6 +21,7 @@ public class fragment_setting extends Fragment {
     private fragment_mypost fragment_mypost = new fragment_mypost();
     private fragment_service fragment_service = new fragment_service();
     private fragment_alarm fragment_alarm = new fragment_alarm();
+    private fragment_rule fragment_rule = new fragment_rule();
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_setting, container, false);
@@ -45,6 +46,18 @@ public class fragment_setting extends Fragment {
                 transaction.commit();
             }
         });
+
+        TextView rule = view.findViewById(R.id.rule);
+        rule.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_container, fragment_rule);
+                transaction.addToBackStack(null);
+                transaction.commit();
+            }
+        });
+
         TextView service = view.findViewById(R.id.service);
         service.setOnClickListener(new View.OnClickListener() {
             @Override
