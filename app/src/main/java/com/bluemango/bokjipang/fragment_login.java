@@ -161,7 +161,7 @@ public class fragment_login extends Fragment {
                     public void run(){
                         try {
                             /**url에 http 로 하는 경우는 HttpURLConnection 으로 해야하고, url에 https인 경우는 HttpsURLConnection 으로 만들어야함*/
-                            URL url = new URL("https://api.bluemango.me/auth/login/");
+                            URL url = new URL("https://api.bluemango.site/auth/login/");
                             HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
                             myconnection.setRequestMethod("POST");  //post, get 나누기
                             myconnection.setRequestProperty("Content-Type","application/json"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
@@ -193,7 +193,7 @@ public class fragment_login extends Fragment {
                                 /** 로그인 성공하면 check api 이용해서 유저 정보 받아오는 부분 start */
                                 try {
                                     /**url에 http 로 하는 경우는 HttpURLConnection 으로 해야하고, url에 https인 경우는 HttpsURLConnection 으로 만들어야함*/
-                                    URL url2 = new URL("https://api.bluemango.me/auth/check/");
+                                    URL url2 = new URL("https://api.bluemango.site/auth/check/");
                                     HttpsURLConnection myconnection2 = (HttpsURLConnection) url2.openConnection();
                                     myconnection2.setRequestMethod("GET");  //post, get 나누기
                                     myconnection2.setRequestProperty ("Content-Type","application/json"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우

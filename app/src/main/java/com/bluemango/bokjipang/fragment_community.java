@@ -1,6 +1,7 @@
 package com.bluemango.bokjipang;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,10 +13,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -40,7 +45,7 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class fragment_community extends Fragment {
     private AdapterComu adapterComu;
-    Fragment fragment = this;
+    Fragment fragment;
     private RecyclerView recyclerView;
     private Button btn;
     JSONObject responseJson = null;
@@ -49,10 +54,26 @@ public class fragment_community extends Fragment {
     int count;
     private Handler handler;
 
+    int board;      //board는 커뮤니티 종류 잡아주는거 나중에 api에서 이 board 사용해서 요청.
+    int renew=-1;
+
+
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         MainActivity activity = (MainActivity)  getActivity();
         View view = inflater.inflate(R.layout.fragment_community, container, false);
+        fragment = this;
+
+        /** renew는 처음오는건지 아닌건지 확인 후에 스피너에서 변경시 board 바꾸는 것*/
+        if(renew!=-1)
+            board = renew;
+        else
+            board = 0;
+
+
+        Log.d("ihasdfiojaosdfioadjsfioajsdfiopjasdfiopjasdfaiopfs oas renew : ", String.valueOf(board));
+
+
         list = new ArrayList<DataComu>();
         recyclerView = view.findViewById(R.id.recycler1);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -84,13 +105,13 @@ public class fragment_community extends Fragment {
                 if(!recyclerView.canScrollVertically(1)){ //맨 밑으로 내려갈때
                     count++;
                     ExecutorService add_list = Executors.newSingleThreadExecutor();
-                    String param = "?board=0&page="+Integer.toString(count);
+                    String param = "?board=" + Integer.toString(board) + "&page="+Integer.toString(count);
                     add_list.execute(new Runnable(){
                         @Override
                         public void run(){
                             try {
                                 /**url에 http 로 하는 경우는 HttpURLConnection 으로 해야하고, url에 https인 경우는 HttpsURLConnection 으로 만들어야함*/
-                                URL url = new URL("https://api.bluemango.me/board"+param);
+                                URL url = new URL("https://api.bluemango.site/board"+param);
                                 HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
                                 myconnection.setRequestMethod("GET");  //post, get 나누기
                                 myconnection.setRequestProperty ("Content-Type","application/json"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
@@ -129,15 +150,17 @@ public class fragment_community extends Fragment {
         });
 
 
+        /**  위로 스와이프 했을 때 board랑 cocunt 초기화 해주고 api 요ㅓㅇ 넣어야함 기억하자. 동작 잘되는지도 확인!!!!!!!!!!!!!!!!    */
+
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        String first_request = "?board=0&page="+Integer.toString(count);
+        String first_request = "?board=" + Integer.toString(board) + "&page="+Integer.toString(count);
         executor.execute(new Runnable(){
             @Override
             public void run(){
                 try {
                     /**url에 http 로 하는 경우는 HttpURLConnection 으로 해야하고, url에 https인 경우는 HttpsURLConnection 으로 만들어야함*/
-                    URL url = new URL("https://api.bluemango.me/board"+first_request);
+                    URL url = new URL("https://api.bluemango.site/board"+first_request);
                     HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
                     myconnection.setRequestMethod("GET");  //post, get 나누기
                     myconnection.setRequestProperty ("Content-Type","application/json"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
@@ -183,7 +206,7 @@ public class fragment_community extends Fragment {
                     public void run(){
                         try {
                             /**url에 http 로 하는 경우는 HttpURLConnection 으로 해야하고, url에 https인 경우는 HttpsURLConnection 으로 만들어야함*/
-                            URL url = new URL("https://api.bluemango.me/board"+first_request);
+                            URL url = new URL("https://api.bluemango.site/board"+first_request);
                             HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
                             myconnection.setRequestMethod("GET");  //post, get 나누기
                             myconnection.setRequestProperty ("Content-Type","application/json"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
@@ -243,6 +266,35 @@ public class fragment_community extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.middle_top_navigation, menu);
+
+        MenuItem item = menu.findItem(R.id.spinner);
+        Spinner spinner = (Spinner) MenuItemCompat.getActionView(item);
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                getActivity(), R.array.community_spinner,
+                R.layout.simple_spinner_item
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        spinner.setAdapter(adapter);
+
+        /** 여기가 액션바 spinner 선택시에 바꿔주는 곳 (밑에) */
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(board != position) {
+                    renew = position;
+                    FragmentTransaction ft = getFragmentManager().beginTransaction();
+                    ft.detach(fragment).attach(fragment).commit();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
     }
 
     @Override
