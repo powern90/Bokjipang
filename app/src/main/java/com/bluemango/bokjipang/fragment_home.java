@@ -204,13 +204,22 @@ public class fragment_home extends Fragment {
                                         Gson gson = new Gson();
                                         Type type = new TypeToken<ArrayList<home_listview_item>>() {}.getType();
                                         ArrayList<home_listview_item> listViewItemList = gson.fromJson(info_tmp, type);
-
-                                        adapter.addItem(listViewItemList.get(0).getNo(), listViewItemList.get(0).getBoard_image(), listViewItemList.get(0).getBoard_name(), boardList.get(0).getTitle());
-                                        adapter.addItem(listViewItemList.get(1).getNo(), listViewItemList.get(1).getBoard_image(), listViewItemList.get(1).getBoard_name(), boardList.get(1).getTitle());
-                                        adapter.addItem(listViewItemList.get(2).getNo(), listViewItemList.get(2).getBoard_image(), listViewItemList.get(2).getBoard_name(),boardList.get(2).getTitle());
-                                        adapter.addItem(listViewItemList.get(3).getNo(), listViewItemList.get(3).getBoard_image(), listViewItemList.get(3).getBoard_name(), boardList.get(3).getTitle());
-                                        adapter.addItem(listViewItemList.get(4).getNo(), listViewItemList.get(4).getBoard_image(), listViewItemList.get(4).getBoard_name(), boardList.get(4).getTitle());
-                                        adapter.addItem(listViewItemList.get(5).getNo(), listViewItemList.get(5).getBoard_image(), listViewItemList.get(5).getBoard_name(), boardList.get(5).getTitle());
+                                        if(listViewItemList!=null) {
+                                            adapter.addItem(listViewItemList.get(0).getNo(), listViewItemList.get(0).getBoard_image(), listViewItemList.get(0).getBoard_name(), boardList.get(0).getTitle());
+                                            adapter.addItem(listViewItemList.get(1).getNo(), listViewItemList.get(1).getBoard_image(), listViewItemList.get(1).getBoard_name(), boardList.get(1).getTitle());
+                                            adapter.addItem(listViewItemList.get(2).getNo(), listViewItemList.get(2).getBoard_image(), listViewItemList.get(2).getBoard_name(), boardList.get(2).getTitle());
+                                            adapter.addItem(listViewItemList.get(3).getNo(), listViewItemList.get(3).getBoard_image(), listViewItemList.get(3).getBoard_name(), boardList.get(3).getTitle());
+                                            adapter.addItem(listViewItemList.get(4).getNo(), listViewItemList.get(4).getBoard_image(), listViewItemList.get(4).getBoard_name(), boardList.get(4).getTitle());
+                                            adapter.addItem(listViewItemList.get(5).getNo(), listViewItemList.get(5).getBoard_image(), listViewItemList.get(5).getBoard_name(), boardList.get(5).getTitle());
+                                        }
+                                        else{
+                                            adapter.addItem(0, R.drawable.star_white, "장애인 게시판", boardList.get(0).getTitle());
+                                            adapter.addItem(1, R.drawable.star_white, "저소득 게시판", boardList.get(1).getTitle());
+                                            adapter.addItem(2, R.drawable.star_white, "다문화 게시판", boardList.get(2).getTitle());
+                                            adapter.addItem(3, R.drawable.star_white, "고령자 게시판", boardList.get(3).getTitle());
+                                            adapter.addItem(4, R.drawable.star_white, "한부모 게시판", boardList.get(4).getTitle());
+                                            adapter.addItem(5, R.drawable.star_white, "자유게시판", boardList.get(5).getTitle());
+                                        }
                                     }catch(IndexOutOfBoundsException e){
                                         Log.d("error","board error");
                                     }
