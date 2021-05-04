@@ -125,28 +125,28 @@ public class fragment_signup extends Fragment {
         btn_signup.setOnClickListener(new View.OnClickListener() {
             /** 가입정보 충분/불충분 여부 **/
             public boolean check_signup(String phone, String password, String name, String gender, String age, String address){
-                if(phone.equals("") || !auth_checked.equals("true")){
-                    Log.d("phone","전화번호를 확인해주세요");  // <- 이 부분들 알림메세지 창 띄워주기 해야함
-                    return false;
-                }else if(password.equals("") || !password_format_check || !password_equal_check){
-                    Log.d("password","비밀번호를 확인해주세요");
-                    return false;
-                }else if(name.equals("")){
-                    Log.d("name","이름을 확인해주세요");
-                    return false;
-                }else if(gender.equals("0")){
-                    Log.d("gender","성별을 확인해주세요");
-                    return false;
-                }else if(age.equals("")){
-                    Log.d("age","나이를 확인해주세요");
-                    return false;
-                }else if(address.equals("")){
-                    Log.d("address","주소를 확인해주세요");
-                    return false;
-                }else if(!checkBox1.isChecked() && !checkBox2.isChecked() && !checkBox3.isChecked() && !checkBox4.isChecked() && !checkBox5.isChecked()){
-                    Log.d("interest","관심분야를 확인해주세요");
-                    return false;
-                }
+//                if(phone.equals("") || !auth_checked.equals("true")){
+//                    Log.d("phone","전화번호를 확인해주세요");  // <- 이 부분들 알림메세지 창 띄워주기 해야함
+//                    return false;
+//                }else if(password.equals("") || !password_format_check || !password_equal_check){
+//                    Log.d("password","비밀번호를 확인해주세요");
+//                    return false;
+//                }else if(name.equals("")){
+//                    Log.d("name","이름을 확인해주세요");
+//                    return false;
+//                }else if(gender.equals("0")){
+//                    Log.d("gender","성별을 확인해주세요");
+//                    return false;
+//                }else if(age.equals("")){
+//                    Log.d("age","나이를 확인해주세요");
+//                    return false;
+//                }else if(address.equals("")){
+//                    Log.d("address","주소를 확인해주세요");
+//                    return false;
+//                }else if(!checkBox1.isChecked() && !checkBox2.isChecked() && !checkBox3.isChecked() && !checkBox4.isChecked() && !checkBox5.isChecked()){
+//                    Log.d("interest","관심분야를 확인해주세요");
+//                    return false;
+//                }
                 return true;
             }
             @Override

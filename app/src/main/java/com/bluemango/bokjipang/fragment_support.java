@@ -14,10 +14,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -41,12 +46,28 @@ public class fragment_support extends Fragment {
     String user_token;
     ArrayList<DataSup> list;
     RecyclerView recyclerView;
+    Fragment fragment;
+
+    int board;      //board는 커뮤니티 종류 잡아주는거 나중에 api에서 이 board 사용해서 요청.
+    int renew=-1;
+
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_support, container, false);
         MainActivity activity = (MainActivity)  getActivity();
         user_token = activity.Shared_user_info.getString("token",null);
         list = new ArrayList<>();
+
+
+
+        fragment = this;
+
+        /** renew는 처음오는건지 아닌건지 확인 후에 스피너에서 변경시 board 바꾸는 것*/
+        if(renew!=-1)
+            board = renew;
+        else
+            board = 0;
+        Log.d("board", String.valueOf(board));
 
 
         @SuppressLint("HandlerLeak") final Handler handler = new Handler()
@@ -62,7 +83,7 @@ public class fragment_support extends Fragment {
 
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        String category = "?support=1";
+        String category = "?support="+ Integer.toString(board);
         executor.execute(new Runnable(){
             @Override
             public void run(){
@@ -116,6 +137,29 @@ public class fragment_support extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.middle_top_navigation, menu);
+        MenuItem item = menu.findItem(R.id.spinner);
+        Spinner spinner = (Spinner) MenuItemCompat.getActionView(item);
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                getActivity(), R.array.support_spinner,
+                R.layout.simple_spinner_item
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(board != position) {
+                    renew = position;
+                    FragmentTransaction ft = getFragmentManager().beginTransaction();
+                    ft.detach(fragment).attach(fragment).commit();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
     }
 
     @Override
@@ -136,7 +180,7 @@ public class fragment_support extends Fragment {
             DataSup dataSup = new DataSup();
 
             dataSup.setTitle(tt.getString("title"));
-            dataSup.setContent(tt.getString("content"));
+            dataSup.setContent(tt.getString("content").replace("\n","<br>").replace("\t",""));
             dataSup.setDate(tt.getString("createdAt"));
             tmp.add(dataSup);
         }

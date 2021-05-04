@@ -69,8 +69,19 @@ public class MainActivity extends AppCompatActivity {
         Shared_user_info = getSharedPreferences("user_info",MODE_PRIVATE);
         Shared_user_info = getSharedPreferences("user_id", MODE_PRIVATE);
         Shared_user_info = getSharedPreferences("user_pwd", MODE_PRIVATE);
-
-
+        Shared_user_info = getSharedPreferences("home_interest", MODE_PRIVATE);
+//        JSONObject home_interest2 = new JSONObject();
+//        try {
+//            home_interest2.put("고령자 게시판",false);
+//            home_interest2.put("다문화 게시판",false);
+//            home_interest2.put("한부모 게시판",false);
+//            home_interest2.put("저소득 게시판",false);
+//            home_interest2.put("장애인 게시판",false);
+//            home_interest2.put("자유 게시판",false);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        Shared_user_info.edit().putString("home_interest", String.valueOf(home_interest2)).apply();
 
 //        Intent intent = getIntent();
 //        if(intent != null){
@@ -142,11 +153,7 @@ public class MainActivity extends AppCompatActivity {
         else{
             bottomNavigationView.setVisibility(View.GONE);
             fm.beginTransaction().replace(R.id.fragment_container,fragment_login).commit();
-
         }
-
-
-
 
 //        bottomNavigationView.setVisibility(View.GONE);
 //
