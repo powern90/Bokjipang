@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.bluemango.bokjipang">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:largeHeap="true"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Bokjipang"
+        android:usesCleartextTraffic="true">
+        <activity android:name=".activity_comu_add"></activity>
+        <activity android:name=".activity_support_post"></activity>
+
+        <!-- android:name=".KaKaoSDKInit" -->
+        <activity android:name=".activity_community_post" /> <!-- android:name=".KaKaoSDKInit" -->
+        <meta-data
+            android:name="com.kakao.sdk.AppKey"
+            android:value="@string/kakaoApi" />
+
+        <activity
+            android:name=".activity_mypage"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".Webview_address"
+            tools:ignore="Instantiatable" />
+        <activity
+            android:name=".activity_changepw"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
