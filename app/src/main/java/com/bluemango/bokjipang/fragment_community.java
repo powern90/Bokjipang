@@ -252,6 +252,7 @@ public class fragment_community extends Fragment {
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
+
         FloatingActionButton floating_btn = view.findViewById(R.id.floating_btn);
         floating_btn.setOnClickListener(new View.OnClickListener() {
             @Override
