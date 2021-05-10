@@ -58,6 +58,7 @@ public class fragment_community extends Fragment {
     String user_token;
     private ArrayList<DataComu> list;
     int count;
+    String first_request;
     private Handler handler;
 
     int board;      //board는 커뮤니티 종류 잡아주는거 나중에 api에서 이 board 사용해서 요청.
@@ -164,11 +165,11 @@ public class fragment_community extends Fragment {
 
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        String first_request = "?board=" + Integer.toString(board) + "&page="+Integer.toString(count);
         executor.execute(new Runnable(){
             @Override
             public void run(){
                 try {
+                    first_request = "?board=" + Integer.toString(board) + "&page="+Integer.toString(count);
                     /**url에 http 로 하는 경우는 HttpURLConnection 으로 해야하고, url에 https인 경우는 HttpsURLConnection 으로 만들어야함*/
                     URL url = new URL("https://api.bluemango.site/board"+first_request);
                     HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
@@ -215,6 +216,8 @@ public class fragment_community extends Fragment {
                     @Override
                     public void run(){
                         try {
+                            count = 1;
+                            first_request = "?board=" + Integer.toString(board) + "&page="+Integer.toString(count);
                             /**url에 http 로 하는 경우는 HttpURLConnection 으로 해야하고, url에 https인 경우는 HttpsURLConnection 으로 만들어야함*/
                             URL url = new URL("https://api.bluemango.site/board"+first_request);
                             HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
@@ -335,20 +338,6 @@ public class fragment_community extends Fragment {
             dataComu.setReply_num(Integer.toString(tt.getInt("reply_count")));
             tmp.add(dataComu);
         }
-
-        for(int i = 0 ; i< json_array.length(); i++){
-            JSONObject tt = json_array.getJSONObject(i);
-            DataComu dataComu = new DataComu();
-
-            dataComu.setId(Integer.toString(tt.getInt("id")));
-            dataComu.setTitle(tt.getString("title"));
-            dataComu.setContent(tt.getString("content"));
-            dataComu.setGood_num(Integer.toString(tt.getInt("like")));
-            dataComu.setDatetime(tt.getString("createdAt"));
-            dataComu.setReply_num(Integer.toString(tt.getInt("reply_count")));
-            tmp.add(dataComu);
-        }
-
 
         return tmp;
     }
