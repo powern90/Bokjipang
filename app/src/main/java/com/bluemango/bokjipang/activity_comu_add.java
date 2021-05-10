@@ -63,6 +63,7 @@ public class activity_comu_add extends AppCompatActivity {
         Shared_user_info = getSharedPreferences("user_id", MODE_PRIVATE);
         Shared_user_info = getSharedPreferences("user_pwd", MODE_PRIVATE);
         Shared_user_info = getSharedPreferences("home_interest", MODE_PRIVATE);
+        Shared_user_info = getSharedPreferences("sup_zzim_list", MODE_PRIVATE);
         user_token = Shared_user_info.getString("token","");
 
         List<String> category_list = Arrays.asList("장애인", "저소득", "다문화", "고령자", "한부모", "자유");
@@ -88,7 +89,7 @@ public class activity_comu_add extends AppCompatActivity {
                     public void run(){
                         try {
                             /**url에 http 로 하는 경우는 HttpURLConnection 으로 해야하고, url에 https인 경우는 HttpsURLConnection 으로 만들어야함*/
-                            URL url = new URL("https://api.bluemango.me/board/post/add/");
+                            URL url = new URL("https://api.bluemango.site/board/post/add/");
                             HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
                             myconnection.setRequestMethod("POST");  //post, get 나누기
                             myconnection.setRequestProperty ("Content-Type","application/json"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
