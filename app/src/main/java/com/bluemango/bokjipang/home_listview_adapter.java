@@ -95,6 +95,9 @@ public class home_listview_adapter extends BaseAdapter {
             }
         };
         listViewItemList.sort(noAsc);
+        gson = new GsonBuilder().create();
+        String user_info = gson.toJson(listViewItemList);
+        Shared_user_info.edit().putString("home_interest", user_info).apply();
         notifyDataSetChanged();
 
         /**별 누른 경우,,, 여기서 api 통신으로 즐겨찾기도 변경해줘야함*/
