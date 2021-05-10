@@ -63,6 +63,7 @@ public class activity_comu_add extends AppCompatActivity {
         Shared_user_info = getSharedPreferences("user_id", MODE_PRIVATE);
         Shared_user_info = getSharedPreferences("user_pwd", MODE_PRIVATE);
         Shared_user_info = getSharedPreferences("home_interest", MODE_PRIVATE);
+        Shared_user_info = getSharedPreferences("sup_zzim_list", MODE_PRIVATE);
         user_token = Shared_user_info.getString("token","");
 
         List<String> category_list = Arrays.asList("장애인", "저소득", "다문화", "고령자", "한부모", "자유");
