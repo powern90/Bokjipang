@@ -19,6 +19,7 @@ import androidx.fragment.app.FragmentTransaction;
 public class fragment_setting extends Fragment {
     private fragment_privacy fragment_privacy = new fragment_privacy();
     private fragment_mypost fragment_mypost = new fragment_mypost();
+    private fragment_my_zzim_sup fragment_my_zzim_sup = new fragment_my_zzim_sup();
     private fragment_service fragment_service = new fragment_service();
     private fragment_alarm fragment_alarm = new fragment_alarm();
     private fragment_rule fragment_rule = new fragment_rule();
@@ -31,6 +32,17 @@ public class fragment_setting extends Fragment {
             public void onClick(View v) {
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.replace(R.id.fragment_container, fragment_mypost);
+                transaction.addToBackStack(null);
+                transaction.commit();
+            }
+        });
+
+        TextView my_zzim_sup = view.findViewById(R.id.my_zzim_sup);
+        my_zzim_sup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_container, fragment_my_zzim_sup);
                 transaction.addToBackStack(null);
                 transaction.commit();
             }
