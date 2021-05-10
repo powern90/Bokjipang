@@ -32,7 +32,7 @@ public class activity_mypage extends AppCompatActivity {
         Shared_user_info = getSharedPreferences("user_id", MODE_PRIVATE);
         Shared_user_info = getSharedPreferences("user_pwd", MODE_PRIVATE);
         Shared_user_info = getSharedPreferences("home_interest", MODE_PRIVATE);
-
+        Shared_user_info = getSharedPreferences("sup_zzim_list", MODE_PRIVATE);
 
         fm.beginTransaction().replace(R.id.fragment_container,fragment_mypage).commit();
 
