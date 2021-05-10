@@ -48,7 +48,7 @@ public class AdapterSup extends RecyclerView.Adapter<AdapterSup.ViewHolder>{
         Intent intent = new Intent(context, activity_support_post.class);
 
         DataSup dataSup = list.get(pos);
-        intent.putExtra("data", dataSup);
+        intent.putExtra("data", dataSup.getIdx());
         context.startActivity(intent);
     }
 
