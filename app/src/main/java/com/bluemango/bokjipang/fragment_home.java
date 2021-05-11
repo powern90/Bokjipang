@@ -64,7 +64,7 @@ public class fragment_home extends Fragment {
     BottomNavigationView bottomNavigationView;
     ListView listview;
     home_listview_adapter adapter;
-    boolean gojung=true;
+    boolean gojung = true;
     List<DataZzim> zzimList;
     List<DataBoard> boardList;
     List<DataHigh> highList;
@@ -77,11 +77,11 @@ public class fragment_home extends Fragment {
         setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        MainActivity activity = (MainActivity)  getActivity();
-        user_token = activity.Shared_user_info.getString("token",null);
-        String info_tmp = activity.Shared_user_info.getString("user_info",null);
-        if(info_tmp != null){
-            try{
+        MainActivity activity = (MainActivity) getActivity();
+        user_token = activity.Shared_user_info.getString("token", null);
+        String info_tmp = activity.Shared_user_info.getString("user_info", null);
+        if (info_tmp != null) {
+            try {
                 user_info = new JSONObject(info_tmp);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -99,7 +99,7 @@ public class fragment_home extends Fragment {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        int a =1;
+        int a = 1;
 
         zzimList = new ArrayList<DataZzim>();
         boardList = new ArrayList<DataBoard>();
@@ -122,24 +122,25 @@ public class fragment_home extends Fragment {
         TextView popular_like3 = (TextView) view.findViewById(R.id.popular_like3_count);
 
         /** 게시판*/
-        adapter = new home_listview_adapter(itemList,getActivity());
-        listview = (ListView)view.findViewById(R.id.home_listview);
+        adapter = new home_listview_adapter(itemList, getActivity());
+        listview = (ListView) view.findViewById(R.id.home_listview);
         listview.setAdapter(adapter);
 
+        popular_zzim_click(popular_title1, popular_title2, popular_title3, zzim1, zzim2, zzim3);
+
         /**백그라운드에서 ui 변경하고 싶어서 handler 호출 하기 위해....*/
-        @SuppressLint("HandlerLeak") final Handler handler = new Handler()
-        {
-            public void handleMessage(Message msg){
-                try{
+        @SuppressLint("HandlerLeak") final Handler handler = new Handler() {
+            public void handleMessage(Message msg) {
+                try {
                     zzim1.setText(zzimList.get(0).getTitle());
                     zzim2.setText(zzimList.get(1).getTitle());
                     zzim3.setText(zzimList.get(2).getTitle());
-                }catch(IndexOutOfBoundsException e){
-                    if(zzimList.size()==0)
+                } catch (IndexOutOfBoundsException e) {
+                    if (zzimList.size() == 0)
                         zzim1.setText("아직 찜한 목록이 없습니다.");
                 }
 
-                try{
+                try {
                     popular_title1.setText(highList.get(0).getTitle());
                     popular_content1.setText(highList.get(0).getContent());
                     popular_like1.setText(String.valueOf(highList.get(0).getLike()));
@@ -149,8 +150,8 @@ public class fragment_home extends Fragment {
                     popular_title3.setText(highList.get(2).getTitle());
                     popular_content3.setText(highList.get(2).getContent());
                     popular_like3.setText(String.valueOf(highList.get(2).getLike()));
-                }catch(IndexOutOfBoundsException e){
-                    if(highList.size()==0)
+                } catch (IndexOutOfBoundsException e) {
+                    if (highList.size() == 0)
                         popular_title1.setText("아직 인기 게시물이 없습니다.");
                 }
 
@@ -162,71 +163,72 @@ public class fragment_home extends Fragment {
         /** 사진 클릭 하이퍼링크*/
         imageclick(view);
         /**홈에 들어온 경우 main 에서 찜이랑 게시판 받아오는 부분 start*/
-        executor.execute(new Runnable(){
+        executor.execute(new Runnable() {
             @Override
-            public void run(){
+            public void run() {
                 try {
                     /**url에 http 로 하는 경우는 HttpURLConnection 으로 해야하고, url에 https인 경우는 HttpsURLConnection 으로 만들어야함*/
                     URL url = new URL("https://api.bluemango.site/main/ ");
                     HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
                     myconnection.setRequestMethod("GET");  //post, get 나누기
-                    myconnection.setRequestProperty ("Content-Type","application/json"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
+                    myconnection.setRequestProperty("Content-Type", "application/json"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
                     myconnection.setRequestProperty("x-access-token", user_token); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
                     Log.d("home", String.valueOf(myconnection.getResponseCode()));
-                    if(myconnection.getResponseCode() == 200){
+                    if (myconnection.getResponseCode() == 200) {
                         /** 리스폰스 데이터 받는 부분*/
                         InputStream responseBody = myconnection.getInputStream();
                         InputStreamReader responseBodyReader = new InputStreamReader(responseBody, StandardCharsets.UTF_8);
                         JsonReader jsonReader = new JsonReader(responseBodyReader);
                         jsonReader.beginObject();
-                        while(jsonReader.hasNext()){
+                        while (jsonReader.hasNext()) {
                             String key = null;
                             try {
                                 key = jsonReader.nextName();
-                            }catch(IllegalStateException e){
+                            } catch (IllegalStateException e) {
                                 break;
                             }
-                                /**찜한 리스트 띄워주는 세팅*/
-                            if(key.equals("zzim")){
+                            /**찜한 리스트 띄워주는 세팅*/
+                            if (key.equals("zzim")) {
                                 zzimList = read_zzim(jsonReader);
 
-                            }
-                            else if(key.equals("high")){
+                            } else if (key.equals("high")) {
                                 highList = read_high(jsonReader);
 
-                            }
-                            else if(key.equals("board")){
+                            } else if (key.equals("board")) {
                                 boardList = read_board(jsonReader);
-                                if(gojung) {
+                                if (gojung) {
                                     /** 즐겨찾기 인경우 먼저 숫자를 부여 -> 코드 수정 필요*/
-                                    try{
-                                        String info_tmp = activity.Shared_user_info.getString("home_interest",null);
+                                    try {
+                                        String info_tmp = activity.Shared_user_info.getString("home_interest", null);
                                         Gson gson = new Gson();
-                                        Type type = new TypeToken<ArrayList<home_listview_item>>() {}.getType();
+                                        Type type = new TypeToken<ArrayList<home_listview_item>>() {
+                                        }.getType();
                                         ArrayList<home_listview_item> listViewItemList = gson.fromJson(info_tmp, type);
-                                        if(listViewItemList!=null) {
-                                            adapter.addItem(listViewItemList.get(0).getNo(), listViewItemList.get(0).getBoard_image(), listViewItemList.get(0).getBoard_name(), boardList.get(0).getTitle());
-                                            adapter.addItem(listViewItemList.get(1).getNo(), listViewItemList.get(1).getBoard_image(), listViewItemList.get(1).getBoard_name(), boardList.get(1).getTitle());
-                                            adapter.addItem(listViewItemList.get(2).getNo(), listViewItemList.get(2).getBoard_image(), listViewItemList.get(2).getBoard_name(), boardList.get(2).getTitle());
-                                            adapter.addItem(listViewItemList.get(3).getNo(), listViewItemList.get(3).getBoard_image(), listViewItemList.get(3).getBoard_name(), boardList.get(3).getTitle());
-                                            adapter.addItem(listViewItemList.get(4).getNo(), listViewItemList.get(4).getBoard_image(), listViewItemList.get(4).getBoard_name(), boardList.get(4).getTitle());
-                                            adapter.addItem(listViewItemList.get(5).getNo(), listViewItemList.get(5).getBoard_image(), listViewItemList.get(5).getBoard_name(), boardList.get(5).getTitle());
+                                        String temp = "{\"장애인 게시판\": \"0\", \"저소득 게시판\": \"1\",\"다문화 게시판\": \"2\",\"고령자 게시판\": \"3\",\"한부모 게시판\": \"4\",\"자유 게시판\": \"5\"}";
+                                        JSONObject tt = new JSONObject(temp);
+                                        if (listViewItemList != null) {
+                                            adapter.addItem(listViewItemList.get(0).getNo(), listViewItemList.get(0).getBoard_image(), listViewItemList.get(0).getBoard_name(), boardList.get(Integer.parseInt((String) tt.get(listViewItemList.get(0).getBoard_name()))).getTitle(), boardList.get(Integer.parseInt((String) tt.get(listViewItemList.get(0).getBoard_name()))).getId());
+                                            adapter.addItem(listViewItemList.get(1).getNo(), listViewItemList.get(1).getBoard_image(), listViewItemList.get(1).getBoard_name(), boardList.get(Integer.parseInt((String) tt.get(listViewItemList.get(1).getBoard_name()))).getTitle(), boardList.get(Integer.parseInt((String) tt.get(listViewItemList.get(1).getBoard_name()))).getId());
+                                            adapter.addItem(listViewItemList.get(2).getNo(), listViewItemList.get(2).getBoard_image(), listViewItemList.get(2).getBoard_name(), boardList.get(Integer.parseInt((String) tt.get(listViewItemList.get(2).getBoard_name()))).getTitle(), boardList.get(Integer.parseInt((String) tt.get(listViewItemList.get(2).getBoard_name()))).getId());
+                                            adapter.addItem(listViewItemList.get(3).getNo(), listViewItemList.get(3).getBoard_image(), listViewItemList.get(3).getBoard_name(), boardList.get(Integer.parseInt((String) tt.get(listViewItemList.get(3).getBoard_name()))).getTitle(), boardList.get(Integer.parseInt((String) tt.get(listViewItemList.get(3).getBoard_name()))).getId());
+                                            adapter.addItem(listViewItemList.get(4).getNo(), listViewItemList.get(4).getBoard_image(), listViewItemList.get(4).getBoard_name(), boardList.get(Integer.parseInt((String) tt.get(listViewItemList.get(4).getBoard_name()))).getTitle(), boardList.get(Integer.parseInt((String) tt.get(listViewItemList.get(4).getBoard_name()))).getId());
+                                            adapter.addItem(listViewItemList.get(5).getNo(), listViewItemList.get(5).getBoard_image(), listViewItemList.get(5).getBoard_name(), boardList.get(Integer.parseInt((String) tt.get(listViewItemList.get(5).getBoard_name()))).getTitle(), boardList.get(Integer.parseInt((String) tt.get(listViewItemList.get(5).getBoard_name()))).getId());
+                                        } else {
+                                            adapter.addItem(0, R.drawable.star_white, "장애인 게시판", boardList.get(0).getTitle(), boardList.get(0).getId());
+                                            adapter.addItem(1, R.drawable.star_white, "저소득 게시판", boardList.get(1).getTitle(), boardList.get(1).getId());
+                                            adapter.addItem(2, R.drawable.star_white, "다문화 게시판", boardList.get(2).getTitle(), boardList.get(2).getId());
+                                            adapter.addItem(3, R.drawable.star_white, "고령자 게시판", boardList.get(3).getTitle(), boardList.get(3).getId());
+                                            adapter.addItem(4, R.drawable.star_white, "한부모 게시판", boardList.get(4).getTitle(), boardList.get(4).getId());
+                                            adapter.addItem(5, R.drawable.star_white, "자유 게시판", boardList.get(5).getTitle(), boardList.get(5).getId());
                                         }
-                                        else{
-                                            adapter.addItem(0, R.drawable.star_white, "장애인 게시판", boardList.get(0).getTitle());
-                                            adapter.addItem(1, R.drawable.star_white, "저소득 게시판", boardList.get(1).getTitle());
-                                            adapter.addItem(2, R.drawable.star_white, "다문화 게시판", boardList.get(2).getTitle());
-                                            adapter.addItem(3, R.drawable.star_white, "고령자 게시판", boardList.get(3).getTitle());
-                                            adapter.addItem(4, R.drawable.star_white, "한부모 게시판", boardList.get(4).getTitle());
-                                            adapter.addItem(5, R.drawable.star_white, "자유게시판", boardList.get(5).getTitle());
-                                        }
-                                    }catch(IndexOutOfBoundsException e){
-                                        Log.d("error","board error");
+                                    } catch (IndexOutOfBoundsException e) {
+                                        Log.d("error", "board error");
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
                                     }
-                                    gojung=false;
+                                    gojung = false;
                                 }
-                            }
-                            else{
+                            } else {
                                 jsonReader.skipValue();
                             }
                         }
@@ -237,17 +239,16 @@ public class fragment_home extends Fragment {
                         jsonReader.close();
                         myconnection.disconnect();
 
-                    }else{
-                        Log.d("api 연결","error 200아님");
+                    } else {
+                        Log.d("api 연결", "error 200아님");
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Log.d("api 연결","tru catch 에러뜸");
+                    Log.d("api 연결", "tru catch 에러뜸");
                 }
             }
         });
         /**홈에 들어온 경우 main 에서 찜이랑 게시판 받아오는 부분 end*/
-
 
 
         /**자동 이미지 배너*/
@@ -281,14 +282,16 @@ public class fragment_home extends Fragment {
         return view;
     }
 
-    /**api에서 받은 high 처리부분*/
+    /**
+     * api에서 받은 high 처리부분
+     */
     public List<DataHigh> read_high(JsonReader reader) throws IOException {
         List<DataHigh> temp = new ArrayList<DataHigh>();
         reader.beginArray();
-        while(reader.hasNext()){
+        while (reader.hasNext()) {
             DataHigh dh = new DataHigh();
             reader.beginObject();
-            while(reader.hasNext()){
+            while (reader.hasNext()) {
                 String name = reader.nextName();
                 if (name.equals("id")) {
                     dh.setId(reader.nextInt());
@@ -313,15 +316,17 @@ public class fragment_home extends Fragment {
     }
 
 
-    /**api에서 받은 zzim 처리부분*/
-    public List<DataZzim> read_zzim(JsonReader reader) throws IOException{
+    /**
+     * api에서 받은 zzim 처리부분
+     */
+    public List<DataZzim> read_zzim(JsonReader reader) throws IOException {
         List<DataZzim> temp = new ArrayList<DataZzim>();
         reader.beginArray();
-        while(reader.hasNext()){
+        while (reader.hasNext()) {
             DataZzim dz = new DataZzim();
             reader.beginObject();
-            while(reader.hasNext()) {
-                String name = reader.nextString();
+            while (reader.hasNext()) {
+                String name = reader.nextName();
                 if (name.equals("id")) {
                     dz.setId(reader.nextInt());
                 } else if (name.equals("title")) {
@@ -338,54 +343,57 @@ public class fragment_home extends Fragment {
         reader.endArray();
         return temp;
     }
+
     public DataBoard setdb(JsonReader reader, DataBoard db) throws IOException {
         reader.beginObject();
-        while(reader.hasNext()){
+        while (reader.hasNext()) {
             String nm = reader.nextName();
-            if(nm.equals("id")){
+            if (nm.equals("id")) {
                 db.setId(reader.nextInt());
-            }
-            else if(nm.equals("title")){
+            } else if (nm.equals("title")) {
                 db.setTitle(reader.nextString());
-            }else{
+            } else {
                 reader.skipValue();
             }
         }
         reader.endObject();
         return db;
     }
-    /**api에서 받은 board 처리부분*/
-    public List<DataBoard> read_board(JsonReader reader) throws IOException{
+
+    /**
+     * api에서 받은 board 처리부분
+     */
+    public List<DataBoard> read_board(JsonReader reader) throws IOException {
         List<DataBoard> temp = new ArrayList<DataBoard>();
         reader.beginObject();
-        while(reader.hasNext()){
+        while (reader.hasNext()) {
             DataBoard db = new DataBoard();
             String name = reader.nextName();
-            if(name.equals("0")){
+            if (name.equals("0")) {
                 db.setBoard(name);          //board 어떤 건지 지정
-                db = setdb(reader,db);
+                db = setdb(reader, db);
                 temp.add(db);
-            }else if(name.equals("1")){
+            } else if (name.equals("1")) {
                 db.setBoard(name);          //board 어떤 건지 지정
-                db = setdb(reader,db);
+                db = setdb(reader, db);
                 temp.add(db);
-            }else if(name.equals("2")){
+            } else if (name.equals("2")) {
                 db.setBoard(name);          //board 어떤 건지 지정
-                db = setdb(reader,db);
+                db = setdb(reader, db);
                 temp.add(db);
-            }else if(name.equals("3")){
+            } else if (name.equals("3")) {
                 db.setBoard(name);          //board 어떤 건지 지정
-                db = setdb(reader,db);
+                db = setdb(reader, db);
                 temp.add(db);
-            }else if(name.equals("4")){
+            } else if (name.equals("4")) {
                 db.setBoard(name);          //board 어떤 건지 지정
-                db = setdb(reader,db);
+                db = setdb(reader, db);
                 temp.add(db);
-            }else if(name.equals("5")){
+            } else if (name.equals("5")) {
                 db.setBoard(name);          //board 어떤 건지 지정
-                db = setdb(reader,db);
+                db = setdb(reader, db);
                 temp.add(db);
-            }else{
+            } else {
                 reader.skipValue();
             }
         }
@@ -408,20 +416,31 @@ public class fragment_home extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
-            case R.id.mypage_btn :
+        switch (item.getItemId()) {
+            case R.id.mypage_btn:
                 Intent intent = new Intent(getActivity(), activity_mypage.class);
                 startActivity(intent);
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
-    /** 사진 클릭 하이퍼링크*/
-    public void imageclick(View view){
-        bokjiro = (ImageView)view.findViewById(R.id.bokjiro);
-        bokjiro.setOnClickListener(new View.OnClickListener(){
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        MainActivity activity = (MainActivity) getActivity();
+        activity.Shared_user_info.edit().putString("home_interest",null).apply();
+    }
+
+
+    /**
+     * 사진 클릭 하이퍼링크
+     */
+    public void imageclick(View view) {
+        bokjiro = (ImageView) view.findViewById(R.id.bokjiro);
+        bokjiro.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_VIEW);
                 intent.addCategory(Intent.CATEGORY_BROWSABLE);
@@ -429,10 +448,10 @@ public class fragment_home extends Fragment {
                 startActivity(intent);
             }
         });
-        jeongbu = (ImageView)view.findViewById(R.id.jeongbu);
-        jeongbu.setOnClickListener(new View.OnClickListener(){
+        jeongbu = (ImageView) view.findViewById(R.id.jeongbu);
+        jeongbu.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_VIEW);
                 intent.addCategory(Intent.CATEGORY_BROWSABLE);
@@ -440,10 +459,10 @@ public class fragment_home extends Fragment {
                 startActivity(intent);
             }
         });
-        sarang = (ImageView)view.findViewById(R.id.sarang);
-        sarang.setOnClickListener(new View.OnClickListener(){
+        sarang = (ImageView) view.findViewById(R.id.sarang);
+        sarang.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_VIEW);
                 intent.addCategory(Intent.CATEGORY_BROWSABLE);
@@ -451,6 +470,56 @@ public class fragment_home extends Fragment {
                 startActivity(intent);
             }
         });
+    }
 
+    public void popular_zzim_click(TextView popular_title1, TextView popular_title2, TextView popular_title3, TextView zzim1, TextView zzim2, TextView zzim3){
+        popular_title1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), activity_community_post.class);
+                intent.putExtra("data", Integer.toString(highList.get(0).getId()));
+                getActivity().startActivity(intent);
+            }
+        });
+        popular_title2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), activity_community_post.class);
+                intent.putExtra("data", Integer.toString(highList.get(1).getId()));
+                getActivity().startActivity(intent);
+            }
+        });
+        popular_title3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), activity_community_post.class);
+                intent.putExtra("data", Integer.toString(highList.get(2).getId()));
+                getActivity().startActivity(intent);
+            }
+        });
+        zzim1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), activity_support_post.class);
+                intent.putExtra("data", Integer.toString(zzimList.get(0).getId()));
+                getActivity().startActivity(intent);
+            }
+        });
+        zzim2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), activity_support_post.class);
+                intent.putExtra("data", Integer.toString(zzimList.get(1).getId()));
+                getActivity().startActivity(intent);
+            }
+        });
+        zzim3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), activity_support_post.class);
+                intent.putExtra("data", Integer.toString(zzimList.get(2).getId()));
+                getActivity().startActivity(intent);
+            }
+        });
     }
 }

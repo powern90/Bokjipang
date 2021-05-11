@@ -2,6 +2,7 @@ package com.bluemango.bokjipang;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,6 +41,7 @@ public class home_listview_adapter extends BaseAdapter {
         Shared_user_info = context.getSharedPreferences("user_id", MODE_PRIVATE);
         Shared_user_info = context.getSharedPreferences("user_pwd", MODE_PRIVATE);
         Shared_user_info = context.getSharedPreferences("home_interest", MODE_PRIVATE);
+        Shared_user_info = context.getSharedPreferences("sup_zzim_list", MODE_PRIVATE);
 
     }
 
@@ -93,6 +95,9 @@ public class home_listview_adapter extends BaseAdapter {
             }
         };
         listViewItemList.sort(noAsc);
+        gson = new GsonBuilder().create();
+        String user_info = gson.toJson(listViewItemList);
+        Shared_user_info.edit().putString("home_interest", user_info).apply();
         notifyDataSetChanged();
 
         /**별 누른 경우,,, 여기서 api 통신으로 즐겨찾기도 변경해줘야함*/
@@ -140,16 +145,30 @@ public class home_listview_adapter extends BaseAdapter {
                 notifyDataSetChanged();
             }
         });
+
+
+        boardtitle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, activity_community_post.class);
+                intent.putExtra("data", Integer.toString(listViewItem.getIdx()));
+                context.startActivity(intent);
+            }
+        });
         return view;
     }
+
+
+
     public ArrayList<home_listview_item> getItemList() {
         return listViewItemList ;
     }
     // 아이템 데이터 추가를 위한 함수. 개발자가 원하는대로 작성 가능.
-    public void addItem(int no, int image,String name, String title) {
+    public void addItem(int no, int image,String name, String title, int idx) {
         home_listview_item item = new home_listview_item();
 
         item.setNo(no);
+        item.setIdx(idx);
         item.setBoard_image(image);
         item.setBoard_name(name);
         item.setBoard_title(title);

@@ -98,7 +98,7 @@ public class fragment_support extends Fragment {
             }
         };
 
-        run_api(handler);
+        run_api_add(handler);
 
         SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_sup);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -107,7 +107,7 @@ public class fragment_support extends Fragment {
                 board = 0;
                 count = 1;
                 list.clear();
-                run_api(handler);
+                run_api_add(handler);
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
@@ -181,64 +181,23 @@ public class fragment_support extends Fragment {
             dataSup.setTitle(tt.getString("title"));
             dataSup.setContent(tt.getString("content").replace("\n","<br>").replace("\t",""));
             dataSup.setDate(tt.getString("createdAt"));
+            dataSup.setIdx(Integer.toString(tt.getInt("id")));
+            dataSup.setUrl(tt.getString("url"));
             tmp.add(dataSup);
         }
         return tmp;
     }
 
-    public void run_api(Handler handler){
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        String category = "?support="+ Integer.toString(board);
-        executor.execute(new Runnable(){
-            @Override
-            public void run(){
-                try {
-                    /**url에 http 로 하는 경우는 HttpURLConnection 으로 해야하고, url에 https인 경우는 HttpsURLConnection 으로 만들어야함*/
-                    URL url = new URL("https://api.bluemango.site/support"+category);
-                    HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
-                    myconnection.setRequestMethod("GET");  //post, get 나누기
-                    myconnection.setRequestProperty ("Content-Type","application/json"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
-                    myconnection.setRequestProperty("x-access-token", user_token); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
-
-                    if(myconnection.getResponseCode() == 200){
-                        /** 리스폰스 데이터 받는 부분*/
-                        BufferedReader br = new BufferedReader(new InputStreamReader(myconnection.getInputStream()));
-                        StringBuilder sb = new StringBuilder();
-                        String line = "";
-                        while((line = br.readLine())!=null){
-                            sb.append(line);
-                        }
-                        responseJson = new JSONObject(sb.toString());
-                        try {
-                            JSONArray array = responseJson.getJSONArray("posts");
-                            list = make_support_item(array, list);
-                            Message msg = handler.obtainMessage();
-                            handler.sendMessage(msg);
-                        } catch (JSONException | IOException e) {
-                            e.printStackTrace();
-                        }
-                    }else{
-                        Log.d("api 연결","error : " + Integer.toString(myconnection.getResponseCode()));
-                    }
-                } catch (IOException | JSONException e) {
-                    e.printStackTrace();
-                    Log.d("api 연결","tru catch 에러뜸");
-                }
-            }
-        });
-    }
 
     public void run_api_add(Handler handler){
         ExecutorService executor = Executors.newSingleThreadExecutor();
         String category = "?support="+ Integer.toString(board)+ "&index="+Integer.toString(count);
-        Log.d("token", user_token);
-        Log.d("here", category);
         executor.execute(new Runnable(){
             @Override
             public void run(){
                 try {
                     /**url에 http 로 하는 경우는 HttpURLConnection 으로 해야하고, url에 https인 경우는 HttpsURLConnection 으로 만들어야함*/
-                    URL url = new URL("https://api.bluemango.site/support"+category);
+                    URL url = new URL("https://api.bluemango.site/support/add"+category);
                     HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
                     myconnection.setRequestMethod("GET");  //post, get 나누기
                     myconnection.setRequestProperty ("Content-Type","application/json"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
@@ -253,6 +212,8 @@ public class fragment_support extends Fragment {
                             sb.append(line);
                         }
                         responseJson = new JSONObject(sb.toString());
+                        Log.d("board : " ,Integer.toString(board)+ "  /  index : "+Integer.toString(count));
+                        Log.d("token : " , user_token);
                         try {
                             JSONArray array = responseJson.getJSONArray("posts");
                             list = make_support_item(array, list);

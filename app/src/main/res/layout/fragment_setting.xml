@@ -19,7 +19,7 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/board_inform"
         android:layout_width="match_parent"
-        android:layout_height="185dp"
+        android:layout_height="215dp"
         android:layout_gravity="center"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
@@ -46,11 +46,20 @@
             android:text="내 게시물 관리"
             android:clickable="true"/>
         <TextView
-            android:id="@+id/rule"
+            android:id="@+id/my_zzim_sup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
             android:layout_marginTop="95dp"
+            android:textColor="@color/black"
+            android:text="찜한 지원 사업"
+            android:clickable="true"/>
+        <TextView
+            android:id="@+id/rule"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="135dp"
             android:textColor="@color/black"
             android:clickable="true"
             android:text="게시판 이용규칙"/>
@@ -59,7 +68,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
-            android:layout_marginTop="135dp"
+            android:layout_marginTop="175dp"
             android:textColor="@color/black"
             android:clickable="true"
             android:text="이용 제한 내역"/>
