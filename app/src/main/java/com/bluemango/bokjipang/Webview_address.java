@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
@@ -30,7 +31,7 @@ public class Webview_address extends Fragment {
     private WebView webView;
     private Handler handler;
     JSONObject js = new JSONObject();
-
+    int gotowhere;
     View view;
     @Override
     public View onCreateView(LayoutInflater layoutInflater, @Nullable ViewGroup container, @Nullable Bundle saveInstanceState) {
@@ -39,6 +40,7 @@ public class Webview_address extends Fragment {
         /**회원가입에서 작성해놓은 데이터들 json으로 저장*/
         Bundle bundle2= getArguments();
         if(bundle2!=null){
+            gotowhere=0;
             try {
                 js.put("input_phone",bundle2.getString("input_phone"));
                 js.put("first_password",bundle2.getString("first_password"));
@@ -51,6 +53,9 @@ public class Webview_address extends Fragment {
                 e.printStackTrace();
             }
         }
+        else{
+            gotowhere=1;
+        }
 
         init_webView();
         handler = new Handler();
@@ -60,9 +65,11 @@ public class Webview_address extends Fragment {
         webView = (WebView) view.findViewById(R.id.webview_address);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
-        webView.addJavascriptInterface(new AndroidBridge(), "TestApp");
+        webView.addJavascriptInterface(new AndroidBridge(), "Bokjipang");
         webView.setWebChromeClient(new WebChromeClient());
-        webView.loadUrl("http://223.194.43.116:80/address.html");
+        webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        webView.loadUrl("https://api.bluemango.site/address");
+
     }
 
 
@@ -73,25 +80,34 @@ public class Webview_address extends Fragment {
                 @Override
                 public void run() {
                     fragment_signup fragment_signup = new fragment_signup();
+                    fragment_changeui fragment_changeui = new fragment_changeui();
                     Bundle bundle = new Bundle();
                     /** fragment_singup에서 받아온 string들 다시 넣어주기*/
                     bundle.putString("arg1",arg1);
                     bundle.putString("arg2",arg2);
                     bundle.putString("arg3",arg3);
-                    Iterator<String> iterator = js.keys();
-                    while(iterator.hasNext()){
-                        String key = (String)iterator.next();
-                        try {
-                            Object value = js.get(key);
-                            bundle.putString(key, (String) value);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                    if(gotowhere==0) {
+                        Iterator<String> iterator = js.keys();
+                        while (iterator.hasNext()) {
+                            String key = (String) iterator.next();
+                            try {
+                                Object value = js.get(key);
+                                bundle.putString(key, (String) value);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         }
+                        fragment_signup.setArguments(bundle);
+                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                        transaction.replace(R.id.fragment_container, fragment_signup);
+                        transaction.commit();
                     }
-                    fragment_signup.setArguments(bundle);
-                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                    transaction.replace(R.id.fragment_container, fragment_signup);
-                    transaction.commit();
+                    else if(gotowhere==1){
+                        fragment_changeui.setArguments(bundle);
+                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                        transaction.replace(R.id.fragment_container, fragment_changeui);
+                        transaction.commit();
+                    }
                 }
             });
         }

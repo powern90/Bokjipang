@@ -38,11 +38,15 @@ public class fragment_changeui extends Fragment {
         String phone = activity_mypage.Shared_user_info.getString("phone", null);
         String user_token = activity_mypage.Shared_user_info.getString("token", null);
 
+        EditText new_address_txt = (EditText)view.findViewById(R.id.new_address_txt);
         EditText new_name_txt = (EditText)view.findViewById(R.id.new_name_txt);
         EditText current_phone_txt = (EditText)view.findViewById(R.id.current_phone_txt);
         new_name_txt.setText(name);
         current_phone_txt.setText(phone);
 
+        Bundle bundle = getArguments();
+        if(bundle!=null)
+            new_address_txt.setText(String.format("(%s) %s %s", bundle.getString("arg1"), bundle.getString("arg2"), bundle.getString("arg3")));
 
         Webview_address = new Webview_address();
 
@@ -75,7 +79,6 @@ public class fragment_changeui extends Fragment {
 
 
         /**버튼 클릭시 주소 변경*/
-        EditText new_address_txt = (EditText)view.findViewById(R.id.new_address_txt);
 
         Button btn_changeui = (Button)view.findViewById(R.id.btn_changeui);
         btn_changeui.setOnClickListener(new View.OnClickListener(){
