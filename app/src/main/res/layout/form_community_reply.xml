@@ -4,31 +4,79 @@
     android:layout_width="match_parent"
     android:layout_marginRight="5dp"
     android:layout_marginLeft="5dp"
+    android:layout_marginBottom="5dp"
     android:orientation="vertical"
-    android:id="@+id/form_reply"
-    android:layout_height="wrap_content">
+    android:id="@+id/reply_all"
+    android:layout_height="60dp">
+    <View
+        android:id="@+id/reply_standard"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="2dp"
+        android:layout_height="1dp"
+        android:background="#A3A0A0"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:orientation="horizontal">
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:orientation="horizontal">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:id="@+id/form_reply"
+                android:orientation="vertical">
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/reply_content"
+                android:orientation="vertical">
+            <TextView
+                android:id="@+id/nickname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="1"
+                android:textStyle="bold"
+                tools:ignore="MissingConstraints" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/nickname"
-        android:textSize="10sp"
-        android:layout_marginLeft="10dp"
-        tools:ignore="MissingConstraints" />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/content"
-        android:textSize="8sp"
-        android:layout_marginLeft="10dp"
-        tools:ignore="MissingConstraints" />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/date"
-        android:textSize="7sp"
-        android:layout_marginLeft="10dp"
-        tools:ignore="InvalidId,MissingConstraints" />
+            <TextView
+                android:id="@+id/content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                tools:ignore="MissingConstraints" />
+
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="10dp"
+                android:layout_marginLeft="10dp"
+                tools:ignore="InvalidId,MissingConstraints" />
+            </LinearLayout>
+
+        </LinearLayout>
+        <ImageView
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:layout_gravity="center|right"
+            android:src="@drawable/normal_heart" />
+
+        <ImageView
+            android:id="@+id/reply_img"
+            android:layout_width="15dp"
+            android:layout_height="17dp"
+            android:layout_gravity="center|right"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/comment" />
+
+    </LinearLayout>
+
 
 </LinearLayout>

@@ -26,7 +26,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -88,8 +92,14 @@ public class activity_community_post extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 try {
-                    createtime.setText(view_post.getString("createdAt"));
-                } catch (JSONException e) {
+                    SimpleDateFormat old_format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                    old_format.setTimeZone(TimeZone.getTimeZone("KST"));
+                    SimpleDateFormat new_format = new SimpleDateFormat("MM/dd HH:mm");
+                    Date old_date = null;
+                    old_date = old_format.parse(view_post.getString("createdAt"));
+                    String new_date =  new_format.format(old_date);
+                    createtime.setText(new_date);
+                } catch (JSONException | ParseException e) {
                     e.printStackTrace();
                 }
                 for(int i = 0 ; i<view_reply.length() ; i++ ){
