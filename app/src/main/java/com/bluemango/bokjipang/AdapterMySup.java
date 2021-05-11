@@ -93,5 +93,9 @@ public class AdapterMySup extends RecyclerView.Adapter<AdapterMySup.ViewHolder>{
         else return mData.size() ;
     }
 
+    public void update_mysup_list(ArrayList<mypost_listview_item> list){
+        mData= list;
+        this.notifyDataSetChanged();
+    }
 
 }
