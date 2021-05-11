@@ -76,7 +76,7 @@ public class fragment_my_zzim_sup extends Fragment {
             public void handleMessage(Message msg){
                 int pos=0;
                 if(adapter != null){
-                    adapter.notifyDataSetChanged();
+                    adapter.update_mysup_list(list);
                     recyclerView.scrollToPosition(adapter.getItemCount()-22);              //이 부분 나중에 맞춰서 바꿔줘야할듯, 여기 위로 새로고침할때도 들어옴
                     recyclerView.setAdapter(adapter);
                     return;
