@@ -164,6 +164,13 @@ public class activity_support_post extends AppCompatActivity {
 
     }
 
+//    @Override
+//    public void onBackPressed() {
+//        super.onBackPressed();
+//        Intent intent = new Intent(this, MainActivity.class);
+//        startActivity(intent);
+//    }
+
     public static Spanned fromHtml(String source) {
         if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.N) {
             return Html.fromHtml(source);
@@ -246,4 +253,5 @@ public class activity_support_post extends AppCompatActivity {
             }
         });
     }
+
 }

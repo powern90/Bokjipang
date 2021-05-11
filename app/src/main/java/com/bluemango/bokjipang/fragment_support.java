@@ -212,6 +212,8 @@ public class fragment_support extends Fragment {
                             sb.append(line);
                         }
                         responseJson = new JSONObject(sb.toString());
+                        Log.d("board : " ,Integer.toString(board)+ "  /  index : "+Integer.toString(count));
+                        Log.d("token : " , user_token);
                         try {
                             JSONArray array = responseJson.getJSONArray("posts");
                             list = make_support_item(array, list);
