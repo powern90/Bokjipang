@@ -79,6 +79,7 @@ public class fragment_home extends Fragment {
 
         MainActivity activity = (MainActivity) getActivity();
         user_token = activity.Shared_user_info.getString("token", null);
+        Log.d("token : ", user_token);
         String info_tmp = activity.Shared_user_info.getString("user_info", null);
         if (info_tmp != null) {
             try {

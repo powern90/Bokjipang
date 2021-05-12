@@ -82,7 +82,7 @@ public class fragment_my_zzim_sup extends Fragment {
                     return;
                 }
                 else {
-                    adapter = new AdapterMySup(getActivity(), list);
+                    adapter = new AdapterMySup(getActivity(), list,user_token);
                 }
                 recyclerView.setVerticalScrollbarPosition(pos-1);                   //이 부분때문에 무조건 처음으로 가게 된것
                 recyclerView.setAdapter(adapter);

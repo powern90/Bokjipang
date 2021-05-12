@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -11,6 +12,7 @@ import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.app.AlertDialog;
 
@@ -26,6 +28,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -60,7 +66,6 @@ public class activity_support_post extends AppCompatActivity {
         createtime = (TextView) findViewById(R.id.post_time);
         title = (TextView) findViewById(R.id.title);
         content = (TextView) findViewById(R.id.content);
-        url = (TextView) findViewById(R.id.str_url);
 
         Intent intent = getIntent();
         sup_idx=intent.getStringExtra("data");
@@ -92,8 +97,17 @@ public class activity_support_post extends AppCompatActivity {
             public void handleMessage(Message msg){
                 content.setText(fromHtml(j_content.replace("\n","<br>").replace("\t","")));
                 title.setText(j_title);
-                createtime.setText(j_createdAt);
-                url.setText(j_url);
+                SimpleDateFormat old_format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                old_format.setTimeZone(TimeZone.getTimeZone("KST"));
+                SimpleDateFormat new_format = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+                Date old_date = null;
+                try {
+                    old_date = old_format.parse(j_createdAt);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                String new_date =  new_format.format(old_date);
+                createtime.setText(new_date);
             }
         };
 
@@ -121,9 +135,10 @@ public class activity_support_post extends AppCompatActivity {
                         responseJson = new JSONObject(sb.toString());
                         try {
                             JSONObject a = new JSONObject();
+                            String match = "[^\uAC00-\uD7A3xfe0-9a-zA-Z\\s]";
                             a =responseJson.getJSONObject("post");
-                            j_title = a.getString("title");
-                            j_content = a.getString("content");
+                            j_title = a.getString("title").replaceAll(match, "");
+                            j_content = a.getString("content").replaceAll("\\p{P}" ,"");
                             j_url = a.getString("url");
                             j_createdAt = a.getString("createdAt");
                             j_updatedAt = a.getString("updatedAt");
@@ -143,7 +158,17 @@ public class activity_support_post extends AppCompatActivity {
             }
         });
 
-
+        Button url_button = findViewById(R.id.url_button);
+        url_button.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.addCategory(Intent.CATEGORY_BROWSABLE);
+                intent.setData(Uri.parse(j_url));
+                startActivity(intent);
+            }
+        });
 
         FloatingActionButton plus_btn = findViewById(R.id.plus_btn);
         FloatingActionButton sub_btn = findViewById(R.id.sub_btn);
