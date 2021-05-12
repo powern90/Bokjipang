@@ -3,11 +3,14 @@ package com.bluemango.bokjipang;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
@@ -77,6 +80,13 @@ public class activity_comu_add extends AppCompatActivity {
         comu_category.setText(category_list.get(category_num).concat(" 게시판"));
         Log.d("comu_Add totken : ",user_token);
 
+        @SuppressLint("HandlerLeak") final Handler handler = new Handler()
+        {
+            public void handleMessage(Message msg){
+                fm.beginTransaction().replace(R.id.fragment_container,fragment_community).commit();
+            }
+        };
+
         String category = category_list.get(category_num);                          //해당 카테고리에 따라 글 작성하도록 변경
         back_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,8 +123,9 @@ public class activity_comu_add extends AppCompatActivity {
                                 }
                                 responseJson = new JSONObject(sb.toString());
                                 if(responseJson.getBoolean("success")) {
-                                   // fm.beginTransaction().replace(R.id.fragment_container,fragment_community).commit();
-                                    finish();
+                                    //finish();
+                                    Message msg = handler.obtainMessage();
+                                    handler.sendMessage(msg);
                                 }
                             }else{
                                 Log.d("api 연결","error : " + Integer.toString(myconnection.getResponseCode()));

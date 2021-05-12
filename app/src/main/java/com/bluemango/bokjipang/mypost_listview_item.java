@@ -13,5 +13,5 @@ public class mypost_listview_item {
     public String get_content(){return this.content;}
     public String get_like(){return this.like;}
     public String get_comment(){return this.comment;}
-    public int getIdx(){return this.idx;}
+    public String getIdx(){return this.idx;}
 }

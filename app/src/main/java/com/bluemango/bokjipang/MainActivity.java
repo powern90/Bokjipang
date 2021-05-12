@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private fragment_setting fragment_set = new fragment_setting();
     private fragment_support fragment_sup = new fragment_support();
     private fragment_login fragment_login = new fragment_login();
+    private long backBtnTime = 0;
     SharedPreferences Shared_auto_login;
     SharedPreferences Shared_user_info;
 
@@ -178,9 +180,21 @@ public class MainActivity extends AppCompatActivity {
             if(notificationData != null)
                 Log.d("FCM_TEST", notificationData);
         }
+    }
 
+    /**뒤로가기시 앱 안꺼지게 하기*/
+    @Override
+    public void onBackPressed() {
+        long curTime = System.currentTimeMillis();
+        long gapTime = curTime - backBtnTime;
 
-
+        if(0 <= gapTime && 2000 >= gapTime) {
+            super.onBackPressed();
+        }
+        else {
+            backBtnTime = curTime;
+            Toast.makeText(this, "한번 더 누르면 종료됩니다.",Toast.LENGTH_SHORT).show();
+        }
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener =
@@ -240,4 +254,6 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 }
             };
+
+
 }

@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.view.menu.MenuView;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONException;
@@ -38,6 +39,11 @@ public class mypost_listview_adapter extends RecyclerView.Adapter<mypost_listvie
     private Context context = null;
     JSONObject responseJson;
     String user_token;
+
+    public mypost_listview_adapter(FragmentActivity activity, ArrayList<mypost_listview_item> list) {
+        this.context = activity;
+        this.mData = list;
+    }
 
     // 아이템 뷰를 저장하는 뷰홀더 클래스.
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -74,7 +80,7 @@ public class mypost_listview_adapter extends RecyclerView.Adapter<mypost_listvie
                     success_alert.create().show();
                     ArrayList<mypost_listview_item> list = mData;
                     mypost_listview_item dataitem = list.get(getAdapterPosition());
-                    my_post_delete(dataitem.getIdx(), user_token);
+                    my_post_delete(Integer.parseInt(dataitem.getIdx()), user_token);
                 }
             });
 
