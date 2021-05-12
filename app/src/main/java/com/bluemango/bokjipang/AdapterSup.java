@@ -71,9 +71,10 @@ public class AdapterSup extends RecyclerView.Adapter<AdapterSup.ViewHolder>{
     // onBindViewHolder() - position에 해당하는 데이터를 뷰홀더의 아이템뷰에 표시.
     @Override
     public void onBindViewHolder(AdapterSup.ViewHolder holder, int position) {
-        DataSup text = mData.get(position) ;
-        holder.title.setText(text.getTitle());
-        holder.content.setText(text.getContent());
+        DataSup text = mData.get(position);
+        String match = "[^\uAC00-\uD7A3xfe0-9a-zA-Z\\s]";
+        holder.title.setText(text.getTitle().replaceAll(match, ""));
+        holder.content.setText(text.getContent().replaceAll(match, "").replaceAll("br", ""));
     }
 
     // getItemCount() - 전체 데이터 갯수 리턴.

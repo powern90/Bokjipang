@@ -1,6 +1,7 @@
 package com.bluemango.bokjipang;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 
 import android.app.Activity;
 import android.content.Context;
@@ -45,6 +46,9 @@ public class activity_comu_add extends AppCompatActivity {
     Activity activity;
     Context context;
     Intent intent;
+    final FragmentManager fm = getSupportFragmentManager();
+    fragment_community fragment_community = new fragment_community();
+
     int category_num;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +112,10 @@ public class activity_comu_add extends AppCompatActivity {
                                     sb.append(line);
                                 }
                                 responseJson = new JSONObject(sb.toString());
-                                Log.d("커뮤니티 글쓰기 성공?",responseJson.getString("success"));
+                                if(responseJson.getBoolean("success")) {
+                                   // fm.beginTransaction().replace(R.id.fragment_container,fragment_community).commit();
+                                    finish();
+                                }
                             }else{
                                 Log.d("api 연결","error : " + Integer.toString(myconnection.getResponseCode()));
                             }
