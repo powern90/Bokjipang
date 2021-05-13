@@ -87,17 +87,7 @@ public class activity_comu_add extends AppCompatActivity {
         @SuppressLint("HandlerLeak") final Handler handler = new Handler()
         {
             public void handleMessage(Message msg){
-//                ((MainActivity)MainActivity.context).
-//                fm.beginTransaction().replace(R.id.fragment_container,fragment_community).commit();
-
-                Intent intent = new Intent(activity, MainActivity.class);
-                intent.putExtra("goto","true");
-                startActivity(intent);
-//                Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container3);
-//                FragmentManager fragmentManager = getSupportFragmentManager();
-//                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//                fragmentTransaction.replace(R.id.fragment_container, fragment);
-//                fragmentTransaction.commit();
+                finish();
             }
         };
 

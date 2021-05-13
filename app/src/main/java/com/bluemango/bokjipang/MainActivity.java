@@ -147,15 +147,6 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
-        /**개 줯같이 짠 코드입니다.*/
-        Intent intent = getIntent();
-        String board_idx = intent.getStringExtra("goto");
-        if(intent!=null && board_idx !=null) {
-            if (board_idx.equals("true")) {
-                fm.beginTransaction().replace(R.id.fragment_container, fragment_comu).commit();
-                return;
-            }
-        }
 
         if(Shared_auto_login.getBoolean("login",false)){
             bottomNavigationView.setVisibility(View.VISIBLE);
