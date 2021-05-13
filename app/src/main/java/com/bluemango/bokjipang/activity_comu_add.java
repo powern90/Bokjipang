@@ -1,7 +1,9 @@
 package com.bluemango.bokjipang;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -16,6 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -58,6 +61,7 @@ public class activity_comu_add extends AppCompatActivity {
         intent = getIntent();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comu_add);
+        activity = this;
 
         title = findViewById(R.id.comu_title);
         content = findViewById(R.id.comu_content);
@@ -83,7 +87,17 @@ public class activity_comu_add extends AppCompatActivity {
         @SuppressLint("HandlerLeak") final Handler handler = new Handler()
         {
             public void handleMessage(Message msg){
-                fm.beginTransaction().replace(R.id.fragment_container,fragment_community).commit();
+//                ((MainActivity)MainActivity.context).
+//                fm.beginTransaction().replace(R.id.fragment_container,fragment_community).commit();
+
+                Intent intent = new Intent(activity, MainActivity.class);
+                intent.putExtra("goto","true");
+                startActivity(intent);
+//                Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container3);
+//                FragmentManager fragmentManager = getSupportFragmentManager();
+//                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//                fragmentTransaction.replace(R.id.fragment_container, fragment);
+//                fragmentTransaction.commit();
             }
         };
 

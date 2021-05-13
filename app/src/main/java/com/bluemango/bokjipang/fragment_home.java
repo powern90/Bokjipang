@@ -29,7 +29,11 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -69,8 +73,9 @@ public class fragment_home extends Fragment {
     List<DataBoard> boardList;
     List<DataHigh> highList;
     ArrayList<home_listview_item> itemList = new ArrayList<home_listview_item>();
-    JSONObject user_info, user_interest;
+    JSONObject user_info, user_interest,responseJson;
     String user_token;
+
 
     @SuppressLint("ClickableViewAccessibility")
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -88,6 +93,61 @@ public class fragment_home extends Fragment {
                 e.printStackTrace();
             }
         }
+
+        /**알림 토큰 제출*/
+        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            Log.d("error","firebase error");
+                            return;
+                        }
+
+                        // Get new Instance ID token
+                        String token = task.getResult().getToken();
+//                        Log.d("FCM_TEST",token);
+
+                        ExecutorService executor = Executors.newSingleThreadExecutor();
+                        executor.execute(new Runnable(){
+                            @Override
+                            public void run(){
+                                try {
+                                    /**url에 http 로 하는 경우는 HttpURLConnection 으로 해야하고, url에 https인 경우는 HttpsURLConnection 으로 만들어야함*/
+                                    URL url = new URL("https://api.bluemango.site/user/fcm");
+                                    HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
+                                    myconnection.setRequestMethod("POST");  //post, get 나누기
+                                    myconnection.setRequestProperty ("Content-Type","application/json"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
+                                    myconnection.setRequestProperty("x-access-token", user_token); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
+
+                                    String str = "{\"token\":"+"\""+token+"\""+"}"; //여기에 post인 경우 body json형식으로 채우기
+                                    byte[] outputInBytes = str.getBytes(StandardCharsets.UTF_8);    //post 인 경우 body 채우는 곳
+                                    OutputStream os = myconnection.getOutputStream();
+                                    os.write( outputInBytes );
+                                    os.close();
+
+                                    if(myconnection.getResponseCode() == 200){
+                                        /** 리스폰스 데이터 받는 부분*/
+                                        BufferedReader br = new BufferedReader(new InputStreamReader(myconnection.getInputStream()));
+                                        StringBuilder sb = new StringBuilder();
+                                        String line = "";
+                                        while((line = br.readLine())!=null){
+                                            sb.append(line);
+                                        }
+                                        responseJson = new JSONObject(sb.toString());
+                                        if(!responseJson.getBoolean("success")) {
+                                            Log.d("fcm_api_error","error뜸");
+                                        }
+                                    }else{
+                                        Log.d("api 연결","error : " + Integer.toString(myconnection.getResponseCode()));
+                                    }
+                                } catch (IOException | JSONException e) {
+                                    e.printStackTrace();
+                                    Log.d("api 연결","tru catch 에러뜸");
+                                }
+                            }
+                        });
+                    }
+        });
 
         try {
             user_interest = user_info.getJSONObject("interest");
@@ -426,12 +486,12 @@ public class fragment_home extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        MainActivity activity = (MainActivity) getActivity();
-        activity.Shared_user_info.edit().putString("home_interest",null).apply();
-    }
+//    @Override
+//    public void onDestroy() {
+//        super.onDestroy();
+//        MainActivity activity = (MainActivity) getActivity();
+//        activity.Shared_user_info.edit().putString("home_interest",null).apply();
+//    }
 
 
     /**

@@ -92,6 +92,4 @@ public class activity_changepw extends AppCompatActivity {
             }
         });
     }
-
-
 }

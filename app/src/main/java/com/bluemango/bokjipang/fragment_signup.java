@@ -43,6 +43,8 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.io.Serializable;
@@ -63,6 +65,8 @@ import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import java.util.concurrent.TimeUnit;
 
@@ -87,6 +91,7 @@ public class fragment_signup extends Fragment {
     ImageView set_image;
     LinearLayout verify_layout;
     String res = null;
+    String token="none";
     private String mVerificationID;
     private EditText confirm_code;
     private Activity activity;
@@ -119,6 +124,18 @@ public class fragment_signup extends Fragment {
         /** webview_address에서 addres 정보 받아와서 출력하기 및 js 저장*/
         Bundle bundle = getArguments();
         res = bundle_receive(bundle);
+
+        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+            @Override
+            public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                if (!task.isSuccessful()) {
+                    Log.d("error","firebase error");
+                    return;
+                }
+                token = task.getResult().getToken();
+                Log.d("FCM_TEST",token);
+            }
+        });
 
         /**회원가입 버튼 api*/
         Button btn_signup = (Button)view.findViewById(R.id.btn_signup);
@@ -160,6 +177,7 @@ public class fragment_signup extends Fragment {
                 if(!check_signup(user_phone,user_password,user_name,user_gender,user_age,user_address)){
                     return;
                 }
+
                 // 입력값 받아 json 포맷 생성
                 res = "{\"phone\" :\"" +
                         user_phone +"\","+
@@ -172,8 +190,11 @@ public class fragment_signup extends Fragment {
                         "\"age\":" +
                         user_age +","+
                         "\"address\":\"" +
-                        user_address +"\",";
+                        user_address +"\","+
+                        "\"fcmID\":\""+
+                        token+"\",";
                 String str = checkbox_ischecked(res);
+
                 AsyncTask.execute(new Runnable(){
                     @Override
                     public void run(){
@@ -183,6 +204,8 @@ public class fragment_signup extends Fragment {
                             HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
                             myconnection.setRequestMethod("POST");  //post, get 나누기
                             myconnection.setRequestProperty("Content-Type","application/json"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
+
+
 
                             byte[] outputInBytes = str.getBytes(StandardCharsets.UTF_8);    //post 인 경우 body 채우는 곳
                             OutputStream os = myconnection.getOutputStream();

@@ -93,11 +93,9 @@ public class MainActivity extends AppCompatActivity {
 //            intent = null;
 //        }
 
-
         setContentView(R.layout.activity_main);        //세션 없으니 바로 로그인으로 가게 해놓아놨음, 만약 필요하면 여기 바꿔서 각자
         bottomNavigationView = findViewById(R.id.bottom_navigation); //탭바 장착
         bottomNavigationView.setOnNavigationItemSelectedListener(navListener); //탭바 리스너
-
 
         u_id = Shared_user_info.getString("user_id","error");
         u_pwd = Shared_user_info.getString("user_pwd","error");
@@ -148,6 +146,16 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
+        /**개 줯같이 짠 코드입니다.*/
+        Intent intent = getIntent();
+        String board_idx = intent.getStringExtra("goto");
+        if(intent!=null && board_idx !=null) {
+            if (board_idx.equals("true")) {
+                fm.beginTransaction().replace(R.id.fragment_container, fragment_comu).commit();
+                return;
+            }
+        }
+
         if(Shared_auto_login.getBoolean("login",false)){
             bottomNavigationView.setVisibility(View.VISIBLE);
             firstFragment = new fragment_home();
@@ -174,12 +182,12 @@ public class MainActivity extends AppCompatActivity {
 //        /**KAKAO hash key 얻기*/
 
 
-        Intent intent = getIntent();
-        if(intent != null) {//푸시알림을 선택해서 실행한것이 아닌경우 예외처리
-            String notificationData = intent.getStringExtra("test");
-            if(notificationData != null)
-                Log.d("FCM_TEST", notificationData);
-        }
+//        Intent intent = getIntent();
+//        if(intent != null) {//푸시알림을 선택해서 실행한것이 아닌경우 예외처리
+//            String notificationData = intent.getStringExtra("test");
+//            if(notificationData != null)
+//                Log.d("FCM_TEST", notificationData);
+//        }
     }
 
     /**뒤로가기시 앱 안꺼지게 하기*/
