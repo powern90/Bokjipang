@@ -91,7 +91,7 @@ public class activity_community_post extends AppCompatActivity {
         {
             public void handleMessage(Message msg){
                 // 리사이클러뷰에 SimpleTextAdapter 객체 지정.
-                nickname.setText("닉네임");
+                nickname.setText(Shared_user_info.getString("name", null));
                 try {
                     title.setText(view_post.getString("title"));
                 } catch (JSONException e) {

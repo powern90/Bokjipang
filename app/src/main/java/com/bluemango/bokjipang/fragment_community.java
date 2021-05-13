@@ -83,11 +83,6 @@ public class fragment_community extends Fragment {
         Log.d("ihasdfiojaosdfioadjsfioajsdfiopjasdfiopjasdfaiopfs oas renew : ", String.valueOf(board));
 
 
-        list = new ArrayList<DataComu>();
-        recyclerView = view.findViewById(R.id.recycler1);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        user_token = activity.Shared_user_info.getString("token",null);
-        count = 1;
         @SuppressLint("HandlerLeak") final Handler handler = new Handler()
         {
             public void handleMessage(Message msg){
@@ -106,14 +101,17 @@ public class fragment_community extends Fragment {
             }
         };
 
+        list = new ArrayList<DataComu>();
+        recyclerView = view.findViewById(R.id.recycler1);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        user_token = activity.Shared_user_info.getString("token",null);
+        count = 1;
+
 
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-//                if(!recyclerView.canScrollVertically(-1)){
-//                    Log.d("up","up");
-//                }
-                if(!recyclerView.canScrollVertically(1)){ //맨 밑으로 내려갈때
+                if(!recyclerView.canScrollVertically(1)&&adapterComu.getItemCount()>20){ //맨 밑으로 내려갈때
                     count++;
                     ExecutorService add_list = Executors.newSingleThreadExecutor();
                     String param = "?board=" + Integer.toString(board) + "&page="+Integer.toString(count);
@@ -162,48 +160,6 @@ public class fragment_community extends Fragment {
 
 
         /**  위로 스와이프 했을 때 board랑 cocunt 초기화 해주고 api 요ㅓㅇ 넣어야함 기억하자. 동작 잘되는지도 확인!!!!!!!!!!!!!!!!    */
-
-
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.execute(new Runnable(){
-            @Override
-            public void run(){
-                try {
-                    first_request = "?board=" + Integer.toString(board) + "&page="+Integer.toString(count);
-                    /**url에 http 로 하는 경우는 HttpURLConnection 으로 해야하고, url에 https인 경우는 HttpsURLConnection 으로 만들어야함*/
-                    URL url = new URL("https://api.bluemango.site/board"+first_request);
-                    HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
-                    myconnection.setRequestMethod("GET");  //post, get 나누기
-                    myconnection.setRequestProperty ("Content-Type","application/json"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
-                    myconnection.setRequestProperty("x-access-token", user_token); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
-
-                    if(myconnection.getResponseCode() == 200){
-                        /** 리스폰스 데이터 받는 부분*/
-                        BufferedReader br = new BufferedReader(new InputStreamReader(myconnection.getInputStream()));
-                        StringBuilder sb = new StringBuilder();
-                        String line = "";
-                        while((line = br.readLine())!=null){
-                            sb.append(line);
-                        }
-                        responseJson = new JSONObject(sb.toString());
-                        try {
-                            JSONArray array = responseJson.getJSONArray("posts");
-                            list = make_comunity_item(array, list);
-                            Message msg = handler.obtainMessage();
-                            handler.sendMessage(msg);
-                        } catch (JSONException | IOException e) {
-                            e.printStackTrace();
-                        }
-                    }else{
-                        Log.d("api 연결","error : " + Integer.toString(myconnection.getResponseCode()));
-                    }
-                } catch (IOException | JSONException e) {
-                    e.printStackTrace();
-                    Log.d("api 연결","tru catch 에러뜸");
-                }
-            }
-        });
-
 
 
         SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipe_refresh);
@@ -274,8 +230,67 @@ public class fragment_community extends Fragment {
     public void onResume() {
         super.onResume();
         getActivity().invalidateOptionsMenu();
-//        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-//        transaction.detach(this).attach(this).commit();
+
+        list.clear();
+        @SuppressLint("HandlerLeak") final Handler handler = new Handler()
+        {
+            public void handleMessage(Message msg){
+                int pos=0;
+                if(adapterComu != null){
+                    adapterComu.notifyDataSetChanged();
+                    recyclerView.scrollToPosition(adapterComu.getItemCount()-22);              //이 부분 나중에 맞춰서 바꿔줘야할듯, 여기 위로 새로고침할때도 들어옴
+                    recyclerView.setAdapter(adapterComu);
+                    return;
+                }
+                else {
+                    adapterComu = new AdapterComu(getActivity(), list);
+                }
+                recyclerView.setVerticalScrollbarPosition(pos-1);                   //이 부분때문에 무조건 처음으로 가게 된것
+                recyclerView.setAdapter(adapterComu);
+            }
+        };
+
+
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(new Runnable(){
+            @Override
+            public void run(){
+                try {
+                    first_request = "?board=" + Integer.toString(board) + "&page="+Integer.toString(count);
+                    /**url에 http 로 하는 경우는 HttpURLConnection 으로 해야하고, url에 https인 경우는 HttpsURLConnection 으로 만들어야함*/
+                    URL url = new URL("https://api.bluemango.site/board"+first_request);
+                    HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
+                    myconnection.setRequestMethod("GET");  //post, get 나누기
+                    myconnection.setRequestProperty ("Content-Type","application/json"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
+                    myconnection.setRequestProperty("x-access-token", user_token); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
+
+                    if(myconnection.getResponseCode() == 200){
+                        /** 리스폰스 데이터 받는 부분*/
+                        BufferedReader br = new BufferedReader(new InputStreamReader(myconnection.getInputStream()));
+                        StringBuilder sb = new StringBuilder();
+                        String line = "";
+                        while((line = br.readLine())!=null){
+                            sb.append(line);
+                        }
+                        responseJson = new JSONObject(sb.toString());
+                        try {
+                            JSONArray array = responseJson.getJSONArray("posts");
+                            list = make_comunity_item(array, list);
+                            Message msg = handler.obtainMessage();
+                            handler.sendMessage(msg);
+                        } catch (JSONException | IOException e) {
+                            e.printStackTrace();
+                        }
+                    }else{
+                        Log.d("api 연결","error : " + Integer.toString(myconnection.getResponseCode()));
+                    }
+                } catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                    Log.d("api 연결","tru catch 에러뜸");
+                }
+            }
+        });
+
     }
 
     @Override
