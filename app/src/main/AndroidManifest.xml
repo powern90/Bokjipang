@@ -21,7 +21,8 @@
         <activity android:name=".activity_support_post"></activity>
 
         <!-- android:name=".KaKaoSDKInit" -->
-        <activity android:name=".activity_community_post" /> <!-- android:name=".KaKaoSDKInit" -->
+        <activity android:name=".activity_community_post"
+                  android:windowSoftInputMode="adjustResize"/> <!-- android:name=".KaKaoSDKInit" -->
         <meta-data
             android:name="com.kakao.sdk.AppKey"
             android:value="@string/kakaoApi" />

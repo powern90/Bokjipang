@@ -1,11 +1,13 @@
 package com.bluemango.bokjipang;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,6 +17,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -25,7 +29,10 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -45,7 +52,8 @@ public class activity_community_post extends AppCompatActivity {
     TextView createtime;
     TextView title;
     TextView content;
-
+    EditText add_reply;
+    ImageView send_reply;
     JSONObject view_post;
     JSONArray view_reply;
     ArrayList<Datareply> list;
@@ -59,6 +67,8 @@ public class activity_community_post extends AppCompatActivity {
         createtime = (TextView) findViewById(R.id.post_time);
         title = (TextView) findViewById(R.id.title);
         content = (TextView) findViewById(R.id.content);
+        add_reply = (EditText) findViewById(R.id.enroll_reply);
+        send_reply = (ImageView) findViewById(R.id.send);
 
         Shared_user_info = getSharedPreferences("token",MODE_PRIVATE);
         Shared_user_info = getSharedPreferences("user_info",MODE_PRIVATE);
@@ -110,11 +120,57 @@ public class activity_community_post extends AppCompatActivity {
                 recyclerView.setAdapter(adapter) ;
             }
         };
+        @SuppressLint("HandlerLeak") final Handler handler2 = new Handler() {
+            public void handleMessage(Message msg) {
 
+            }
+        };
         ExecutorService executor = Executors.newSingleThreadExecutor();
-
-
         String first_request = "?post="+board_idx;
+
+        send_reply.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ExecutorService executor = Executors.newSingleThreadExecutor();
+                executor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            URL url = new URL("https://api.bluemango.site/board/reply/add/");
+                            HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
+                            myconnection.setRequestMethod("POST");  //post, get 나누기
+                            myconnection.setRequestProperty("Content-Type", "application/json");
+                            myconnection.setRequestProperty("x-access-token", user_token); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
+                            String str = "{\"m_id\":" +  0  + " ,\"post_id\":"  + Integer.parseInt(board_idx)  + " ,\"content\":" + "\"" + add_reply.getText().toString() + "\"" + "}";
+                            byte[] outputInBytes = str.getBytes(StandardCharsets.UTF_8);
+                            OutputStream os = myconnection.getOutputStream();
+                            os.write(outputInBytes);
+                            os.close();
+                            if (myconnection.getResponseCode() == 200) {
+                                BufferedReader br = new BufferedReader(new InputStreamReader(myconnection.getInputStream()));
+                                StringBuilder sb = new StringBuilder();
+                                String line = "";
+                                while ((line = br.readLine()) != null) {
+                                    sb.append(line);
+                                }
+                                responseJson = new JSONObject(sb.toString());
+                                if (responseJson.getBoolean("success")) {
+                                    Message msg = handler2.obtainMessage();
+                                    handler2.sendMessage(msg);
+                                } else {
+                                    //댓글달기 실패했습니다.
+                                }
+                            }
+                            else {
+                                Log.d("api 연결","error : " + Integer.toString(myconnection.getResponseCode()));
+                            }
+                        } catch (IOException | JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        });
         executor.execute(new Runnable(){
             @Override
             public void run(){
