@@ -1,11 +1,14 @@
 package com.bluemango.bokjipang;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.JsonReader;
@@ -22,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.graphics.drawable.Drawable;
+import android.widget.Toast;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
@@ -92,6 +96,7 @@ public class fragment_signup extends Fragment {
     LinearLayout verify_layout;
     String res = null;
     String token="none";
+    String phone_number = "";
     private String mVerificationID;
     private EditText confirm_code;
     private Activity activity;
@@ -142,28 +147,28 @@ public class fragment_signup extends Fragment {
         btn_signup.setOnClickListener(new View.OnClickListener() {
             /** 가입정보 충분/불충분 여부 **/
             public boolean check_signup(String phone, String password, String name, String gender, String age, String address){
-//                if(phone.equals("") || !auth_checked.equals("true")){
-//                    Log.d("phone","전화번호를 확인해주세요");  // <- 이 부분들 알림메세지 창 띄워주기 해야함
-//                    return false;
-//                }else if(password.equals("") || !password_format_check || !password_equal_check){
-//                    Log.d("password","비밀번호를 확인해주세요");
-//                    return false;
-//                }else if(name.equals("")){
-//                    Log.d("name","이름을 확인해주세요");
-//                    return false;
-//                }else if(gender.equals("0")){
-//                    Log.d("gender","성별을 확인해주세요");
-//                    return false;
-//                }else if(age.equals("")){
-//                    Log.d("age","나이를 확인해주세요");
-//                    return false;
-//                }else if(address.equals("")){
-//                    Log.d("address","주소를 확인해주세요");
-//                    return false;
-//                }else if(!checkBox1.isChecked() && !checkBox2.isChecked() && !checkBox3.isChecked() && !checkBox4.isChecked() && !checkBox5.isChecked()){
-//                    Log.d("interest","관심분야를 확인해주세요");
-//                    return false;
-//                }
+                if(phone.equals("") || !auth_checked.equals("true")){
+                    Toast.makeText(getActivity(), "전화번호를 확인해주세요.",Toast.LENGTH_SHORT).show();
+                    return false;
+                }else if(password.equals("") || !password_format_check || !password_equal_check){
+                    Toast.makeText(getActivity(), "비밀번호를 확인해주세요.",Toast.LENGTH_SHORT).show();
+                    return false;
+                }else if(name.equals("")){
+                    Toast.makeText(getActivity(), "이름을 확인해주세요.",Toast.LENGTH_SHORT).show();
+                    return false;
+                }else if(gender.equals("0")){
+                    Toast.makeText(getActivity(), "성별을 확인해주세요.",Toast.LENGTH_SHORT).show();
+                    return false;
+                }else if(age.equals("")){
+                    Toast.makeText(getActivity(), "나이를 확인해주세요.",Toast.LENGTH_SHORT).show();
+                    return false;
+                }else if(address.equals("")){
+                    Toast.makeText(getActivity(), "주소를 확인해주세요.",Toast.LENGTH_SHORT).show();
+                    return false;
+                }else if(!checkBox1.isChecked() && !checkBox2.isChecked() && !checkBox3.isChecked() && !checkBox4.isChecked() && !checkBox5.isChecked()){
+                    Toast.makeText(getActivity(), "관심분야를 확인해주세요.",Toast.LENGTH_SHORT).show();
+                    return false;
+                }
                 return true;
             }
             @Override
@@ -319,10 +324,32 @@ public class fragment_signup extends Fragment {
 
             }
         });
+        @SuppressLint("HandlerLeak") final Handler handler = new Handler()
+        {
+            public void handleMessage(Message msg){
+                AlertDialog.Builder auth_alert = new AlertDialog.Builder(activity);
+                auth_alert.setTitle("Bokjipang 인증 서비스");
+                auth_alert.setMessage("사용가능한 전화번호 입니다.");
+                auth_alert.setPositiveButton("예", null);
+                auth_alert.create().show();
+                verify_layout.setVisibility(View.VISIBLE);
+                startPhoneNumberVerification(phone_number);
+            }
+        };
+        @SuppressLint("HandlerLeak") final Handler handler2 = new Handler()
+        {
+            public void handleMessage(Message msg){
+
+                AlertDialog.Builder auth_alert = new AlertDialog.Builder(activity);
+                auth_alert.setTitle("Bokjipang 인증 서비스");
+                auth_alert.setMessage("이미 가입된 전화번호 입니다.");
+                auth_alert.setPositiveButton("예", null);
+                auth_alert.create().show();
+            }
+        };
+
         /** 전화번호 인증 **/
-
         view.findViewById(R.id.buttonContinue).setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
                 /** api 번호 체크 **/
@@ -330,7 +357,7 @@ public class fragment_signup extends Fragment {
                     @Override
                     public void run() {
                         try {
-                            String phone_number = input_phone.getText().toString().trim();
+                            phone_number = input_phone.getText().toString().trim();
                             URL url = new URL("https://api.bluemango.site/auth/checkphone/");
                             HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
                             myconnection.setRequestMethod("POST");  //post, get 나누기
@@ -355,7 +382,7 @@ public class fragment_signup extends Fragment {
                                     if (key.equals("exist")) {
                                         boolean phone_check = jsonReader.nextBoolean();
                                         if (!phone_check) {
-                                            if (phone_number.isEmpty() || phone_number.length() < 10) {
+                                            if (phone_number.length() != 11) {
                                                 input_phone.setError("잘못된 번호입력입니다.");
                                                 input_phone.requestFocus();
                                                 return;
@@ -363,23 +390,13 @@ public class fragment_signup extends Fragment {
                                             if (phone_number.startsWith("0")) {
                                                 phone_number = phone_number.substring(1);
                                             }
-//                                            AlertDialog.Builder auth_alert = new AlertDialog.Builder(activity);
-//                                            auth_alert.setTitle("Bokjipang 인증 서비스");
-//                                            auth_alert.setMessage("사용가능한 전화번호 입니다.");
-//                                            auth_alert.setPositiveButton("예", null);
-//                                            auth_alert.create().show();
-                                            Log.d("phone_check", "success");
-//                                            verify_layout.setVisibility(View.VISIBLE);
-//                                            startPhoneNumberVerification(phone_number);
-                                        } else {
-                                            Log.d("phone_check","failed");
-//                                            AlertDialog.Builder auth_alert = new AlertDialog.Builder(activity);
-//                                            auth_alert.setTitle("Bokjipang 인증 서비스");
-//                                            auth_alert.setMessage("이미 가입된 전화번호 입니다.");
-//                                            auth_alert.setPositiveButton("예", null);
-//                                            auth_alert.create().show();
+                                            Message msg = handler.obtainMessage();
+                                            handler.sendMessage(msg);
                                         }
-//                                        Log.d("phone_check", Boolean.toString(phone_check));
+                                        else {
+                                            Message msg = handler2.obtainMessage();
+                                            handler2.sendMessage(msg);
+                                        }
                                         break;
                                     } else {
                                         jsonReader.skipValue();
@@ -396,7 +413,6 @@ public class fragment_signup extends Fragment {
                         }
                     }
                 });
-
             }
         });
         view.findViewById(R.id.buttonSignIn).setOnClickListener(new View.OnClickListener() {
