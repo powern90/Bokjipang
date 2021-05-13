@@ -223,6 +223,7 @@ public class activity_community_post extends AppCompatActivity {
             @Override
             public void run() {
                 try {
+
                     URL url = new URL("https://api.bluemango.site/board/reply/add/");
                     HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
                     myconnection.setRequestMethod("POST");  //post, get 나누기
