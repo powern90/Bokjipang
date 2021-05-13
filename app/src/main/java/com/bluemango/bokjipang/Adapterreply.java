@@ -2,8 +2,14 @@ package com.bluemango.bokjipang;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,39 +21,86 @@ import android.widget.TextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimeZone;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import javax.net.ssl.HttpsURLConnection;
 
 public class Adapterreply extends RecyclerView.Adapter<Adapterreply.ViewHolder> {
     private ArrayList<Datareply> mData = null ;
-
+    SharedPreferences Shared_user_info;
+    private Context context = null;
+    Activity activity;
     // 아이템 뷰를 저장하는 뷰홀더 클래스.
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView nickname;
         TextView content;
         TextView date;
-        TextView rereply;
+        ImageView rereply;
         ViewHolder(View itemView) {
             super(itemView) ;
             // 뷰 객체에 대한 참조. (hold strong reference)
             nickname = itemView.findViewById(R.id.nickname) ;
             content = itemView.findViewById(R.id.content);
             date = itemView.findViewById(R.id.date);
+            rereply = itemView.findViewById(R.id.reply_img);
+//            rereply.setOnClickListener(new View.OnClickListener(){
+//                @Override
+//                public void onClick(View v){
+//                    int pos = getAdapterPosition();
+//                    int id = mData.get(pos).getIndex();
+//                    int a = 1;
+//                }
+//            });
+            rereply.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v){
+                    AlertDialog.Builder confirm_reply = new AlertDialog.Builder(activity);
+                    confirm_reply.setMessage("대댓글을 작성하시겠습니까?");
+                    confirm_reply.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            int pos = getAdapterPosition();
+                            int a = 1;
+                            //대댓글 모드로 변경
+                            //작성후 보내기 버튼
+//                            make_rereply();
+                        }
+                    });
+                    confirm_reply.setNegativeButton("취소", null);
+                    confirm_reply.create().show();
+                }
+            });
         }
+
     }
 
     // 생성자에서 데이터 리스트 객체를 전달받음.
-    Adapterreply(ArrayList<Datareply> list) {
+    Adapterreply(Activity activity, ArrayList<Datareply> list) {
         mData = list ;
+        this.activity = activity;
+        ArrayList<Datareply> alist = mData;
     }
+
 
     // onCreateViewHolder() - 아이템 뷰를 위한 뷰홀더 객체 생성하여 리턴.
     @Override
     public Adapterreply.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Context context = parent.getContext() ;
+        Context context = parent.getContext();
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) ;
 
         View view = inflater.inflate(R.layout.form_community_reply, parent, false) ;
@@ -62,7 +115,9 @@ public class Adapterreply extends RecyclerView.Adapter<Adapterreply.ViewHolder> 
         Datareply text = mData.get(position) ;
         holder.nickname.setText(text.getNickname());
         holder.content.setText(text.getContent());
+
         Context context = ApplicationClass.getContext();
+
         SimpleDateFormat old_format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         old_format.setTimeZone(TimeZone.getTimeZone("KST"));
         SimpleDateFormat new_format = new SimpleDateFormat("MM/dd HH:mm");
@@ -98,4 +153,5 @@ public class Adapterreply extends RecyclerView.Adapter<Adapterreply.ViewHolder> 
     public int getItemCount() {
         return mData.size() ;
     }
+
 }
