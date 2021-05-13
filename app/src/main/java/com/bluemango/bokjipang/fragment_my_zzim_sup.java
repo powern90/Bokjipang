@@ -74,6 +74,34 @@ public class fragment_my_zzim_sup extends Fragment {
         list = new ArrayList<mypost_listview_item>();
         recyclerView = view.findViewById(R.id.post_mysup_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        return view;
+    }
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {    // 메뉴에 '내 게시물'페이지 상단바 만든뒤에 넣어둠 (검색 버튼)
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.mypost_navigation, menu);
+    }
+
+    public ArrayList<mypost_listview_item> make_comunity_item(JSONArray json_array, ArrayList<mypost_listview_item> tmp) throws IOException, JSONException {
+//        ArrayList<DataComu> tmp = new ArrayList<DataComu>();
+        for(int i = 0 ; i< json_array.length(); i++){
+            JSONObject tt = json_array.getJSONObject(i);
+            mypost_listview_item dataitem = new mypost_listview_item();
+
+            dataitem.setIdx(Integer.toString(tt.getInt("id")));
+            dataitem.set_title(tt.getString("title"));
+            tmp.add(dataitem);
+        }
+        return tmp;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().invalidateOptionsMenu();
+
+        list.clear();
         @SuppressLint("HandlerLeak") final Handler handler = new Handler()
         {
             public void handleMessage(Message msg){
@@ -132,28 +160,6 @@ public class fragment_my_zzim_sup extends Fragment {
             }
         });
 
-
-
-
-        return view;
-    }
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {    // 메뉴에 '내 게시물'페이지 상단바 만든뒤에 넣어둠 (검색 버튼)
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.mypost_navigation, menu);
-    }
-
-    public ArrayList<mypost_listview_item> make_comunity_item(JSONArray json_array, ArrayList<mypost_listview_item> tmp) throws IOException, JSONException {
-//        ArrayList<DataComu> tmp = new ArrayList<DataComu>();
-        for(int i = 0 ; i< json_array.length(); i++){
-            JSONObject tt = json_array.getJSONObject(i);
-            mypost_listview_item dataitem = new mypost_listview_item();
-
-            dataitem.setIdx(Integer.toString(tt.getInt("id")));
-            dataitem.set_title(tt.getString("title"));
-            tmp.add(dataitem);
-        }
-        return tmp;
     }
 
 }
