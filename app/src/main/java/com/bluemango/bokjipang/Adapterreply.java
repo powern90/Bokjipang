@@ -45,6 +45,7 @@ public class Adapterreply extends RecyclerView.Adapter<Adapterreply.ViewHolder> 
     SharedPreferences Shared_user_info;
     private Context context = null;
     Activity activity;
+    public int r_num = 0;
     // 아이템 뷰를 저장하는 뷰홀더 클래스.
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView nickname;
@@ -75,6 +76,7 @@ public class Adapterreply extends RecyclerView.Adapter<Adapterreply.ViewHolder> 
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             int pos = getAdapterPosition();
+                            r_num = mData.get(pos).getIndex();
                             int a = 1;
                             //대댓글 모드로 변경
                             //작성후 보내기 버튼
@@ -153,5 +155,8 @@ public class Adapterreply extends RecyclerView.Adapter<Adapterreply.ViewHolder> 
     public int getItemCount() {
         return mData.size() ;
     }
-
+    public int getr_num(){
+        if(this.r_num==0) return this.r_num;
+        return this.r_num;
+    }
 }
