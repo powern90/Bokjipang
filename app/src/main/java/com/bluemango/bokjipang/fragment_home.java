@@ -105,7 +105,7 @@ public class fragment_home extends Fragment {
 
                         // Get new Instance ID token
                         String token = task.getResult().getToken();
-//                        Log.d("FCM_TEST",token);
+                        Log.d("FCM_TEST",token);
 
                         ExecutorService executor = Executors.newSingleThreadExecutor();
                         executor.execute(new Runnable(){
@@ -155,11 +155,6 @@ public class fragment_home extends Fragment {
             e.printStackTrace();
         }
 
-        try {
-            Log.d("bb", String.valueOf(user_interest.getBoolean("고령자")));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
         int a = 1;
 
         zzimList = new ArrayList<DataZzim>();
@@ -485,13 +480,6 @@ public class fragment_home extends Fragment {
         }
         return super.onOptionsItemSelected(item);
     }
-
-//    @Override
-//    public void onDestroy() {
-//        super.onDestroy();
-//        MainActivity activity = (MainActivity) getActivity();
-//        activity.Shared_user_info.edit().putString("home_interest",null).apply();
-//    }
 
 
     /**

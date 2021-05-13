@@ -65,17 +65,6 @@ public class fragment_mypage extends Fragment {
                 transaction.commit();
             }
         });
-        /**관심분야 변경*/
-        TextView change_interest = view.findViewById(R.id.change_interest);
-        change_interest.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, fragment_changefv);
-                transaction.addToBackStack(null);
-                transaction.commit();
-            }
-        });
         btn_logout = view.findViewById(R.id.btn_logout);
         btn_logout.setOnClickListener(new View.OnClickListener() {
             @Override

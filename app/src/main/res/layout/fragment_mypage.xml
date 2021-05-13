@@ -64,7 +64,7 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/board_inform"
         android:layout_width="match_parent"
-        android:layout_height="180dp"
+        android:layout_height="140dp"
         android:layout_gravity="center"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
@@ -98,15 +98,6 @@
             android:textColor="@color/black"
             android:clickable="true"
             android:text="개인정보 변경"/>
-        <TextView
-            android:id="@+id/change_interest"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
-            android:layout_marginTop="135dp"
-            android:textColor="@color/black"
-            android:clickable="true"
-            android:text="해당사항 or 관심분야 변경"/>
     </androidx.cardview.widget.CardView>
     <androidx.cardview.widget.CardView
         android:id="@+id/legal_policy"

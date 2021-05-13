@@ -111,7 +111,7 @@ public class fragment_community extends Fragment {
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                if(!recyclerView.canScrollVertically(1)&&adapterComu.getItemCount()>20){ //맨 밑으로 내려갈때
+                if(!recyclerView.canScrollVertically(1)&&adapterComu.getItemCount()>=20){ //맨 밑으로 내려갈때
                     count++;
                     ExecutorService add_list = Executors.newSingleThreadExecutor();
                     String param = "?board=" + Integer.toString(board) + "&page="+Integer.toString(count);

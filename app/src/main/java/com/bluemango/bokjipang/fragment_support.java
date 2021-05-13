@@ -115,7 +115,7 @@ public class fragment_support extends Fragment {
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                if(!recyclerView.canScrollVertically(1)){ //맨 밑으로 내려갈때
+                if(!recyclerView.canScrollVertically(1)&&adapterSup.getItemCount()>=20){ //맨 밑으로 내려갈때
                     count = count + 1;
                     run_api_add(handler);
                 }
@@ -143,7 +143,7 @@ public class fragment_support extends Fragment {
                 getActivity(), R.array.support_spinner,
                 R.layout.simple_spinner_item
         );
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
