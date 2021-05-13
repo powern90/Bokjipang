@@ -46,12 +46,15 @@ public class fragment_my_zzim_sup extends Fragment {
     private ArrayList<mypost_listview_item> list;
     JSONObject responseJson;
     private RecyclerView recyclerView;
+    Fragment fragment = this;
+    FragmentTransaction ft;
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_my_zzim_list, container, false);
         activity = (MainActivity) getActivity();
         user_token = activity.Shared_user_info.getString("token",null);
+        ft = getFragmentManager().beginTransaction();
 
         /** 설정 뒤로가기 */
         fragment_setting fragment_setting = new fragment_setting();
@@ -77,12 +80,13 @@ public class fragment_my_zzim_sup extends Fragment {
                 int pos=0;
                 if(adapter != null){
                     adapter.update_mysup_list(list);
+                    adapter.update_fragmentaction(ft);
                     recyclerView.scrollToPosition(adapter.getItemCount()-22);              //이 부분 나중에 맞춰서 바꿔줘야할듯, 여기 위로 새로고침할때도 들어옴
                     recyclerView.setAdapter(adapter);
                     return;
                 }
                 else {
-                    adapter = new AdapterMySup(getActivity(), list,user_token);
+                    adapter = new AdapterMySup(getActivity(), list,user_token, fragment, ft);
                 }
                 recyclerView.setVerticalScrollbarPosition(pos-1);                   //이 부분때문에 무조건 처음으로 가게 된것
                 recyclerView.setAdapter(adapter);

@@ -45,13 +45,17 @@ public class fragment_mypost extends Fragment {
     MainActivity activity;
     private ArrayList<mypost_listview_item> list;
     JSONObject responseJson;
+    Fragment fragment;
     private RecyclerView recyclerView;
+    FragmentTransaction fragmentTransaction;
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_mypost, container, false);
         activity = (MainActivity) getActivity();
         user_token = activity.Shared_user_info.getString("token",null);
+        fragment = this;
+        fragmentTransaction = getFragmentManager().beginTransaction();
 
         Log.d("token", user_token);
 
@@ -78,13 +82,14 @@ public class fragment_mypost extends Fragment {
             public void handleMessage(Message msg){
                 int pos=0;
                 if(adapter != null){
-                    adapter.notifyDataSetChanged();
+                    adapter.update_mypost_list(list);
+                    adapter.update_fragmentaction(fragmentTransaction);
                     recyclerView.scrollToPosition(adapter.getItemCount()-22);              //이 부분 나중에 맞춰서 바꿔줘야할듯, 여기 위로 새로고침할때도 들어옴
                     recyclerView.setAdapter(adapter);
                     return;
                 }
                 else {
-                    adapter = new mypost_listview_adapter(getActivity(), list);
+                    adapter = new mypost_listview_adapter(getActivity(), list, user_token, fragment, fragmentTransaction);
                 }
                 recyclerView.setVerticalScrollbarPosition(pos-1);                   //이 부분때문에 무조건 처음으로 가게 된것
                 recyclerView.setAdapter(adapter);

@@ -100,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
         u_id = Shared_user_info.getString("user_id","error");
         u_pwd = Shared_user_info.getString("user_pwd","error");
         token = Shared_user_info.getString("token","error");
+        Log.d("token : " , token);
 
         if(!u_id.equals("error")){
             ExecutorService executor = Executors.newSingleThreadExecutor();

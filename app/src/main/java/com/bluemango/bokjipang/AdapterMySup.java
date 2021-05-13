@@ -16,6 +16,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONException;
@@ -36,6 +38,19 @@ public class AdapterMySup extends RecyclerView.Adapter<AdapterMySup.ViewHolder>{
     private Context context = null;
     JSONObject responseJson;
     private String user_token;
+    Fragment fragment;
+    private static FragmentTransaction fragmentTransaction = null;
+
+
+    // 생성자에서 데이터 리스트 객체를 전달받음.
+    public AdapterMySup(Context context, ArrayList<mypost_listview_item> list, String user_token, final Fragment fragment, final FragmentTransaction ft) {
+        this.context = context;
+        mData = list ;
+        this.user_token = user_token;
+        fragmentTransaction = ft;
+        this.fragment = fragment;
+    }
+
 
     // 아이템 뷰를 저장하는 뷰홀더 클래스.
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -78,11 +93,19 @@ public class AdapterMySup extends RecyclerView.Adapter<AdapterMySup.ViewHolder>{
                 @Override
                 public void onClick(View v) {
                     AlertDialog.Builder success_alert = new AlertDialog.Builder(context);
-                    success_alert.setTitle(" delete ?");
+                    success_alert.setTitle("찜 삭제");
+                    success_alert.setMessage(" 찜 목록에서 삭제하겠습니까?");
+                    success_alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ArrayList<mypost_listview_item> list = mData;
+                            mypost_listview_item dataitem = list.get(getAdapterPosition());
+                            sup_sub_zzim(handler, dataitem.getIdx(), user_token);
+                            fragmentTransaction.detach(fragment).attach(fragment).commit();
+                        }
+                    });
+                    success_alert.setNegativeButton("취소", null);
                     success_alert.create().show();
-                    ArrayList<mypost_listview_item> list = mData;
-                    mypost_listview_item dataitem = list.get(getAdapterPosition());
-                    sup_sub_zzim(handler, dataitem.getIdx(), user_token);
                 }
             });
         }
@@ -91,12 +114,6 @@ public class AdapterMySup extends RecyclerView.Adapter<AdapterMySup.ViewHolder>{
 
     }
 
-    // 생성자에서 데이터 리스트 객체를 전달받음.
-    public AdapterMySup(Context context, ArrayList<mypost_listview_item> list, String user_token) {
-        this.context = context;
-        mData = list ;
-        this.user_token = user_token;
-    }
 
     public void mOnPopupClick(View v, int pos) {
         ArrayList<mypost_listview_item> list = this.mData;
@@ -141,6 +158,10 @@ public class AdapterMySup extends RecyclerView.Adapter<AdapterMySup.ViewHolder>{
     public void update_mysup_list(ArrayList<mypost_listview_item> list){
         mData= list;
         this.notifyDataSetChanged();
+    }
+
+    public void update_fragmentaction(FragmentTransaction ft){
+        fragmentTransaction = ft;
     }
 
 

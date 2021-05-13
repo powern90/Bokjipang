@@ -2,6 +2,7 @@ package com.bluemango.bokjipang;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Handler;
@@ -16,7 +17,9 @@ import android.widget.TextView;
 
 import androidx.appcompat.view.menu.MenuView;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONException;
@@ -39,10 +42,15 @@ public class mypost_listview_adapter extends RecyclerView.Adapter<mypost_listvie
     private Context context = null;
     JSONObject responseJson;
     String user_token;
+    Fragment fragment;
+    FragmentTransaction fragmentTransaction;
 
-    public mypost_listview_adapter(FragmentActivity activity, ArrayList<mypost_listview_item> list) {
+    public mypost_listview_adapter(FragmentActivity activity, ArrayList<mypost_listview_item> list,String user_token, Fragment fg, FragmentTransaction ft) {
         this.context = activity;
         this.mData = list;
+        fragment = fg;
+        fragmentTransaction = ft;
+        this.user_token = user_token;
     }
 
     // 아이템 뷰를 저장하는 뷰홀더 클래스.
@@ -76,11 +84,20 @@ public class mypost_listview_adapter extends RecyclerView.Adapter<mypost_listvie
                 @Override
                 public void onClick(View v) {
                     AlertDialog.Builder success_alert = new AlertDialog.Builder(context);
-                    success_alert.setTitle(" delete ?");
+                    success_alert.setTitle("내 게시물 삭제");
+                    success_alert.setMessage("정말 삭제하시겠습니까?");
+                    success_alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ArrayList<mypost_listview_item> list = mData;
+                            mypost_listview_item dataitem = list.get(getAdapterPosition());
+                            my_post_delete(Integer.parseInt(dataitem.getIdx()), user_token);
+                            fragmentTransaction.detach(fragment).attach(fragment).commit();
+                        }
+                    });
+                    success_alert.setNegativeButton("취소", null);
                     success_alert.create().show();
-                    ArrayList<mypost_listview_item> list = mData;
-                    mypost_listview_item dataitem = list.get(getAdapterPosition());
-                    my_post_delete(Integer.parseInt(dataitem.getIdx()), user_token);
+
                 }
             });
 
@@ -137,6 +154,14 @@ public class mypost_listview_adapter extends RecyclerView.Adapter<mypost_listvie
         else return mData.size() ;
     }
 
+    public void update_mypost_list(ArrayList<mypost_listview_item> list){
+        mData= list;
+        this.notifyDataSetChanged();
+    }
+
+    public void update_fragmentaction(FragmentTransaction ft){
+        fragmentTransaction = ft;
+    }
 
 
     public void my_post_delete(int idx, String user_token){
