@@ -45,15 +45,13 @@ public class Adapterreply extends RecyclerView.Adapter<Adapterreply.ViewHolder> 
     SharedPreferences Shared_user_info;
     private Context context = null;
     Activity activity;
-//    Adapterreply.ViewHolder ad_vh;
-
+    public int r_num = 0;
     // 아이템 뷰를 저장하는 뷰홀더 클래스.
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView nickname;
         TextView content;
         TextView date;
         ImageView rereply;
-        int r_num=0;
         ViewHolder(View itemView) {
             super(itemView) ;
             // 뷰 객체에 대한 참조. (hold strong reference)
@@ -77,7 +75,8 @@ public class Adapterreply extends RecyclerView.Adapter<Adapterreply.ViewHolder> 
                     confirm_reply.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-
+                            int pos = getAdapterPosition();
+                            r_num = mData.get(pos).getIndex();
                             int a = 1;
                             //대댓글 모드로 변경
                             //작성후 보내기 버튼
@@ -108,6 +107,7 @@ public class Adapterreply extends RecyclerView.Adapter<Adapterreply.ViewHolder> 
 
         View view = inflater.inflate(R.layout.form_community_reply, parent, false) ;
         Adapterreply.ViewHolder vh = new Adapterreply.ViewHolder(view) ;
+
         return vh ;
     }
 
@@ -155,5 +155,8 @@ public class Adapterreply extends RecyclerView.Adapter<Adapterreply.ViewHolder> 
     public int getItemCount() {
         return mData.size() ;
     }
-
+    public int getr_num(){
+        if(this.r_num==0) return this.r_num;
+        return this.r_num;
+    }
 }
