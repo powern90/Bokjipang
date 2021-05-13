@@ -274,6 +274,8 @@ public class fragment_community extends Fragment {
     public void onResume() {
         super.onResume();
         getActivity().invalidateOptionsMenu();
+//        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+//        transaction.detach(this).attach(this).commit();
     }
 
     @Override
