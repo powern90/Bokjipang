@@ -84,7 +84,7 @@ public class fragment_changeui extends Fragment {
         btn_changeui.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                String ad = new_address_txt.getText().toString();
+                String ad = new_address_txt.getText().toString().replaceAll("\n","\\\\n");
                 if (!ad.equals("")) {
                     AsyncTask.execute(new Runnable() {
                         @Override

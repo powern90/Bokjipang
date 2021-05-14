@@ -212,7 +212,7 @@ public class fragment_signup extends Fragment {
 
 
 
-                            byte[] outputInBytes = str.getBytes(StandardCharsets.UTF_8);    //post 인 경우 body 채우는 곳
+                            byte[] outputInBytes = str.replaceAll("\n","\\\\n").getBytes(StandardCharsets.UTF_8);    //post 인 경우 body 채우는 곳
                             OutputStream os = myconnection.getOutputStream();
                             os.write( outputInBytes );
                             os.close();
