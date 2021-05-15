@@ -29,7 +29,7 @@ public class fragment_notification extends Fragment {
         for(int i = 0 ; i <10; i++){
             DataNoti ad = new DataNoti();
             ad.setTitle(Integer.toString(i));
-            ad.setContent("qaasdfasdfasdfasdfasdfasdfasdf123124123123123");
+            ad.setContent("1분전");
             ad.setType("장애인");
             ad.setRead(true);
             list.add(ad);

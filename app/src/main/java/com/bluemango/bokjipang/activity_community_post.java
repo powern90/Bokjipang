@@ -47,6 +47,7 @@ import javax.net.ssl.HttpsURLConnection;
 public class activity_community_post extends AppCompatActivity {
     SharedPreferences Shared_user_info;
     String user_token;
+    String user_name;
     JSONObject responseJson;
 
     TextView nickname;
@@ -83,12 +84,12 @@ public class activity_community_post extends AppCompatActivity {
         Shared_user_info = getSharedPreferences("sup_zzim_list", MODE_PRIVATE);
 
         user_token = Shared_user_info.getString("token","");
-
+        user_name = Shared_user_info.getString("name",null);
         Intent intent = getIntent();
         String board_idx = intent.getStringExtra("data");
         list = new ArrayList<>();
-        RecyclerView recyclerView = findViewById(R.id.community_reply) ;
-        recyclerView.setLayoutManager(new LinearLayoutManager(this)) ;
+        RecyclerView recyclerView = findViewById(R.id.community_reply);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
 
         @SuppressLint("HandlerLeak") final Handler handler = new Handler()
@@ -120,13 +121,14 @@ public class activity_community_post extends AppCompatActivity {
                 for(int i = 0 ; i<view_reply.length() ; i++ ){
 
                 }
-                adapter = new Adapterreply(activity, list);
+                adapter = new Adapterreply(activity, user_name, list, user_token, add_reply);
                 recyclerView.setAdapter(adapter);
             }
         };
         @SuppressLint("HandlerLeak") final Handler handler2 = new Handler() {
             public void handleMessage(Message msg) {
                 startActivity(intent);
+                finish();
             }
         };
         ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -141,6 +143,7 @@ public class activity_community_post extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         make_reply(board_idx, handler2);
+                        add_reply.setHint("댓글을 입력하세요");
                     }
                 });
                 confirm_reply.setNegativeButton("취소", null);

@@ -4,41 +4,62 @@
     android:layout_width="match_parent"
     android:layout_marginRight="5dp"
     android:layout_marginLeft="5dp"
-    android:orientation="vertical"
+
+    android:orientation="horizontal"
     android:id="@+id/notification_background"
     android:layout_height="wrap_content">
 
+    <ImageView
+        android:layout_gravity="center"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/normal_heart"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="5dp"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/type"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/red"
+                android:ellipsize="end"
+                tools:ignore="MissingConstraints" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:id="@+id/content"
+                android:layout_marginTop="5dp"
+                android:textSize="10sp"
+                android:maxLines="2"
+                android:layout_marginLeft="10dp"
+                android:ellipsize="end"
+                android:textColor="@color/red"
+                tools:ignore="MissingConstraints" />
+        </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/title"
+            android:textSize="20sp"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/red"
+            tools:ignore="MissingConstraints" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/title"
-        android:textSize="20sp"
-        android:layout_marginLeft="10dp"
-        android:textColor="@color/red"
-        tools:ignore="MissingConstraints" />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/content"
-        android:textSize="10sp"
-        android:maxLines="2"
-        android:layout_marginLeft="10dp"
-        android:ellipsize="end"
-        android:textColor="@color/red"
-        tools:ignore="MissingConstraints" />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/type"
-        android:textSize="10sp"
-        android:layout_marginTop="10dp"
-        android:maxLines="1"
-        android:layout_marginLeft="10dp"
-        android:textColor="@color/red"
-        android:ellipsize="end"
-        tools:ignore="MissingConstraints" />
 
+    </LinearLayout>
 
 
 </LinearLayout>
