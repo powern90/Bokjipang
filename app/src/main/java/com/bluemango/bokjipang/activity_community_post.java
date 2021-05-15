@@ -226,12 +226,13 @@ public class activity_community_post extends AppCompatActivity {
             @Override
             public void run() {
                 try {
+
                     URL url = new URL("https://api.bluemango.site/board/reply/add/");
                     HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
                     myconnection.setRequestMethod("POST");  //post, get 나누기
                     myconnection.setRequestProperty("Content-Type", "application/json");
                     myconnection.setRequestProperty("x-access-token", user_token); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
-                    String str = "{\"m_id\":" +  adapter.getr_num()  + " ,\"post_id\":"  + Integer.parseInt(board_idx)  + " ,\"content\":" + "\"" + add_reply.getText().toString() + "\"" + "}";
+                    String str = "{\"m_id\":" +  adapter.getr_num()  + " ,\"post_id\":"  + Integer.parseInt(board_idx)  + " ,\"content\":" + "\"" + add_reply.getText().toString().replaceAll("\n","\\\\n") + "\"" + "}";
                     byte[] outputInBytes = str.getBytes(StandardCharsets.UTF_8);
                     OutputStream os = myconnection.getOutputStream();
                     os.write(outputInBytes);
