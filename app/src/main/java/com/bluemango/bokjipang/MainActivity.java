@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
     private long backBtnTime = 0;
     SharedPreferences Shared_auto_login;
     SharedPreferences Shared_user_info;
+    SharedPreferences Shared_noti_list;
 
     Fragment active;
     BottomNavigationView bottomNavigationView;
@@ -66,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         context = this;
 
+        Shared_noti_list = getSharedPreferences("noti_list", MODE_PRIVATE);
         Shared_auto_login = getSharedPreferences("login",MODE_PRIVATE); //세션유지에 쓸 sharedPreferences
         Shared_user_info = getSharedPreferences("token",MODE_PRIVATE);
         Shared_user_info = getSharedPreferences("user_info",MODE_PRIVATE);
@@ -73,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
         Shared_user_info = getSharedPreferences("user_pwd", MODE_PRIVATE);
         Shared_user_info = getSharedPreferences("home_interest", MODE_PRIVATE);
         Shared_user_info = getSharedPreferences("sup_zzim_list", MODE_PRIVATE);
+//        Shared_noti_list.edit().putString("noti_list", null).apply();
 //        JSONObject home_interest2 = new JSONObject();
 //        try {
 //            home_interest2.put("고령자 게시판",false);
@@ -174,12 +177,12 @@ public class MainActivity extends AppCompatActivity {
 //        /**KAKAO hash key 얻기*/
 
 
-//        Intent intent = getIntent();
-//        if(intent != null) {//푸시알림을 선택해서 실행한것이 아닌경우 예외처리
-//            String notificationData = intent.getStringExtra("test");
-//            if(notificationData != null)
-//                Log.d("FCM_TEST", notificationData);
-//        }
+        Intent intent = getIntent();
+        if(intent != null) {//푸시알림을 선택해서 실행한것이 아닌경우 예외처리
+            String notificationData = intent.getStringExtra("title");
+            if(notificationData != null)
+                Log.d("FCM_TEST", notificationData);
+        }
     }
 
     /**뒤로가기시 앱 안꺼지게 하기*/

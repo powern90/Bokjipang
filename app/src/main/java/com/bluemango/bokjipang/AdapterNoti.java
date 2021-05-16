@@ -1,10 +1,12 @@
 package com.bluemango.bokjipang;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -15,6 +17,15 @@ import java.util.ArrayList;
 
 public class AdapterNoti extends RecyclerView.Adapter<AdapterNoti.ViewHolder>{
     private ArrayList<DataNoti> mData = null ;
+    private Context context = null;
+
+    public ArrayList<DataNoti> return_mdata(){return this.mData;}
+
+    public AdapterNoti(Context context, ArrayList<DataNoti> list) {
+        this.context = context;
+        mData = list ;
+    }
+
 
     // 아이템 뷰를 저장하는 뷰홀더 클래스.
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -30,17 +41,29 @@ public class AdapterNoti extends RecyclerView.Adapter<AdapterNoti.ViewHolder>{
             content = itemView.findViewById(R.id.content);
             type = itemView.findViewById(R.id.type);
 
+
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     int pos = getAdapterPosition();
                     if(pos != RecyclerView.NO_POSITION){
-                        final LinearLayout backGround = v.findViewById(R.id.notification_background);
-                        backGround.setBackgroundColor(0xB0C9FA); //클릭시 배경 바꿈 이거 디비값 같은거 0으로 바꿔서 다시 로딩되도록 해야될듯
+                        mOnPopupClick(v, pos);
+                        mData.get(pos).setRead(false);
+
+
                     }
                 }
             });
         }
+    }
+
+    public void mOnPopupClick(View v, int pos) {
+        ArrayList<DataNoti> list = this.mData;
+        Intent intent = new Intent(context, activity_support_post.class);
+
+        DataNoti dataNoti = list.get(pos);
+        intent.putExtra("data", dataNoti.getIdx());
+        context.startActivity(intent);
     }
 
     // 생성자에서 데이터 리스트 객체를 전달받음.
@@ -57,19 +80,11 @@ public class AdapterNoti extends RecyclerView.Adapter<AdapterNoti.ViewHolder>{
 //        final GradientDrawable drawable = (GradientDrawable) ContextCompat.getDrawable(context, R.drawable.read);
 //        final
         View view = inflater.inflate(R.layout.form_notification, parent, false) ;
+
         /** 백그라운드 값 세팅해주는 부분*/
         final LinearLayout backGround = view.findViewById(R.id.notification_background);
         backGround.setBackgroundColor(0xff011111);
         /** 여기까지 백그라운드 조건에 따라서 넣어주면*/
-
-
-
-
-
-
-
-
-
 
         AdapterNoti.ViewHolder vh = new AdapterNoti.ViewHolder(view) ;
 
@@ -83,6 +98,12 @@ public class AdapterNoti extends RecyclerView.Adapter<AdapterNoti.ViewHolder>{
         holder.title.setText(text.getTitle());
         holder.content.setText(text.getContent());
         holder.type.setText(text.getType());
+
+        if(!mData.get(position).getread()){
+            final LinearLayout backGround = holder.itemView.findViewById(R.id.notification_background);
+            backGround.setBackgroundColor(0xB0C9FA); //클릭시 배경 바꿈 이거 디비값 같은거 0으로 바꿔서 다시 로딩되도록 해야될듯
+        }
+
     }
 
     // getItemCount() - 전체 데이터 갯수 리턴.
@@ -90,4 +111,5 @@ public class AdapterNoti extends RecyclerView.Adapter<AdapterNoti.ViewHolder>{
     public int getItemCount() {
         return mData.size() ;
     }
+
 }

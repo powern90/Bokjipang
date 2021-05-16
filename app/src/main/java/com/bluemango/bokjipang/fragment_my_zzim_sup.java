@@ -69,8 +69,6 @@ public class fragment_my_zzim_sup extends Fragment {
             }
         });
 
-
-
         list = new ArrayList<mypost_listview_item>();
         recyclerView = view.findViewById(R.id.post_mysup_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
