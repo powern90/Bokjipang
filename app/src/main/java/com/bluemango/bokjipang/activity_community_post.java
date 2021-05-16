@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -41,6 +42,7 @@ import java.util.Date;
 import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -55,7 +57,7 @@ public class activity_community_post extends AppCompatActivity {
     TextView title;
     TextView content;
     EditText add_reply;
-    ImageView send_reply;
+    ImageView send_reply, heart;
     JSONObject view_post;
     JSONArray view_reply;
     ArrayList<Datareply> list;
@@ -75,6 +77,7 @@ public class activity_community_post extends AppCompatActivity {
         content = (TextView) findViewById(R.id.content);
         add_reply = (EditText) findViewById(R.id.enroll_reply);
         send_reply = (ImageView) findViewById(R.id.send);
+        heart = (ImageView)findViewById(R.id.heart_post);
 
         Shared_user_info = getSharedPreferences("token",MODE_PRIVATE);
         Shared_user_info = getSharedPreferences("user_info",MODE_PRIVATE);
@@ -97,13 +100,16 @@ public class activity_community_post extends AppCompatActivity {
             public void handleMessage(Message msg){
                 // 리사이클러뷰에 SimpleTextAdapter 객체 지정.
                 nickname.setText(Shared_user_info.getString("name", null));
-                try {
-                    title.setText(view_post.getString("title"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+
                 try {
                     content.setText(view_post.getString("content"));
+                    title.setText(view_post.getString("title"));
+                    if(view_post.getString("my_like").equals("1")){
+                        heart.setImageResource(R.drawable.full_heart);
+                    }
+                    else{
+                        heart.setImageResource(R.drawable.normal_heart);
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -131,8 +137,56 @@ public class activity_community_post extends AppCompatActivity {
                 finish();
             }
         };
+        @SuppressLint("HandlerLeak") final Handler handler3 = new Handler() {
+            public void handleMessage(Message msg) {
+                heart.setImageResource(R.drawable.normal_heart);
+            }
+        };
+        @SuppressLint("HandlerLeak") final Handler handler4 = new Handler() {
+            public void handleMessage(Message msg) {
+                heart.setImageResource(R.drawable.full_heart);
+            }
+        };
+
+
         ExecutorService executor = Executors.newSingleThreadExecutor();
         String first_request = "?post="+board_idx;
+        String like_request = "?id="+board_idx;
+
+        heart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    if(view_post.getString("my_like").equals("1")){
+                        AlertDialog.Builder confirm_reply = new AlertDialog.Builder(activity);
+                        confirm_reply.setMessage("게시글 좋아요를 취소하시겠습니까?");
+                        confirm_reply.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                    delete_heart(handler3,like_request);
+                            }
+                        });
+                        confirm_reply.setNegativeButton("취소", null);
+                        confirm_reply.create().show();
+                    }
+                    else{
+                        AlertDialog.Builder confirm_reply = new AlertDialog.Builder(activity);
+                        confirm_reply.setMessage("게시글 좋아요를 하시겠습니까?");
+                        confirm_reply.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                make_heart(handler4,like_request);
+                            }
+                        });
+                        confirm_reply.setNegativeButton("취소", null);
+                        confirm_reply.create().show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
 
         send_reply.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -150,6 +204,8 @@ public class activity_community_post extends AppCompatActivity {
                 confirm_reply.create().show();
             }
         });
+
+
         executor.execute(new Runnable(){
             @Override
             public void run(){
@@ -226,7 +282,6 @@ public class activity_community_post extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-
                     URL url = new URL("https://api.bluemango.site/board/reply/add/");
                     HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
                     myconnection.setRequestMethod("POST");  //post, get 나누기
@@ -257,6 +312,90 @@ public class activity_community_post extends AppCompatActivity {
                     }
                 } catch (IOException | JSONException e) {
                     e.printStackTrace();
+                }
+            }
+        });
+    }
+    void make_heart(Handler handler4, String like_request){
+        ExecutorService executor2 = Executors.newSingleThreadExecutor();
+        AsyncTask.execute(new Runnable(){
+            @Override
+            public void run(){
+                try {
+                    /**url에 http 로 하는 경우는 HttpURLConnection 으로 해야하고, url에 https인 경우는 HttpsURLConnection 으로 만들어야함*/
+                    URL url = new URL("https://api.bluemango.site/board/post/like/add"+like_request);
+                    HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
+                    myconnection.setRequestMethod("GET");  //post, get 나누기
+                    myconnection.setRequestProperty ("Content-Type","application/json"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
+                    myconnection.setRequestProperty("x-access-token", user_token); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
+                    myconnection.setReadTimeout(2000);
+                    Log.d("siballalala", String.valueOf(myconnection.getResponseCode()));
+                    if(myconnection.getResponseCode() == 200){
+                        /** 리스폰스 데이터 받는 부분*/
+                        Log.d("comu post api 접속 성공","33333");
+                        BufferedReader br = new BufferedReader(new InputStreamReader(myconnection.getInputStream()));
+                        StringBuilder sb = new StringBuilder();
+                        String line = "";
+                        while((line = br.readLine())!=null){
+                            sb.append(line);
+                        }
+                        responseJson = new JSONObject(sb.toString());
+                        try {
+                            if(responseJson.getBoolean("success")) {
+                                Message msg = handler4.obtainMessage();
+                                handler4.sendMessage(msg);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }else{
+                        Log.d("api 연결","error : " + Integer.toString(myconnection.getResponseCode()));
+                    }
+                } catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                    Log.d("api 연결","tru catch 에러뜸");
+                }
+            }
+        });
+    }
+    void delete_heart(Handler handler3, String like_request){
+        ExecutorService executor2 = Executors.newSingleThreadExecutor();
+        AsyncTask.execute(new Runnable(){
+            @Override
+            public void run(){
+                try {
+                    /**url에 http 로 하는 경우는 HttpURLConnection 으로 해야하고, url에 https인 경우는 HttpsURLConnection 으로 만들어야함*/
+                    URL url = new URL("https://api.bluemango.site/board/post/like/delete"+like_request);
+                    HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
+                    myconnection.setRequestMethod("GET");  //post, get 나누기
+                    myconnection.setRequestProperty ("Content-Type","application/json"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
+                    myconnection.setRequestProperty("x-access-token", user_token); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
+                    myconnection.setReadTimeout(2000);
+                    Log.d("siballalala", String.valueOf(myconnection.getResponseCode()));
+                    if(myconnection.getResponseCode() == 200){
+                        /** 리스폰스 데이터 받는 부분*/
+                        Log.d("comu post api 접속 성공","33333");
+                        BufferedReader br = new BufferedReader(new InputStreamReader(myconnection.getInputStream()));
+                        StringBuilder sb = new StringBuilder();
+                        String line = "";
+                        while((line = br.readLine())!=null){
+                            sb.append(line);
+                        }
+                        responseJson = new JSONObject(sb.toString());
+                        try {
+                            if(responseJson.getBoolean("success")) {
+                                Message msg = handler3.obtainMessage();
+                                handler3.sendMessage(msg);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }else{
+                        Log.d("api 연결","error : " + Integer.toString(myconnection.getResponseCode()));
+                    }
+                } catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                    Log.d("api 연결","tru catch 에러뜸");
                 }
             }
         });

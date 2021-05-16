@@ -84,7 +84,7 @@ public class fragment_signup extends Fragment {
     TextView back_login;
     RadioButton radio_man, radio_woman;
     Webview_address Webview_address;
-    String auth_checked="false";
+    String auth_checked="true";
     boolean password_format_check = false;
     boolean password_equal_check = false;
     int gender;
