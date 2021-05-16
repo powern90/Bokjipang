@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,6 +21,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -53,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private long backBtnTime = 0;
     SharedPreferences Shared_auto_login;
     SharedPreferences Shared_user_info;
+    SharedPreferences Shared_noti_list;
 
     Fragment active;
     BottomNavigationView bottomNavigationView;
@@ -66,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         context = this;
 
+        Shared_noti_list = getSharedPreferences("noti_list", MODE_PRIVATE);
         Shared_auto_login = getSharedPreferences("login",MODE_PRIVATE); //세션유지에 쓸 sharedPreferences
         Shared_user_info = getSharedPreferences("token",MODE_PRIVATE);
         Shared_user_info = getSharedPreferences("user_info",MODE_PRIVATE);
@@ -73,6 +78,26 @@ public class MainActivity extends AppCompatActivity {
         Shared_user_info = getSharedPreferences("user_pwd", MODE_PRIVATE);
         Shared_user_info = getSharedPreferences("home_interest", MODE_PRIVATE);
         Shared_user_info = getSharedPreferences("sup_zzim_list", MODE_PRIVATE);
+//        Shared_noti_list.edit().putString("noti_list", null).apply();
+//        JSONObject home_interest2 = new JSONObject();
+//        try {
+//            home_interest2.put("고령자 게시판",false);
+//            home_interest2.put("다문화 게시판",false);
+//            home_interest2.put("한부모 게시판",false);
+//            home_interest2.put("저소득 게시판",false);
+//            home_interest2.put("장애인 게시판",false);
+//            home_interest2.put("자유 게시판",false);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        Shared_user_info.edit().putString("home_interest", String.valueOf(home_interest2)).apply();
+
+//        Intent intent = getIntent();
+//        if(intent != null){
+//            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//            Shared_auto_login.edit().putBoolean("login",false).apply();
+//            intent = null;
+//        }
 
         setContentView(R.layout.activity_main);        //세션 없으니 바로 로그인으로 가게 해놓아놨음, 만약 필요하면 여기 바꿔서 각자
         bottomNavigationView = findViewById(R.id.bottom_navigation); //탭바 장착
@@ -155,12 +180,12 @@ public class MainActivity extends AppCompatActivity {
 //        /**KAKAO hash key 얻기*/
 
 
-//        Intent intent = getIntent();
-//        if(intent != null) {//푸시알림을 선택해서 실행한것이 아닌경우 예외처리
-//            String notificationData = intent.getStringExtra("test");
-//            if(notificationData != null)
-//                Log.d("FCM_TEST", notificationData);
-//        }
+        Intent intent = getIntent();
+        if(intent != null) {//푸시알림을 선택해서 실행한것이 아닌경우 예외처리
+            String notificationData = intent.getStringExtra("title");
+            if(notificationData != null)
+                Log.d("FCM_TEST", notificationData);
+        }
     }
 
     /**뒤로가기시 앱 안꺼지게 하기*/
