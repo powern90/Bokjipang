@@ -26,6 +26,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class AdapterNoti extends RecyclerView.Adapter<AdapterNoti.ViewHolder>{
     private ArrayList<DataNoti> mData = null ;
@@ -146,21 +147,19 @@ public class AdapterNoti extends RecyclerView.Adapter<AdapterNoti.ViewHolder>{
 
 
         @SuppressLint("SimpleDateFormat") SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat receive_format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         String date = format.format(new Date());
+        receive_format.setTimeZone(TimeZone.getTimeZone("KST"));
         Date dt = null;
-        try {
-            dt = format.parse(date);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-//        String date2 = text.getDatetime();
-        String date2 = "2021-05-16 11:00:00";
         Date dt2 = null;
         try {
-            dt2 = format.parse(date2);
+            dt = format.parse(date);
+            dt2 = receive_format.parse(text.getDatetime());
         } catch (ParseException e) {
             e.printStackTrace();
         }
+        String receive = format.format(dt2);
+
         long cal = dt.getTime() - dt2.getTime();
         long upload_sub = cal/(60*1000);
         @SuppressLint("SimpleDateFormat") SimpleDateFormat new_format = new SimpleDateFormat("MM/dd HH:mm");
