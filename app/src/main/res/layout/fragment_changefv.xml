@@ -23,7 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="45dp"
-            android:text="해당사항 or 관심분야 변경"
+            android:text="관심분야 지원사업 알림 변경"
             android:textSize="19dp"
             android:layout_marginTop="15dp"
             android:textStyle="bold"
@@ -43,7 +43,7 @@
         <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="17dp"
+            android:layout_marginTop="9dp"
             android:layout_marginLeft="20dp"
             android:id="@+id/ck1"
             />
@@ -57,7 +57,7 @@
         <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="52dp"
+            android:layout_marginTop="44dp"
             android:layout_marginLeft="20dp"
             android:id="@+id/ck2"
             />
@@ -71,7 +71,7 @@
         <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="87dp"
+            android:layout_marginTop="79dp"
             android:layout_marginLeft="20dp"
             android:id="@+id/ck3"
             />
@@ -85,7 +85,7 @@
         <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="122dp"
+            android:layout_marginTop="114dp"
             android:layout_marginLeft="20dp"
             android:id="@+id/ck4"
             />
@@ -99,7 +99,7 @@
         <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="157dp"
+            android:layout_marginTop="149dp"
             android:layout_marginLeft="20dp"
             android:id="@+id/ck5"
             />

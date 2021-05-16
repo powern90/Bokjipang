@@ -2,6 +2,7 @@ package com.bluemango.bokjipang;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -105,13 +106,14 @@ public class fragment_community extends Fragment {
         recyclerView = view.findViewById(R.id.recycler1);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         user_token = activity.Shared_user_info.getString("token",null);
+
         count = 1;
 
 
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                if(!recyclerView.canScrollVertically(1)&&adapterComu.getItemCount()>20){ //맨 밑으로 내려갈때
+                if(!recyclerView.canScrollVertically(1)&&adapterComu.getItemCount()>=20){ //맨 밑으로 내려갈때
                     count++;
                     ExecutorService add_list = Executors.newSingleThreadExecutor();
                     String param = "?board=" + Integer.toString(board) + "&page="+Integer.toString(count);
@@ -338,8 +340,6 @@ public class fragment_community extends Fragment {
         }
         return super.onOptionsItemSelected(item);
     }
-
-
 
     public ArrayList<DataComu> make_comunity_item(JSONArray json_array, ArrayList<DataComu> tmp) throws IOException, JSONException {
 //        ArrayList<DataComu> tmp = new ArrayList<DataComu>();

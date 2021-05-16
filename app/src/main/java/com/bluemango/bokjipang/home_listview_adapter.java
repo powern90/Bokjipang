@@ -27,6 +27,7 @@ public class home_listview_adapter extends BaseAdapter {
     private final Context context;
     private ArrayList<home_listview_item> listViewItemList;
     SharedPreferences Shared_user_info;
+    int size;
     Gson gson;
     public home_listview_adapter(ArrayList<home_listview_item> itemlist, Context context){
         if (itemlist == null) {
@@ -42,6 +43,7 @@ public class home_listview_adapter extends BaseAdapter {
         Shared_user_info = context.getSharedPreferences("user_pwd", MODE_PRIVATE);
         Shared_user_info = context.getSharedPreferences("home_interest", MODE_PRIVATE);
         Shared_user_info = context.getSharedPreferences("sup_zzim_list", MODE_PRIVATE);
+        gson = new GsonBuilder().create();
 
     }
 
@@ -95,9 +97,7 @@ public class home_listview_adapter extends BaseAdapter {
             }
         };
         listViewItemList.sort(noAsc);
-        gson = new GsonBuilder().create();
-        String user_info = gson.toJson(listViewItemList);
-        Shared_user_info.edit().putString("home_interest", user_info).apply();
+        store_listviewitemlist();
         notifyDataSetChanged();
 
         /**별 누른 경우,,, 여기서 api 통신으로 즐겨찾기도 변경해줘야함*/
@@ -123,9 +123,7 @@ public class home_listview_adapter extends BaseAdapter {
                     }
                 }
 
-                gson = new GsonBuilder().create();
-                String user_info = gson.toJson(listViewItemList);
-                Shared_user_info.edit().putString("home_interest", user_info).apply();
+              store_listviewitemlist();
 
                 Comparator<home_listview_item> noAsc = new Comparator<home_listview_item>(){
                     @Override
@@ -173,8 +171,9 @@ public class home_listview_adapter extends BaseAdapter {
         item.setBoard_name(name);
         item.setBoard_title(title);
         listViewItemList.add(item);
+    }
 
-        gson = new GsonBuilder().create();
+    public void store_listviewitemlist(){
         String user_info = gson.toJson(listViewItemList);
         Shared_user_info.edit().putString("home_interest", user_info).apply();
     }

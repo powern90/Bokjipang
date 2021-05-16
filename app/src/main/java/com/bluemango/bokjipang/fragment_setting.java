@@ -21,9 +21,8 @@ public class fragment_setting extends Fragment {
     private fragment_mypost fragment_mypost = new fragment_mypost();
     private fragment_my_zzim_sup fragment_my_zzim_sup = new fragment_my_zzim_sup();
     private fragment_service fragment_service = new fragment_service();
-    private fragment_alarm fragment_alarm = new fragment_alarm();
     private fragment_rule fragment_rule = new fragment_rule();
-
+    private fragment_changefv fragment_changefv = new fragment_changefv();
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_setting, container, false);
         TextView my_post = view.findViewById(R.id.my_post);
@@ -80,12 +79,13 @@ public class fragment_setting extends Fragment {
                 transaction.commit();
             }
         });
-        TextView alarm = view.findViewById(R.id.alarm);
-        alarm.setOnClickListener(new View.OnClickListener() {
+        /**관심분야 변경*/
+        TextView change_interest = view.findViewById(R.id.alarm);
+        change_interest.setOnClickListener(new View.OnClickListener(){
             @Override
-            public void onClick(View v) {
+            public void onClick(View v){
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, fragment_alarm);
+                transaction.replace(R.id.fragment_container, fragment_changefv);
                 transaction.addToBackStack(null);
                 transaction.commit();
             }

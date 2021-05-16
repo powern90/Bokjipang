@@ -65,7 +65,6 @@ public class fragment_home extends Fragment {
     ViewFlipper viewFlipper;
     float xAtDown, xAtUp;
     ImageView sarang, bokjiro, jeongbu;
-    BottomNavigationView bottomNavigationView;
     ListView listview;
     home_listview_adapter adapter;
     boolean gojung = true;
@@ -73,7 +72,7 @@ public class fragment_home extends Fragment {
     List<DataBoard> boardList;
     List<DataHigh> highList;
     ArrayList<home_listview_item> itemList = new ArrayList<home_listview_item>();
-    JSONObject user_info, user_interest,responseJson;
+    JSONObject user_info,responseJson;
     String user_token;
 
 
@@ -105,7 +104,7 @@ public class fragment_home extends Fragment {
 
                         // Get new Instance ID token
                         String token = task.getResult().getToken();
-//                        Log.d("FCM_TEST",token);
+                        Log.d("FCM_TEST",token);
 
                         ExecutorService executor = Executors.newSingleThreadExecutor();
                         executor.execute(new Runnable(){
@@ -148,19 +147,6 @@ public class fragment_home extends Fragment {
                         });
                     }
         });
-
-        try {
-            user_interest = user_info.getJSONObject("interest");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            Log.d("bb", String.valueOf(user_interest.getBoolean("고령자")));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        int a = 1;
 
         zzimList = new ArrayList<DataZzim>();
         boardList = new ArrayList<DataBoard>();
@@ -260,11 +246,10 @@ public class fragment_home extends Fragment {
                                 if (gojung) {
                                     /** 즐겨찾기 인경우 먼저 숫자를 부여 -> 코드 수정 필요*/
                                     try {
-                                        String info_tmp = activity.Shared_user_info.getString("home_interest", null);
+                                        String tsts = activity.Shared_user_info.getString("home_interest", null);
                                         Gson gson = new Gson();
-                                        Type type = new TypeToken<ArrayList<home_listview_item>>() {
-                                        }.getType();
-                                        ArrayList<home_listview_item> listViewItemList = gson.fromJson(info_tmp, type);
+                                        Type type = new TypeToken<ArrayList<home_listview_item>>() {}.getType();
+                                        ArrayList<home_listview_item> listViewItemList = gson.fromJson(tsts, type);
                                         String temp = "{\"장애인 게시판\": \"0\", \"저소득 게시판\": \"1\",\"다문화 게시판\": \"2\",\"고령자 게시판\": \"3\",\"한부모 게시판\": \"4\",\"자유 게시판\": \"5\"}";
                                         JSONObject tt = new JSONObject(temp);
                                         if (listViewItemList != null) {
@@ -274,6 +259,7 @@ public class fragment_home extends Fragment {
                                             adapter.addItem(listViewItemList.get(3).getNo(), listViewItemList.get(3).getBoard_image(), listViewItemList.get(3).getBoard_name(), boardList.get(Integer.parseInt((String) tt.get(listViewItemList.get(3).getBoard_name()))).getTitle(), boardList.get(Integer.parseInt((String) tt.get(listViewItemList.get(3).getBoard_name()))).getId());
                                             adapter.addItem(listViewItemList.get(4).getNo(), listViewItemList.get(4).getBoard_image(), listViewItemList.get(4).getBoard_name(), boardList.get(Integer.parseInt((String) tt.get(listViewItemList.get(4).getBoard_name()))).getTitle(), boardList.get(Integer.parseInt((String) tt.get(listViewItemList.get(4).getBoard_name()))).getId());
                                             adapter.addItem(listViewItemList.get(5).getNo(), listViewItemList.get(5).getBoard_image(), listViewItemList.get(5).getBoard_name(), boardList.get(Integer.parseInt((String) tt.get(listViewItemList.get(5).getBoard_name()))).getTitle(), boardList.get(Integer.parseInt((String) tt.get(listViewItemList.get(5).getBoard_name()))).getId());
+                                            adapter.store_listviewitemlist();
                                         } else {
                                             adapter.addItem(0, R.drawable.star_white, "장애인 게시판", boardList.get(0).getTitle(), boardList.get(0).getId());
                                             adapter.addItem(1, R.drawable.star_white, "저소득 게시판", boardList.get(1).getTitle(), boardList.get(1).getId());
@@ -281,6 +267,7 @@ public class fragment_home extends Fragment {
                                             adapter.addItem(3, R.drawable.star_white, "고령자 게시판", boardList.get(3).getTitle(), boardList.get(3).getId());
                                             adapter.addItem(4, R.drawable.star_white, "한부모 게시판", boardList.get(4).getTitle(), boardList.get(4).getId());
                                             adapter.addItem(5, R.drawable.star_white, "자유 게시판", boardList.get(5).getTitle(), boardList.get(5).getId());
+                                            adapter.store_listviewitemlist();
                                         }
                                     } catch (IndexOutOfBoundsException e) {
                                         Log.d("error", "board error");
@@ -485,13 +472,6 @@ public class fragment_home extends Fragment {
         }
         return super.onOptionsItemSelected(item);
     }
-
-//    @Override
-//    public void onDestroy() {
-//        super.onDestroy();
-//        MainActivity activity = (MainActivity) getActivity();
-//        activity.Shared_user_info.edit().putString("home_interest",null).apply();
-//    }
 
 
     /**

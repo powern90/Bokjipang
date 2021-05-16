@@ -9,6 +9,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -46,6 +47,7 @@ import javax.net.ssl.HttpsURLConnection;
 public class activity_community_post extends AppCompatActivity {
     SharedPreferences Shared_user_info;
     String user_token;
+    String user_name;
     JSONObject responseJson;
 
     TextView nickname;
@@ -57,12 +59,16 @@ public class activity_community_post extends AppCompatActivity {
     JSONObject view_post;
     JSONArray view_reply;
     ArrayList<Datareply> list;
+    Adapterreply adapter;
+    Context context = ApplicationClass.getContext();
+    Activity activity;
     //    private DataComu dataComu = new DataComu();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_community_post);
+        activity = this;
         nickname = (TextView) findViewById(R.id.nickname);
         createtime = (TextView) findViewById(R.id.post_time);
         title = (TextView) findViewById(R.id.title);
@@ -78,13 +84,12 @@ public class activity_community_post extends AppCompatActivity {
         Shared_user_info = getSharedPreferences("sup_zzim_list", MODE_PRIVATE);
 
         user_token = Shared_user_info.getString("token","");
-
+        user_name = Shared_user_info.getString("name",null);
         Intent intent = getIntent();
         String board_idx = intent.getStringExtra("data");
         list = new ArrayList<>();
-
-        RecyclerView recyclerView = findViewById(R.id.community_reply) ;
-        recyclerView.setLayoutManager(new LinearLayoutManager(this)) ;
+        RecyclerView recyclerView = findViewById(R.id.community_reply);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
 
         @SuppressLint("HandlerLeak") final Handler handler = new Handler()
@@ -116,13 +121,14 @@ public class activity_community_post extends AppCompatActivity {
                 for(int i = 0 ; i<view_reply.length() ; i++ ){
 
                 }
-                Adapterreply adapter = new Adapterreply(list) ;
-                recyclerView.setAdapter(adapter) ;
+                adapter = new Adapterreply(activity, user_name, list, user_token, add_reply);
+                recyclerView.setAdapter(adapter);
             }
         };
         @SuppressLint("HandlerLeak") final Handler handler2 = new Handler() {
             public void handleMessage(Message msg) {
-
+                startActivity(intent);
+                finish();
             }
         };
         ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -131,44 +137,17 @@ public class activity_community_post extends AppCompatActivity {
         send_reply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ExecutorService executor = Executors.newSingleThreadExecutor();
-                executor.execute(new Runnable() {
+                AlertDialog.Builder confirm_reply = new AlertDialog.Builder(activity);
+                confirm_reply.setMessage("댓글을 작성하시겠습니까?");
+                confirm_reply.setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     @Override
-                    public void run() {
-                        try {
-                            URL url = new URL("https://api.bluemango.site/board/reply/add/");
-                            HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
-                            myconnection.setRequestMethod("POST");  //post, get 나누기
-                            myconnection.setRequestProperty("Content-Type", "application/json");
-                            myconnection.setRequestProperty("x-access-token", user_token); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
-                            String str = "{\"m_id\":" +  0  + " ,\"post_id\":"  + Integer.parseInt(board_idx)  + " ,\"content\":" + "\"" + add_reply.getText().toString() + "\"" + "}";
-                            byte[] outputInBytes = str.getBytes(StandardCharsets.UTF_8);
-                            OutputStream os = myconnection.getOutputStream();
-                            os.write(outputInBytes);
-                            os.close();
-                            if (myconnection.getResponseCode() == 200) {
-                                BufferedReader br = new BufferedReader(new InputStreamReader(myconnection.getInputStream()));
-                                StringBuilder sb = new StringBuilder();
-                                String line = "";
-                                while ((line = br.readLine()) != null) {
-                                    sb.append(line);
-                                }
-                                responseJson = new JSONObject(sb.toString());
-                                if (responseJson.getBoolean("success")) {
-                                    Message msg = handler2.obtainMessage();
-                                    handler2.sendMessage(msg);
-                                } else {
-                                    //댓글달기 실패했습니다.
-                                }
-                            }
-                            else {
-                                Log.d("api 연결","error : " + Integer.toString(myconnection.getResponseCode()));
-                            }
-                        } catch (IOException | JSONException e) {
-                            e.printStackTrace();
-                        }
+                    public void onClick(DialogInterface dialog, int which) {
+                        make_reply(board_idx, handler2);
+                        add_reply.setHint("댓글을 입력하세요");
                     }
                 });
+                confirm_reply.setNegativeButton("취소", null);
+                confirm_reply.create().show();
             }
         });
         executor.execute(new Runnable(){
@@ -218,7 +197,7 @@ public class activity_community_post extends AppCompatActivity {
         for(int i = 0 ; i< json_array.length(); i++){
             JSONObject tt = json_array.getJSONObject(i);
             Datareply datareply = new Datareply();
-
+            datareply.setIdx(tt.getInt("id"));
             datareply.setNickname(tt.getString("uid"));
             datareply.setDate(tt.getString("createdAt"));
             datareply.setContent(tt.getString("content"));
@@ -227,9 +206,9 @@ public class activity_community_post extends AppCompatActivity {
 
             JSONArray rereply_arr = tt.getJSONArray("double_reply");
             for(int j =0; j<rereply_arr.length(); j++){
-                JSONObject tt2 = rereply_arr.getJSONObject(i);
+                JSONObject tt2 = rereply_arr.getJSONObject(j);
                 Datareply datareply2 = new Datareply();
-
+                datareply2.setIdx(tt2.getInt("id"));
                 datareply2.setNickname(tt2.getString("uid"));
                 datareply2.setDate(tt2.getString("createdAt"));
                 datareply2.setContent(tt2.getString("content"));
@@ -238,5 +217,48 @@ public class activity_community_post extends AppCompatActivity {
             }
         }
         return tmp;
+    }
+
+
+    void make_reply(String board_idx, Handler handler2){
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+
+                    URL url = new URL("https://api.bluemango.site/board/reply/add/");
+                    HttpsURLConnection myconnection = (HttpsURLConnection) url.openConnection();
+                    myconnection.setRequestMethod("POST");  //post, get 나누기
+                    myconnection.setRequestProperty("Content-Type", "application/json");
+                    myconnection.setRequestProperty("x-access-token", user_token); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
+                    String str = "{\"m_id\":" +  adapter.getr_num()  + " ,\"post_id\":"  + Integer.parseInt(board_idx)  + " ,\"content\":" + "\"" + add_reply.getText().toString().replaceAll("\n","\\\\n") + "\"" + "}";
+                    byte[] outputInBytes = str.getBytes(StandardCharsets.UTF_8);
+                    OutputStream os = myconnection.getOutputStream();
+                    os.write(outputInBytes);
+                    os.close();
+                    if (myconnection.getResponseCode() == 200) {
+                        BufferedReader br = new BufferedReader(new InputStreamReader(myconnection.getInputStream()));
+                        StringBuilder sb = new StringBuilder();
+                        String line = "";
+                        while ((line = br.readLine()) != null) {
+                            sb.append(line);
+                        }
+                        responseJson = new JSONObject(sb.toString());
+                        if (responseJson.getBoolean("success")) {
+                            Message msg = handler2.obtainMessage();
+                            handler2.sendMessage(msg);
+                        } else {
+                            //댓글달기 실패했습니다.
+                        }
+                    }
+                    else {
+                        Log.d("api 연결","error : " + Integer.toString(myconnection.getResponseCode()));
+                    }
+                } catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 }

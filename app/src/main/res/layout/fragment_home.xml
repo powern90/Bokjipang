@@ -214,7 +214,6 @@
                     android:layout_marginTop="13dp"
                     android:layout_below="@+id/popular_subject"
                     android:layout_toRightOf="@+id/popular_like1"
-                    android:textStyle="bold"
                     android:textColor="#CD0C22"
                     />
                 <TextView

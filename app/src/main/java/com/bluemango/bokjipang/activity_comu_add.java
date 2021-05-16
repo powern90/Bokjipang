@@ -112,7 +112,7 @@ public class activity_comu_add extends AppCompatActivity {
                             myconnection.setRequestMethod("POST");  //post, get 나누기
                             myconnection.setRequestProperty ("Content-Type","application/json"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
                             myconnection.setRequestProperty("x-access-token", user_token); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
-                            String str = "{\"title\":"+"\""+title.getText().toString()+"\""+" , \"content\":"+"\""+content.getText().toString()+"\""+", \"category\":"+"\""+category+"\""+"}"; //여기에 post인 경우 body json형식으로 채우기
+                            String str = "{\"title\":"+"\""+title.getText().toString().replaceAll("\n","\\\\n")+"\""+" , \"content\":"+"\""+content.getText().toString().replaceAll("\n","\\\\n")+"\""+", \"category\":"+"\""+category+"\""+"}"; //여기에 post인 경우 body json형식으로 채우기
                             byte[] outputInBytes = str.getBytes(StandardCharsets.UTF_8);    //post 인 경우 body 채우는 곳
                             OutputStream os = myconnection.getOutputStream();
                             os.write( outputInBytes );

@@ -62,19 +62,20 @@
             </LinearLayout>
 
         </LinearLayout>
-        <ImageView
-            android:layout_width="12dp"
-            android:layout_height="12dp"
-            android:layout_gravity="center|right"
-            android:src="@drawable/normal_heart" />
 
         <ImageView
             android:id="@+id/reply_img"
             android:layout_width="15dp"
-            android:layout_height="17dp"
+            android:layout_height="19dp"
             android:layout_gravity="center|right"
-            android:layout_marginLeft="10dp"
             android:src="@drawable/comment" />
+        <ImageView
+            android:id="@+id/delete"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_gravity="center|right"
+            android:layout_marginLeft="13dp"
+            android:src="@drawable/delete" />
 
     </LinearLayout>
 

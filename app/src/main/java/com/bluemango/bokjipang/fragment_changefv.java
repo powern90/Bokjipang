@@ -33,12 +33,14 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class fragment_changefv extends Fragment {
     JSONObject user_info, user_interest;
+    MainActivity activity;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_changefv, container, false);
+        activity = (MainActivity) getActivity();
 
-        activity_mypage activity_mypage = (activity_mypage) getActivity();
-        String user_token = activity_mypage.Shared_user_info.getString("token", null);
+        String user_token = activity.Shared_user_info.getString("token", null);
 
         @SuppressLint("HandlerLeak") final Handler handler = new Handler() {
             public void handleMessage(Message msg) {
@@ -47,9 +49,9 @@ public class fragment_changefv extends Fragment {
                 auth_alert.setMessage("성공");
                 auth_alert.setPositiveButton("예", null);
                 auth_alert.create().show();
-                fragment_mypage fragment_mypage = new fragment_mypage();
+                fragment_setting fragment_setting = new fragment_setting();
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, fragment_mypage);
+                transaction.replace(R.id.fragment_container, fragment_setting);
                 transaction.addToBackStack(null);
                 transaction.commit();
             }
@@ -63,7 +65,7 @@ public class fragment_changefv extends Fragment {
         CheckBox ck4 = (CheckBox)view.findViewById(R.id.ck4);
         CheckBox ck5 = (CheckBox)view.findViewById(R.id.ck5);
 
-        String info_tmp = activity_mypage.Shared_user_info.getString("user_info",null);
+        String info_tmp = activity.Shared_user_info.getString("user_info",null);
         if(info_tmp != null){
             try{
                 user_info = new JSONObject(info_tmp);
@@ -101,7 +103,7 @@ public class fragment_changefv extends Fragment {
                     user_interest2.put("저소득",ck5.isChecked());
                     user_interest2.put("장애인",ck1.isChecked());
                     user_info.put("interest",user_interest2);
-                    activity_mypage.Shared_user_info.edit().putString("user_info",user_info.toString()).apply();
+                    activity.Shared_user_info.edit().putString("user_info",user_info.toString()).apply();
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -118,8 +120,7 @@ public class fragment_changefv extends Fragment {
                             myconnection.setRequestMethod("POST");  //post, get 나누기
                             myconnection.setRequestProperty("Content-Type", "application/json"); // 데이터 json인 경우 세팅 , setrequestProperty 헤더인 경우
                             myconnection.setRequestProperty("x-access-token", user_token);
-
-                            String str = "{\"interest\":{ \"고령자\": " + ck4.isChecked() + ", \"다문화\": " + ck3.isChecked() + ", \"한부모\": " + ck2.isChecked() + ", \"저소득\": " + ck5.isChecked() + ", \"장애인\": " + ck1.isChecked() + "}}";
+                            String str = "{\"interest\":{ \"장애인\": " + ck1.isChecked() + ", \"한부모\": " + ck2.isChecked() + ", \"다문화\": " + ck3.isChecked() + ", \"고령자\": " + ck4.isChecked() + ", \"저소득\": " + ck5.isChecked() + "}}";
                             byte[] outputInBytes = str.getBytes(StandardCharsets.UTF_8);    //post 인 경우 body 채우는 곳
                             OutputStream os = myconnection.getOutputStream();
                             os.write(outputInBytes);
