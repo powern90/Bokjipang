@@ -7,8 +7,10 @@ public class DataComu {
     private String reply_num;
     private String id;
     private String datetime;
+    private String my_like;
 
     public String getDatetime(){ return datetime;}
+    public String getmy_like(){return my_like;}
     public String getId(){return id;}
     public String getTitle(){return title;}
     public String getContent(){return content;}
@@ -21,4 +23,5 @@ public class DataComu {
     public void setGood_num(String good_num){this.good_num = good_num;}
     public void setReply_num(String reply_num){this.reply_num = reply_num;}
     public void setId(String id){this.id = id;}
+    public void setmy_like(String my_like){this.my_like = my_like;}
 }

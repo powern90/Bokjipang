@@ -353,6 +353,7 @@ public class fragment_community extends Fragment {
             dataComu.setGood_num(Integer.toString(tt.getInt("like")));
             dataComu.setDatetime(tt.getString("createdAt"));
             dataComu.setReply_num(Integer.toString(tt.getInt("reply_count")));
+            dataComu.setmy_like(Integer.toString(tt.getInt("my_like")));
             tmp.add(dataComu);
         }
 

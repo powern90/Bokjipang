@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,6 +23,7 @@ public class AdapterComu extends RecyclerView.Adapter<AdapterComu.ViewHolder>{
         TextView content;
         TextView good;
         TextView reply;
+        ImageView heart;
 
         ViewHolder(View itemView) {
             super(itemView) ;
@@ -31,6 +33,7 @@ public class AdapterComu extends RecyclerView.Adapter<AdapterComu.ViewHolder>{
             content = itemView.findViewById(R.id.content);
             good = itemView.findViewById(R.id.good);
             reply = itemView.findViewById(R.id.reply);
+            heart = itemView.findViewById(R.id.heart);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -84,6 +87,12 @@ public class AdapterComu extends RecyclerView.Adapter<AdapterComu.ViewHolder>{
         holder.content.setText(text.getContent());
         holder.good.setText(text.getGood_num());
         holder.reply.setText(text.getReply_num());
+        if(text.getmy_like().equals("1")){
+            holder.heart.setImageResource(R.drawable.full_heart);
+        }
+        else{
+            holder.heart.setImageResource(R.drawable.normal_heart);
+        }
     }
 
 
