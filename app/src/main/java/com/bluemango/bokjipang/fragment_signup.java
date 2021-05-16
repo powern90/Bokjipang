@@ -84,7 +84,7 @@ public class fragment_signup extends Fragment {
     TextView back_login;
     RadioButton radio_man, radio_woman;
     Webview_address Webview_address;
-    String auth_checked="true";
+    String auth_checked="false";
     boolean password_format_check = false;
     boolean password_equal_check = false;
     int gender;
@@ -125,7 +125,35 @@ public class fragment_signup extends Fragment {
                 }
             }
         });
+        @SuppressLint("HandlerLeak") final Handler handler = new Handler()
+        {
+            public void handleMessage(Message msg){
+                AlertDialog.Builder auth_alert = new AlertDialog.Builder(activity);
+                auth_alert.setTitle("Bokjipang 인증 서비스");
+                auth_alert.setMessage("사용가능한 전화번호 입니다.");
+                auth_alert.setPositiveButton("예", null);
+                auth_alert.create().show();
+                verify_layout.setVisibility(View.VISIBLE);
+                startPhoneNumberVerification(phone_number);
+            }
+        };
+        @SuppressLint("HandlerLeak") final Handler handler2 = new Handler()
+        {
+            public void handleMessage(Message msg){
 
+                AlertDialog.Builder auth_alert = new AlertDialog.Builder(activity);
+                auth_alert.setTitle("Bokjipang 인증 서비스");
+                auth_alert.setMessage("이미 가입된 전화번호 입니다.");
+                auth_alert.setPositiveButton("예", null);
+                auth_alert.create().show();
+            }
+        };
+        @SuppressLint("HandlerLeak") final Handler handler3 = new Handler()
+        {
+            public void handleMessage(Message msg){
+                Toast.makeText(getActivity(), "회원가입되었습니다.",Toast.LENGTH_SHORT).show();
+            }
+        };
         /** webview_address에서 addres 정보 받아와서 출력하기 및 js 저장*/
         Bundle bundle = getArguments();
         res = bundle_receive(bundle);
@@ -226,6 +254,10 @@ public class fragment_signup extends Fragment {
                                     String key = jsonReader.nextName();
                                     if(key.equals("success")){
                                         boolean success = jsonReader.nextBoolean();
+                                        if(success){
+                                            Message msg = handler3.obtainMessage();
+                                            handler3.sendMessage(msg);
+                                        }
                                         Log.d("token",Boolean.toString(success));
                                         break;
                                     }
@@ -324,29 +356,6 @@ public class fragment_signup extends Fragment {
 
             }
         });
-        @SuppressLint("HandlerLeak") final Handler handler = new Handler()
-        {
-            public void handleMessage(Message msg){
-                AlertDialog.Builder auth_alert = new AlertDialog.Builder(activity);
-                auth_alert.setTitle("Bokjipang 인증 서비스");
-                auth_alert.setMessage("사용가능한 전화번호 입니다.");
-                auth_alert.setPositiveButton("예", null);
-                auth_alert.create().show();
-                verify_layout.setVisibility(View.VISIBLE);
-                startPhoneNumberVerification(phone_number);
-            }
-        };
-        @SuppressLint("HandlerLeak") final Handler handler2 = new Handler()
-        {
-            public void handleMessage(Message msg){
-
-                AlertDialog.Builder auth_alert = new AlertDialog.Builder(activity);
-                auth_alert.setTitle("Bokjipang 인증 서비스");
-                auth_alert.setMessage("이미 가입된 전화번호 입니다.");
-                auth_alert.setPositiveButton("예", null);
-                auth_alert.create().show();
-            }
-        };
 
         /** 전화번호 인증 **/
         view.findViewById(R.id.buttonContinue).setOnClickListener(new View.OnClickListener() {

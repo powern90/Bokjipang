@@ -80,6 +80,7 @@
                                               <map>
                                                 <entry key="color" value="000000" />
                                                 <entry key="imagePath" value="D:\Downloads\KakaoTalk_20210516_133104590_05.png" />
+                                                <entry key="scalingPercent" value="51" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -111,7 +112,9 @@
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="outputName" value="ic_main" />
+                                      <entry key="backgroundAssetType" value="COLOR" />
+                                      <entry key="backgroundColor" value="ffffff" />
+                                      <entry key="outputName" value="ic_main2" />
                                     </map>
                                   </option>
                                 </PersistentState>
