@@ -332,8 +332,8 @@ public class fragment_signup extends Fragment {
                 auth_alert.setMessage("사용가능한 전화번호 입니다.");
                 auth_alert.setPositiveButton("예", null);
                 auth_alert.create().show();
-//                verify_layout.setVisibility(View.VISIBLE);
-//                startPhoneNumberVerification(phone_number);
+                verify_layout.setVisibility(View.VISIBLE);
+                startPhoneNumberVerification(phone_number);
             }
         };
         @SuppressLint("HandlerLeak") final Handler handler2 = new Handler()
