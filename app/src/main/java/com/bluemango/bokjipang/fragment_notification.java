@@ -81,7 +81,7 @@ public class fragment_notification extends Fragment {
             public void handleMessage(Message msg){
                 recyclerView = view.findViewById(R.id.recycler3) ;
                 recyclerView.setLayoutManager(new LinearLayoutManager(getActivity())) ;
-                adapterNoti = new AdapterNoti(getActivity(), noti_item_list);
+                adapterNoti = new AdapterNoti(getActivity(), noti_item_list, activity.Shared_noti_list);
                 recyclerView.setAdapter(adapterNoti);
 
                 if(adapterNoti != null){
@@ -90,7 +90,7 @@ public class fragment_notification extends Fragment {
                     return;
                 }
                 else {
-                    adapterNoti = new AdapterNoti(getActivity(), noti_item_list);
+                    adapterNoti = new AdapterNoti(getActivity(), noti_item_list, activity.Shared_noti_list);
                 }
                 recyclerView.setAdapter(adapterNoti);
             }
@@ -151,6 +151,7 @@ public class fragment_notification extends Fragment {
         dataNoti.setTitle(jsonObject.getString("title"));
         dataNoti.setContent(jsonObject.getString("content").replace("\n","<br>").replace("\t",""));
         dataNoti.setIdx(Integer.toString(jsonObject.getInt("id")));
+        dataNoti.setDatetime(jsonObject.getString("createdAt"));
         dataNoti.setRead(true);
         tmp.add(dataNoti);
         return tmp;

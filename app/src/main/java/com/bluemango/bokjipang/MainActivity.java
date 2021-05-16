@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,6 +21,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -75,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         Shared_user_info = getSharedPreferences("user_pwd", MODE_PRIVATE);
         Shared_user_info = getSharedPreferences("home_interest", MODE_PRIVATE);
         Shared_user_info = getSharedPreferences("sup_zzim_list", MODE_PRIVATE);
+//        Shared_noti_list.edit().putString("noti_list", null).apply();
 //        JSONObject home_interest2 = new JSONObject();
 //        try {
 //            home_interest2.put("고령자 게시판",false);

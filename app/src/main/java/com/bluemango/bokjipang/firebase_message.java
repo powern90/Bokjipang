@@ -114,34 +114,37 @@ public class firebase_message extends FirebaseMessagingService {
         Map<String, String> data = remoteMessage.getData();
         String messageData = data.get("message");
         String titleData = data.get("title");
-        String nameData = data.get("name");
+        String nameData = data.get("body");
+        String datetime = data.get("createdAt");
+        String idx = remoteMessage.getData().get("id");
+        Log.d("create : ", datetime);
 
         //저는 포그라운드 백그라운드 동일하게 컨트롤하기 위해 Data항목에 푸쉬 Title, Body 모두 넣어서 구현하였습니다.
-        sendNotification(titleData, messageData, nameData);
+        sendNotification(titleData, messageData, nameData, idx);
 
 
 //        super.onMessageReceived(remoteMessage);
 //
-//        SharedPreferences Shared_noti_list = getApplicationContext().getSharedPreferences("noti_list",MODE_PRIVATE);
-//
-//        String noti_tmp = Shared_noti_list.getString("noti_list", null);
-//        ArrayList<String> list;
-//        if(noti_tmp != null){
-//            Gson gson2 = new Gson();
-//            Type type = new TypeToken<ArrayList<String>>() {}.getType();
-//            list = gson2.fromJson(noti_tmp, type);
-//
-//        }
-//        else{
-//            list  = new ArrayList<String>();
-//        }
-//        list.add(remoteMessage.getData().get("id"));
-//
-////        ArrayList<String> list = new ArrayList<String>();
-//        gson = new GsonBuilder().create();
-//        String noti_info = gson.toJson(list);
-//        Shared_noti_list.edit().putString("noti_list", noti_info).apply();
-//        Log.d("noti_list : ", noti_info);
+        SharedPreferences Shared_noti_list = getApplicationContext().getSharedPreferences("noti_list",MODE_PRIVATE);
+
+        String noti_tmp = Shared_noti_list.getString("noti_list", null);
+        ArrayList<String> list;
+        if(noti_tmp != null){
+            Gson gson2 = new Gson();
+            Type type = new TypeToken<ArrayList<String>>() {}.getType();
+            list = gson2.fromJson(noti_tmp, type);
+
+        }
+        else{
+            list  = new ArrayList<String>();
+        }
+        list.add(remoteMessage.getData().get("id"));
+
+//        ArrayList<String> list = new ArrayList<String>();
+        gson = new GsonBuilder().create();
+        String noti_info = gson.toJson(list);
+        Shared_noti_list.edit().putString("noti_list", noti_info).apply();
+        Log.d("noti_list : ", noti_info);
 //
 //
 //        String title = remoteMessage.getData().get("title");//firebase에서 보낸 메세지의 title
@@ -202,7 +205,7 @@ public class firebase_message extends FirebaseMessagingService {
 //        }
     }
 
-    private void sendNotification(String title, String message, String name) {
+    private void sendNotification(String title, String message, String name, String idx) {
 
         Intent intent;
         PendingIntent pendingIntent;
@@ -211,43 +214,48 @@ public class firebase_message extends FirebaseMessagingService {
         intent.putExtra("name", name);  //push 정보중 name 값을 mainActivity로 넘김
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent, PendingIntent.FLAG_ONE_SHOT);
+        pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
-        NotificationCompat.Builder notificationBuilder;
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this,"test push")
+                .setSmallIcon(R.drawable.donut)
+                .setContentTitle(title)
+                .setContentText(name)
+                .setContentIntent(pendingIntent)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        //SDK26부터 푸쉬에 채널항목에 대한 세팅이 필요하다.
-        if (Build.VERSION.SDK_INT >= 26) {
+//        //SDK26부터 푸쉬에 채널항목에 대한 세팅이 필요하다.
+//        if (Build.VERSION.SDK_INT >= 26) {
+//
+//            String channelId = "test push";
+//            String channelName = "test Push Message";
+//            String channelDescription = "New test Information";
+//            NotificationChannel channel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT);
+//            channel.setDescription(channelDescription);
+//            //각종 채널에 대한 설정
+//            channel.enableLights(true);
+//            channel.setLightColor(Color.RED);
+//            channel.enableVibration(true);
+//            channel.setVibrationPattern(new long[]{100, 200, 300});
+//            notificationManager.createNotificationChannel(channel);
+//            //channel이 등록된 builder
+//            notificationBuilder = new NotificationCompat.Builder(this, channelId);
+//        } else {
+//            notificationBuilder = new NotificationCompat.Builder(this);
+//        }
 
-            String channelId = "test push";
-            String channelName = "test Push Message";
-            String channelDescription = "New test Information";
-            NotificationChannel channel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT);
-            channel.setDescription(channelDescription);
-            //각종 채널에 대한 설정
-            channel.enableLights(true);
-            channel.setLightColor(Color.RED);
-            channel.enableVibration(true);
-            channel.setVibrationPattern(new long[]{100, 200, 300});
-            notificationManager.createNotificationChannel(channel);
-            //channel이 등록된 builder
-            notificationBuilder = new NotificationCompat.Builder(this, channelId);
-        } else {
-            notificationBuilder = new NotificationCompat.Builder(this);
-        }
+//        notificationBuilder.setSmallIcon(R.drawable.donut)
+//                .setContentTitle(title)
+//                .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
+//                .setAutoCancel(true)
+//                .setSound(defaultSoundUri)
+//                .setContentIntent(pendingIntent)
+//                .setContentText(message);
 
-        notificationBuilder.setSmallIcon(R.drawable.donut)
-                .setContentTitle(title)
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
-                .setAutoCancel(true)
-                .setSound(defaultSoundUri)
-                .setContentIntent(pendingIntent)
-                .setContentText(message);
-
-        notificationManager.notify(1 /* ID of notification */, notificationBuilder.build());
+        notificationManager.notify(Integer.parseInt(idx) /* ID of notification */, notificationBuilder.build());
 
     }
 

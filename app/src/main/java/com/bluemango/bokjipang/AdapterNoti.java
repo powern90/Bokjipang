@@ -1,8 +1,12 @@
 package com.bluemango.bokjipang;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,24 +17,34 @@ import android.widget.TextView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class AdapterNoti extends RecyclerView.Adapter<AdapterNoti.ViewHolder>{
     private ArrayList<DataNoti> mData = null ;
     private Context context = null;
+    private SharedPreferences Shared_noti_list;
 
     public ArrayList<DataNoti> return_mdata(){return this.mData;}
 
-    public AdapterNoti(Context context, ArrayList<DataNoti> list) {
+    public AdapterNoti(Context context, ArrayList<DataNoti> list, SharedPreferences noti_list) {
         this.context = context;
         mData = list ;
+        Shared_noti_list = noti_list;
     }
 
 
     // 아이템 뷰를 저장하는 뷰홀더 클래스.
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView title ;
-        TextView content;
+        TextView upload_time;
         TextView type;
 
         ViewHolder(View itemView) {
@@ -38,7 +52,7 @@ public class AdapterNoti extends RecyclerView.Adapter<AdapterNoti.ViewHolder>{
 
             // 뷰 객체에 대한 참조. (hold strong reference)
             title = itemView.findViewById(R.id.title) ;
-            content = itemView.findViewById(R.id.content);
+            upload_time = itemView.findViewById(R.id.upload_time);
             type = itemView.findViewById(R.id.type);
 
 
@@ -50,6 +64,32 @@ public class AdapterNoti extends RecyclerView.Adapter<AdapterNoti.ViewHolder>{
                         mOnPopupClick(v, pos);
                         mData.get(pos).setRead(false);
 
+                        String noti_tmp = Shared_noti_list.getString("noti_list", null);
+
+                        ArrayList<String> list = null;
+                        if(noti_tmp != null){
+                            Gson gson2 = new Gson();
+                            Type type = new TypeToken<ArrayList<String>>() {}.getType();
+                            list = gson2.fromJson(noti_tmp, type);
+
+                        }
+                        else{
+                            Log.d("없을 일이다.","");
+                        }
+
+                        ArrayList<String> tmp = new ArrayList<>();
+                        tmp.add(mData.get(pos).getIdx());
+                        list.removeAll(tmp);
+
+                        Gson gson;
+                        gson = new GsonBuilder().create();
+                        if(list.size() == 0 ){
+                            Shared_noti_list.edit().putString("noti_list", null).apply();
+                        }
+                        else{
+                            String noti_info = gson.toJson(list);
+                            Shared_noti_list.edit().putString("noti_list", noti_info).apply();
+                        }
 
                     }
                 }
@@ -83,7 +123,7 @@ public class AdapterNoti extends RecyclerView.Adapter<AdapterNoti.ViewHolder>{
 
         /** 백그라운드 값 세팅해주는 부분*/
         final LinearLayout backGround = view.findViewById(R.id.notification_background);
-        backGround.setBackgroundColor(0xff011111);
+        backGround.setBackgroundColor(Color.parseColor("#FFDCFF"));
         /** 여기까지 백그라운드 조건에 따라서 넣어주면*/
 
         AdapterNoti.ViewHolder vh = new AdapterNoti.ViewHolder(view) ;
@@ -92,17 +132,41 @@ public class AdapterNoti extends RecyclerView.Adapter<AdapterNoti.ViewHolder>{
     }
 
     // onBindViewHolder() - position에 해당하는 데이터를 뷰홀더의 아이템뷰에 표시.
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(AdapterNoti.ViewHolder holder, int position) {
         DataNoti text = mData.get(position) ;
         holder.title.setText(text.getTitle());
-        holder.content.setText(text.getContent());
         holder.type.setText(text.getType());
 
         if(!mData.get(position).getread()){
             final LinearLayout backGround = holder.itemView.findViewById(R.id.notification_background);
-            backGround.setBackgroundColor(0xB0C9FA); //클릭시 배경 바꿈 이거 디비값 같은거 0으로 바꿔서 다시 로딩되도록 해야될듯
+            backGround.setBackgroundColor(Color.parseColor("#ffffff")); //클릭시 배경 바꿈 이거 디비값 같은거 0으로 바꿔서 다시 로딩되도록 해야될듯
         }
+
+
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String date = format.format(new Date());
+        Date dt = null;
+        try {
+            dt = format.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+//        String date2 = text.getDatetime();
+        String date2 = "2021-05-16 11:00:00";
+        Date dt2 = null;
+        try {
+            dt2 = format.parse(date2);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        long cal = dt.getTime() - dt2.getTime();
+        long upload_sub = cal/(60*1000);
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat new_format = new SimpleDateFormat("MM/dd HH:mm");
+
+        holder.upload_time.setText(Integer.toString((int)upload_sub)+"분전");
+
 
     }
 
