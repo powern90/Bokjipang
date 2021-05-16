@@ -84,7 +84,30 @@ public class activity_support_post extends AppCompatActivity {
                 // 리사이클러뷰에 SimpleTextAdapter 객체 지정.
                 AlertDialog.Builder success_alert = new AlertDialog.Builder(activity);
                 try {
-                    success_alert.setTitle("add : "+responseJson.getString("success"));
+                    if(responseJson.getString("success").equals("true")){
+                        success_alert.setTitle("찜 성공!");
+                    }
+                    else{
+                        success_alert.setTitle("이미 등록한 사업입니다.");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                success_alert.create().show();
+            }
+        };
+        @SuppressLint("HandlerLeak") final Handler handler3 = new Handler()
+        {
+            public void handleMessage(Message msg){
+                // 리사이클러뷰에 SimpleTextAdapter 객체 지정.
+                AlertDialog.Builder success_alert = new AlertDialog.Builder(activity);
+                try {
+                    if(responseJson.getString("success").equals("true")){
+                        success_alert.setTitle("찜 삭제!");
+                    }
+                    else{
+                        success_alert.setTitle("찜 목록에 없는 사업입니다.");
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -183,7 +206,7 @@ public class activity_support_post extends AppCompatActivity {
         sub_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sup_sub_zzim(handler);
+                sup_sub_zzim(handler3);
             }
         });
 
