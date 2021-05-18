@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         Shared_user_info = getSharedPreferences("user_pwd", MODE_PRIVATE);
         Shared_user_info = getSharedPreferences("home_interest", MODE_PRIVATE);
         Shared_user_info = getSharedPreferences("sup_zzim_list", MODE_PRIVATE);
+
 //        Shared_noti_list.edit().putString("noti_list", null).apply();
 //        JSONObject home_interest2 = new JSONObject();
 //        try {

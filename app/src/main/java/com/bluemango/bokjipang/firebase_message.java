@@ -214,49 +214,97 @@ public class firebase_message extends FirebaseMessagingService {
         intent.putExtra("name", name);  //push 정보중 name 값을 mainActivity로 넘김
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent, PendingIntent.FLAG_ONE_SHOT);
 
 
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this,"test push")
-                .setSmallIcon(R.drawable.donut)
-                .setContentTitle(title)
-                .setContentText(name)
-                .setContentIntent(pendingIntent)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        NotificationCompat.Builder notificationBuilder;
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-//        //SDK26부터 푸쉬에 채널항목에 대한 세팅이 필요하다.
-//        if (Build.VERSION.SDK_INT >= 26) {
-//
-//            String channelId = "test push";
-//            String channelName = "test Push Message";
-//            String channelDescription = "New test Information";
-//            NotificationChannel channel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT);
-//            channel.setDescription(channelDescription);
-//            //각종 채널에 대한 설정
-//            channel.enableLights(true);
-//            channel.setLightColor(Color.RED);
-//            channel.enableVibration(true);
-//            channel.setVibrationPattern(new long[]{100, 200, 300});
-//            notificationManager.createNotificationChannel(channel);
-//            //channel이 등록된 builder
-//            notificationBuilder = new NotificationCompat.Builder(this, channelId);
-//        } else {
-//            notificationBuilder = new NotificationCompat.Builder(this);
-//        }
+        //SDK26부터 푸쉬에 채널항목에 대한 세팅이 필요하다.
+        if (Build.VERSION.SDK_INT >= 26) {
 
-//        notificationBuilder.setSmallIcon(R.drawable.donut)
-//                .setContentTitle(title)
-//                .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
-//                .setAutoCancel(true)
-//                .setSound(defaultSoundUri)
-//                .setContentIntent(pendingIntent)
-//                .setContentText(message);
+            String channelId = "test push";
+            String channelName = "test Push Message";
+            String channelDescription = "New test Information";
+            NotificationChannel channel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription(channelDescription);
+            //각종 채널에 대한 설정
+            channel.enableLights(true);
+            channel.setLightColor(Color.RED);
+            channel.enableVibration(true);
+            channel.setVibrationPattern(new long[]{100, 200, 300});
+            notificationManager.createNotificationChannel(channel);
+            //channel이 등록된 builder
+            notificationBuilder = new NotificationCompat.Builder(this, channelId);
+        } else {
+            notificationBuilder = new NotificationCompat.Builder(this);
+        }
+
+        notificationBuilder.setSmallIcon(R.drawable.donut)
+                .setContentTitle(title)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
+                .setAutoCancel(true)
+                .setSound(defaultSoundUri)
+                .setContentIntent(pendingIntent)
+                .setContentText(message);
 
         notificationManager.notify(Integer.parseInt(idx) /* ID of notification */, notificationBuilder.build());
-
     }
+
+//    private void sendNotification(String title, String message, String name, String idx) {
+//
+//        Intent intent;
+//        PendingIntent pendingIntent;
+//
+//        intent = new Intent(this, MainActivity.class);
+//        intent.putExtra("name", name);  //push 정보중 name 값을 mainActivity로 넘김
+//
+//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//        pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+//
+//
+//        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+//
+//        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this,"")
+//                .setSmallIcon(R.drawable.donut)
+//                .setContentTitle(title)
+//                .setContentText(name)
+//                .setContentIntent(pendingIntent)
+//                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+//        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+//
+////        //SDK26부터 푸쉬에 채널항목에 대한 세팅이 필요하다.
+////        if (Build.VERSION.SDK_INT >= 26) {
+////
+////            String channelId = "test push";
+////            String channelName = "test Push Message";
+////            String channelDescription = "New test Information";
+////            NotificationChannel channel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT);
+////            channel.setDescription(channelDescription);
+////            //각종 채널에 대한 설정
+////            channel.enableLights(true);
+////            channel.setLightColor(Color.RED);
+////            channel.enableVibration(true);
+////            channel.setVibrationPattern(new long[]{100, 200, 300});
+////            notificationManager.createNotificationChannel(channel);
+////            //channel이 등록된 builder
+////            notificationBuilder = new NotificationCompat.Builder(this, channelId);
+////        } else {
+////            notificationBuilder = new NotificationCompat.Builder(this);
+////        }
+//
+////        notificationBuilder.setSmallIcon(R.drawable.donut)
+////                .setContentTitle(title)
+////                .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
+////                .setAutoCancel(true)
+////                .setSound(defaultSoundUri)
+////                .setContentIntent(pendingIntent)
+////                .setContentText(message);
+//
+//        notificationManager.notify(Integer.parseInt(idx) /* ID of notification */, notificationBuilder.build());
+//
+//    }
 
 }

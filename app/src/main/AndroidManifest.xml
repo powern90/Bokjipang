@@ -17,8 +17,8 @@
         android:theme="@style/Theme.Bokjipang"
         android:usesCleartextTraffic="true"
         android:name=".ApplicationClass">
-        <activity android:name=".activity_comu_add"></activity>
-        <activity android:name=".activity_support_post"></activity>
+        <activity android:name=".activity_comu_add" />
+        <activity android:name=".activity_support_post" />
 
         <!-- android:name=".KaKaoSDKInit" -->
         <activity android:name=".activity_community_post"
